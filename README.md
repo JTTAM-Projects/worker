@@ -28,3 +28,4 @@ The application is built around two primary user roles: the Employer and the Tas
 * Tuomas Jaakkola
 * Jani Könönen
 * Tuomas Leinonen
+* Markus Mäntylä
