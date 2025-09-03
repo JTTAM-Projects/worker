@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-GligApplication<glig>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jttam.glig.GligApplication",
+            "projectName": "glig",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
