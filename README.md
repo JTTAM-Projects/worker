@@ -19,9 +19,13 @@ The application is built around two primary user roles: the Employer and the Tas
 * **Track Your Earnings:** Receive payments instantly to your in-app balance after a job is marked as complete. View a comprehensive history of all earnings.
 
 ## Technology Stack
-* **Backend:** Java
-* **Database:** PostgreSQL
-* **Frontend:** React
+### Backend
+* **Java & Spring Boot**
+### Frontend
+* **React & TypeScript**
+* **Vite**
+### Database
+* **PostgreSQL**
 
 ## Authors
 * Aku Ihamuotila
