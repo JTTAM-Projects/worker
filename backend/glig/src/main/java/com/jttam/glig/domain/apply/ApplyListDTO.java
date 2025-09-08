@@ -1,5 +1,5 @@
 package com.jttam.glig.domain.apply;
 
-public interface ApplyMapper {
+public class ApplyListDTO {
 
 }

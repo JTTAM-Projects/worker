@@ -1,5 +1,5 @@
 package com.jttam.glig.domain.task;
 
-public interface TaskMapper {
+public record TaskListDTO() {
 
 }
