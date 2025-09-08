@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.task;
+package com.jttam.glig.domain.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,27 +11,27 @@ import com.jttam.glig.service.Message;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("task/")
-public class TaskController {
+@RequestMapping("user/")
+public class UserController {
 
-    private final TaskControllerService service;
+    private final UserControllerService service;
 
-    public TaskController(TaskControllerService service) {
+    public UserController(UserControllerService service) {
         this.service = service;
     }
 
-    @GetMapping("{taskId}")
-    public TaskDto getSingleTaskDto(@PathVariable Long taskId) {
-        return service.tryGetSingleTaskDtoById(taskId);
+    @GetMapping("{userId}")
+    public UserDto getSingleUserDto(@PathVariable Long userId) {
+        return service.tryGetSingleUserDtoById(userId);
     }
 
-    @GetMapping("user-tasks")
-    public TaskListDTO getAllUserTasks() {
-        return service.tryGetAllUserTasks();
+    @GetMapping("user-users")
+    public UserListDTO getAllUserUsers() {
+        return service.tryGetAllUserUsers();
     }
 
-    @PostMapping("{taskId}/create")
-    public ResponseEntity<Message> createTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
+    @PostMapping("{userId}/create")
+    public ResponseEntity<Message> createUser(@PathVariable Long userId, @Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -39,11 +39,11 @@ public class TaskController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryCreateNewTask(taskId, taskDto);
+        return service.tryCreateNewUser(userId, userDto);
     }
 
-    @PutMapping("{taskId}/edit")
-    public ResponseEntity<Message> editTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
+    @PutMapping("{userId}/edit")
+    public ResponseEntity<Message> editUser(@PathVariable Long userId, @Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -51,7 +51,7 @@ public class TaskController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryEditTask(taskId, taskDto);
+        return service.tryEditUser(userId, userDto);
     }
 
 }
