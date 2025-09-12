@@ -9,22 +9,17 @@ import com.jttam.glig.service.Message;
 public class UserControllerService {
     private UserRepository userRepository;
 
-    public UserDto tryGetSingleUserDtoById(Long userId) {
+    public UserDto tryGetSingleUserDtoById(String userName) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'tryGetSingleUserDtoById'");
     }
 
-    public UserListDTO tryGetAllUserUsers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'tryGetAllUserUsers'");
-    }
-
-    public ResponseEntity<Message> tryCreateNewUser(Long userId, UserDto userDto) {
+    public ResponseEntity<Message> tryCreateNewUser(UserDto userDto) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'tryCreateNewUser'");
     }
 
-    public ResponseEntity<Message> tryEditUser(Long userId, UserDto userDto) {
+    public ResponseEntity<Message> tryEditUser(UserDto userDto) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'tryEditUser'");
     }

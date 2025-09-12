@@ -20,18 +20,13 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("{userId}")
-    public UserDto getSingleUserDto(@PathVariable Long userId) {
-        return service.tryGetSingleUserDtoById(userId);
+    @GetMapping("{user-name}")
+    public UserDto getSingleUser(@PathVariable String userName) {
+        return service.tryGetSingleUserDtoById(userName);
     }
 
-    @GetMapping("user-users")
-    public UserListDTO getAllUserUsers() {
-        return service.tryGetAllUserUsers();
-    }
-
-    @PostMapping("{userId}/create")
-    public ResponseEntity<Message> createUser(@PathVariable Long userId, @Valid @RequestBody UserDto userDto,
+    @PostMapping("{create")
+    public ResponseEntity<Message> createUser(@Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -39,11 +34,11 @@ public class UserController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryCreateNewUser(userId, userDto);
+        return service.tryCreateNewUser(userDto);
     }
 
-    @PutMapping("{userId}/edit")
-    public ResponseEntity<Message> editUser(@PathVariable Long userId, @Valid @RequestBody UserDto userDto,
+    @PutMapping("edit")
+    public ResponseEntity<Message> editUser(@Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -51,7 +46,7 @@ public class UserController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryEditUser(userId, userDto);
+        return service.tryEditUser(userDto);
     }
 
 }

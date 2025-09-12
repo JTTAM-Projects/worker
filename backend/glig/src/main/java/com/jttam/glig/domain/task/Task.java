@@ -5,13 +5,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.jttam.glig.domain.apply.Apply;
+import com.jttam.glig.domain.user.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -20,8 +25,8 @@ import jakarta.persistence.Table;
 public class Task {
 
     @Id
-    @Column(name = "user_name")
-    private String userName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
@@ -49,15 +54,18 @@ public class Task {
     @Column(name = "description")
     private String description = "";
 
+    @ManyToOne
+    @JoinColumn(name = "user_name")
+    private User user;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = false)
     private Set<Apply> applies = new HashSet<>();
 
     public Task() {
     }
 
-    public Task(String userName, Category category, String title, int price, LocalDateTime startDate,
-            LocalDateTime endDate, String location, TaskStatus status, String description, Set<Apply> applies) {
-        this.userName = userName;
+    public Task(Category category, String title, int price, LocalDateTime startDate, LocalDateTime endDate,
+            String location, TaskStatus status, String description, User user, Set<Apply> applies) {
         this.category = category;
         this.title = title;
         this.price = price;
@@ -66,7 +74,15 @@ public class Task {
         this.location = location;
         this.status = status;
         this.description = description;
-        this.applies = applies;
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Category getCategory() {
@@ -75,14 +91,6 @@ public class Task {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getTitle() {
@@ -139,6 +147,14 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Set<Apply> getApplies() {

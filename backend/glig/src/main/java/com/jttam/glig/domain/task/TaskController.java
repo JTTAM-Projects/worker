@@ -1,5 +1,7 @@
 package com.jttam.glig.domain.task;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,12 +28,12 @@ public class TaskController {
     }
 
     @GetMapping("user-tasks")
-    public TaskListDTO getAllUserTasks() {
+    public List<TaskDto> getAllUserTasks() {
         return service.tryGetAllUserTasks();
     }
 
-    @PostMapping("{taskId}/create")
-    public ResponseEntity<Message> createTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
+    @PostMapping("create-task")
+    public ResponseEntity<Message> createTask(@Valid @RequestBody TaskDto taskDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -39,7 +41,7 @@ public class TaskController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryCreateNewTask(taskId, taskDto);
+        return service.tryCreateNewTask(taskDto);
     }
 
     @PutMapping("{taskId}/edit")

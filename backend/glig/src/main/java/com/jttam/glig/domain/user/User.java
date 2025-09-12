@@ -3,6 +3,7 @@ package com.jttam.glig.domain.user;
 import java.util.HashSet;
 import java.util.Set;
 import com.jttam.glig.domain.apply.Apply;
+import com.jttam.glig.domain.task.Task;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,7 +21,7 @@ public class User {
     String userName;
 
     @Column(name = "business_id")
-    String BusinessId = "";
+    String businessId = "";
 
     @Column(name = "address")
     String address = "";
@@ -34,17 +35,17 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
     private Set<Apply> applies = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
+    private Set<Task> tasks = new HashSet<>();
+
     public User() {
     }
 
-    public User(String userName, String businessId, String address, String phoneNumber, String mail,
-            Set<Apply> applies) {
-        this.userName = userName;
-        BusinessId = businessId;
+    public User(String businessId, String address, String phoneNumber, String mail) {
+        businessId = businessId;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.mail = mail;
-        this.applies = applies;
     }
 
     public String getUserName() {
@@ -56,11 +57,11 @@ public class User {
     }
 
     public String getBusinessId() {
-        return BusinessId;
+        return businessId;
     }
 
     public void setBusinessId(String businessId) {
-        BusinessId = businessId;
+        businessId = businessId;
     }
 
     public String getAddress() {
@@ -93,6 +94,14 @@ public class User {
 
     public void setApplies(Set<Apply> applies) {
         this.applies = applies;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 
 }
