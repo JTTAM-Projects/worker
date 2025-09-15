@@ -28,7 +28,7 @@ The application is built around two primary user roles: the Employer and the Tas
 
 ## Entity-Relationship Diagram (ERD)
 
-The following ERD shows the database structure and the logical relationships between entities.
+The following ERD shows the current database design structure and the logical relationships between entities.
 ```mermaid
 erDiagram
     User {
