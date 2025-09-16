@@ -25,7 +25,7 @@ public class UserController {
         return service.tryGetSingleUserDtoById(userName);
     }
 
-    @PostMapping("{create")
+    @PostMapping("create")
     public ResponseEntity<Message> createUser(@Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 

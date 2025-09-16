@@ -2,7 +2,9 @@ package com.jttam.glig.domain.user;
 
 import java.util.Optional;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByUserName(String userName);
 }
