@@ -1,6 +1,4 @@
-package com.jttam.glig.domain.task;
-
-import java.util.List;
+package com.jttam.glig.domain.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,27 +11,22 @@ import com.jttam.glig.service.Message;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("task/")
-public class TaskController {
+@RequestMapping("user/")
+public class UserController {
 
-    private final TaskControllerService service;
+    private final UserControllerService service;
 
-    public TaskController(TaskControllerService service) {
+    public UserController(UserControllerService service) {
         this.service = service;
     }
 
-    @GetMapping("{taskId}")
-    public TaskDto getSingleTaskDto(@PathVariable Long taskId) {
-        return service.tryGetSingleTaskDtoById(taskId);
+    @GetMapping("{user-name}")
+    public UserDto getSingleUser(@PathVariable String userName) {
+        return service.tryGetSingleUserDtoById(userName);
     }
 
-    @GetMapping("user-tasks")
-    public List<TaskDto> getAllUserTasks() {
-        return service.tryGetAllUserTasks();
-    }
-
-    @PostMapping("create-task")
-    public ResponseEntity<Message> createTask(@Valid @RequestBody TaskDto taskDto,
+    @PostMapping("create")
+    public ResponseEntity<Message> createUser(@Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -41,11 +34,11 @@ public class TaskController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryCreateNewTask(taskDto);
+        return service.tryCreateNewUser(userDto);
     }
 
-    @PutMapping("{taskId}/edit")
-    public ResponseEntity<Message> editTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
+    @PutMapping("edit")
+    public ResponseEntity<Message> editUser(@Valid @RequestBody UserDto userDto,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -53,7 +46,7 @@ public class TaskController {
                     bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        return service.tryEditTask(taskId, taskDto);
+        return service.tryEditUser(userDto);
     }
 
 }
