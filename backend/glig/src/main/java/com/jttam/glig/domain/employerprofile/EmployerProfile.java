@@ -15,21 +15,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 
-
-
-/**
- *     Employer_Profile {
-        int employer_profile_id PK
-        string user_id FK "unique"
-        string employer_type "e.g., INDIVIDUAL, COMPANY"
-        int location_id FK "optional, for default address"
-        text bio
-        string company_name "optional"
-        string business_id "optional"
-        string website_link "optional"
-    }
- */
-
 @Entity
 @Table(name = "employer_profile")
 public class EmployerProfile implements Serializable {
