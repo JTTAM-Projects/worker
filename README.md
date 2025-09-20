@@ -51,14 +51,20 @@ erDiagram
     }
 
     Employer_Profile {
-        int employer_profile_id PK
+        long employer_profile_id PK
         string user_id FK "unique"
         string employer_type "e.g., INDIVIDUAL, COMPANY"
-        int location_id FK "optional, for default address"
-        text bio
+        int location_id FK "optional"
+        text bio "optional"
         string company_name "optional"
         string business_id "optional"
         string website_link "optional"
+        string profile_image_url "optional"
+        boolean is_verified
+        string status "e.g., ACTIVE, DELETED, SUSPENDED"
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at "optional"
     }
 
     Job_Category {
