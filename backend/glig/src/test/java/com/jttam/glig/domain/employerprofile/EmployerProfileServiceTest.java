@@ -3,7 +3,6 @@ package com.jttam.glig.domain.employerprofile;
 import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
-import com.jttam.glig.service.GlobalServiceMethods;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +25,6 @@ class EmployerProfileServiceTest {
     @Mock
     private EmployerProfileMapper employerProfileMapper;
 
-    @Mock
-    private GlobalServiceMethods globalServiceMethods;
-
     @InjectMocks
     private EmployerProfileService employerProfileService;
 
@@ -45,10 +41,10 @@ class EmployerProfileServiceTest {
         employerProfile.setEmployerProfileId(1L);
         employerProfile.setUserId(userId);
         employerProfile.setCompanyName("Test Corp");
+        employerProfile.setStatus(ProfileStatus.ACTIVE);
 
         createRequest = new CreateEmployerProfileRequest();
         createRequest.setCompanyName("Test Corp");
-        createRequest.setUserId(userId);
 
         employerProfileResponse = new EmployerProfileResponse();
         employerProfileResponse.setEmployerProfileId(1L);
@@ -57,11 +53,10 @@ class EmployerProfileServiceTest {
 
     @Test
     void getEmployerProfile_shouldReturnProfile_whenExists() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
         when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
-        EmployerProfileResponse result = employerProfileService.getEmployerProfile();
+        EmployerProfileResponse result = employerProfileService.getEmployerProfile(userId);
 
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
@@ -70,11 +65,10 @@ class EmployerProfileServiceTest {
 
     @Test
     void getEmployerProfile_shouldThrowNotFoundException_whenNotExists() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            employerProfileService.getEmployerProfile();
+            employerProfileService.getEmployerProfile(userId);
         });
 
         verify(employerProfileRepository).findByUserId(userId);
@@ -82,13 +76,12 @@ class EmployerProfileServiceTest {
 
     @Test
     void createEmployerProfile_shouldCreateAndReturnProfile() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
         when(employerProfileMapper.toEmployerProfile(any(CreateEmployerProfileRequest.class))).thenReturn(employerProfile);
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
         when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
-        EmployerProfileResponse result = employerProfileService.createEmployerProfile(createRequest);
+        EmployerProfileResponse result = employerProfileService.createEmployerProfile(createRequest, userId);
 
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
@@ -97,11 +90,10 @@ class EmployerProfileServiceTest {
 
     @Test
     void createEmployerProfile_shouldThrowException_whenProfileAlreadyExists() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
 
         assertThrows(IllegalStateException.class, () -> {
-            employerProfileService.createEmployerProfile(createRequest);
+            employerProfileService.createEmployerProfile(createRequest, userId);
         });
 
         verify(employerProfileRepository, never()).save(any(EmployerProfile.class));
@@ -109,12 +101,11 @@ class EmployerProfileServiceTest {
 
     @Test
     void updateEmployerProfile_shouldUpdateAndReturnProfile() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
         when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
-        EmployerProfileResponse result = employerProfileService.updateEmployerProfile(createRequest);
+        EmployerProfileResponse result = employerProfileService.updateEmployerProfile(createRequest, userId);
 
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
@@ -124,11 +115,32 @@ class EmployerProfileServiceTest {
 
     @Test
     void updateEmployerProfile_shouldThrowException_whenProfileNotFound() {
-        when(globalServiceMethods.getUsernameFromJwt()).thenReturn(userId);
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            employerProfileService.updateEmployerProfile(createRequest);
+            employerProfileService.updateEmployerProfile(createRequest, userId);
+        });
+
+        verify(employerProfileRepository, never()).save(any(EmployerProfile.class));
+    }
+
+    @Test
+    void deleteEmployerProfile_shouldSetStatusToDeleted() {
+        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
+
+        employerProfileService.deleteEmployerProfile(userId);
+
+        verify(employerProfileRepository).findByUserId(userId);
+        verify(employerProfileRepository).save(employerProfile);
+        assertEquals(ProfileStatus.DELETED, employerProfile.getStatus());
+    }
+
+    @Test
+    void deleteEmployerProfile_shouldThrowException_whenProfileNotFound() {
+        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> {
+            employerProfileService.deleteEmployerProfile(userId);
         });
 
         verify(employerProfileRepository, never()).save(any(EmployerProfile.class));

@@ -27,17 +27,14 @@ public class EmployerProfileService {
     }
 
     @Transactional(readOnly = true)
-    public EmployerProfileResponse getEmployerProfile() {
-        String userId = globalServiceMethods.getUsernameFromJwt();
+    public EmployerProfileResponse getEmployerProfile(String userId) {
         EmployerProfile employerProfile = employerProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
         return employerProfileMapper.toEmployerProfileResponse(employerProfile);
     }
 
     @Transactional
-    public EmployerProfileResponse createEmployerProfile(CreateEmployerProfileRequest request) {
-        String userId = globalServiceMethods.getUsernameFromJwt();
-        
+    public EmployerProfileResponse createEmployerProfile(CreateEmployerProfileRequest request, String userId) {
         employerProfileRepository.findByUserId(userId).ifPresent(profile -> {
             throw new IllegalStateException("User already has an employer profile.");
         });
@@ -50,8 +47,7 @@ public class EmployerProfileService {
     }
 
     @Transactional
-    public EmployerProfileResponse updateEmployerProfile(CreateEmployerProfileRequest request) {
-        String userId = globalServiceMethods.getUsernameFromJwt();
+    public EmployerProfileResponse updateEmployerProfile(CreateEmployerProfileRequest request, String userId) {
         EmployerProfile existingProfile = employerProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
 
@@ -59,5 +55,14 @@ public class EmployerProfileService {
         
         EmployerProfile updatedProfile = employerProfileRepository.save(existingProfile);
         return employerProfileMapper.toEmployerProfileResponse(updatedProfile);
+    }
+
+    @Transactional
+    public void deleteEmployerProfile(String userId) {
+        EmployerProfile employerProfile = employerProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
+        
+        employerProfile.setStatus(ProfileStatus.DELETED);
+        employerProfileRepository.save(employerProfile);
     }
 }

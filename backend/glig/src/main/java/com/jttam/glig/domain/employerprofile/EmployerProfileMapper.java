@@ -16,6 +16,7 @@ public interface EmployerProfileMapper {
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
     EmployerProfile toEmployerProfile(CreateEmployerProfileRequest request);
 
     @Mapping(target = "employerProfileId", ignore = true)
@@ -23,5 +24,6 @@ public interface EmployerProfileMapper {
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
     void updateEmployerProfileFromDto(CreateEmployerProfileRequest dto, @MappingTarget EmployerProfile employerProfile);
 }

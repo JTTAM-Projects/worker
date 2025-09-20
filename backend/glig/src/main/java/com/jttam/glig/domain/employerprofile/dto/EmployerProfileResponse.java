@@ -2,6 +2,7 @@ package com.jttam.glig.domain.employerprofile.dto;
 
 import java.time.Instant;
 import com.jttam.glig.domain.employerprofile.EmployerType;
+import com.jttam.glig.domain.employerprofile.ProfileStatus;
 
 public class EmployerProfileResponse {
 
@@ -17,11 +18,12 @@ public class EmployerProfileResponse {
     private boolean isVerified;
     private Instant createdAt;
     private Instant updatedAt;
+    private ProfileStatus status;
 
     public EmployerProfileResponse() {
     }
 
-    public EmployerProfileResponse(Long employerProfileId, String userId, EmployerType employerType, Integer locationId, String bio, String companyName, String businessId, String websiteLink, String profileImageUrl, boolean isVerified, Instant createdAt, Instant updatedAt) {
+    public EmployerProfileResponse(Long employerProfileId, String userId, EmployerType employerType, Integer locationId, String bio, String companyName, String businessId, String websiteLink, String profileImageUrl, boolean isVerified, Instant createdAt, Instant updatedAt, ProfileStatus status) {
         this.employerProfileId = employerProfileId;
         this.userId = userId;
         this.employerType = employerType;
@@ -34,11 +36,13 @@ public class EmployerProfileResponse {
         this.isVerified = isVerified;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.status = status;
     }
 
     public Long getEmployerProfileId() {
         return employerProfileId;
     }
+
 
     public void setEmployerProfileId(Long employerProfileId) {
         this.employerProfileId = employerProfileId;
@@ -132,5 +136,11 @@ public class EmployerProfileResponse {
         this.updatedAt = updatedAt;
     }
 
-    
+    public ProfileStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProfileStatus status) {
+        this.status = status;
+    }
 }

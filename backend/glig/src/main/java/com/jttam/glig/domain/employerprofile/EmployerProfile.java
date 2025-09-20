@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,6 +18,7 @@ import jakarta.persistence.EnumType;
 
 @Entity
 @Table(name = "employer_profile")
+@Where(clause = "status = 'ACTIVE'")
 public class EmployerProfile implements Serializable {
 
     @Id
@@ -62,6 +64,9 @@ public class EmployerProfile implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ProfileStatus status = ProfileStatus.ACTIVE;
 
     public Long getEmployerProfileId() {
         return employerProfileId;
@@ -157,5 +162,13 @@ public class EmployerProfile implements Serializable {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public ProfileStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProfileStatus status) {
+        this.status = status;
     }
 }
