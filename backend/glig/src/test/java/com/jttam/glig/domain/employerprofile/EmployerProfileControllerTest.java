@@ -3,19 +3,16 @@ package com.jttam.glig.domain.employerprofile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
-import com.jttam.glig.exception.GlobalExceptionHandler;
 import com.jttam.glig.exception.custom.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,26 +25,18 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*
- * NOTE: These tests are currently failing with 500 Internal Server Errors.
- * The likely cause is a misconfiguration in the MockMvc standalone setup.
- * Specifically, the setup is missing a registered HttpMessageConverter for JSON,
- * which is necessary for serializing and deserializing request/response bodies.
- * 
- * should be looked up again once the project is more complete.
- */
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(EmployerProfileController.class)
 class EmployerProfileControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private EmployerProfileService employerProfileService;
 
-    @InjectMocks
-    private EmployerProfileController employerProfileController;
-
-    private ObjectMapper objectMapper;
     private EmployerProfileResponse employerProfileResponse;
     private CreateEmployerProfileRequest createRequest;
     private Jwt jwt;
@@ -56,27 +45,27 @@ class EmployerProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(employerProfileController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-
-        objectMapper = new ObjectMapper();
-
         employerProfileResponse = new EmployerProfileResponse();
         employerProfileResponse.setEmployerProfileId(1L);
         employerProfileResponse.setUserId(USER_ID);
         employerProfileResponse.setCompanyName("Test Corp");
+        employerProfileResponse.setStreetAddress("123 Test St");
+        employerProfileResponse.setCity("Testville");
+        employerProfileResponse.setCountry("Testland");
         employerProfileResponse.setStatus(ProfileStatus.ACTIVE);
 
         createRequest = new CreateEmployerProfileRequest();
         createRequest.setCompanyName("Test Corp");
         createRequest.setEmployerType(EmployerType.COMPANY);
+        createRequest.setStreetAddress("123 Test St");
+        createRequest.setCity("Testville");
+        createRequest.setCountry("Testland");
 
         jwt = Jwt.withTokenValue("token")
-                .header("alg", "none")
-                .claim("sub", USER_ID)
-                .build();
+        .header("alg", "none")
+        .claim("sub", USER_ID)
+        .claim("scope", "profile:manage") 
+        .build();
     }
 
     @Test
@@ -87,7 +76,8 @@ class EmployerProfileControllerTest {
                         .with(authentication(new JwtAuthenticationToken(jwt))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.companyName").value("Test Corp"));
+                .andExpect(jsonPath("$.companyName").value("Test Corp"))
+                .andExpect(jsonPath("$.streetAddress").value("123 Test St"));
     }
 
     @Test
@@ -109,7 +99,8 @@ class EmployerProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.companyName").value("Test Corp"));
+                .andExpect(jsonPath("$.companyName").value("Test Corp"))
+                .andExpect(jsonPath("$.streetAddress").value("123 Test St"));
     }
 
     @Test
@@ -134,7 +125,8 @@ class EmployerProfileControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.companyName").value("Test Corp"));
+                .andExpect(jsonPath("$.companyName").value("Test Corp"))
+                .andExpect(jsonPath("$.streetAddress").value("123 Test St"));
     }
 
     @Test

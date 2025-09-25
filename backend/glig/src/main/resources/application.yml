@@ -10,6 +10,7 @@ spring:
         username: sa
         password: password
 server:
+    port: 8080
     servlet:
         context-path: /api
 okta:

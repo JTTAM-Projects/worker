@@ -35,8 +35,17 @@ public class EmployerProfile implements Serializable {
     @Column(name = "employer_type", nullable = false)
     private EmployerType employerType;
 
-    @Column(name = "location_id")
-    private Integer locationId;
+    @Column(name = "street_address")
+    private String streetAddress;
+
+    @Column(name = "postal_code")
+    private String postalCode;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "country")
+    private String country;
 
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
@@ -92,12 +101,36 @@ public class EmployerProfile implements Serializable {
         this.employerType = employerType;
     }
 
-    public Integer getLocationId() {
-        return locationId;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setLocationId(Integer locationId) {
-        this.locationId = locationId;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getBio() {
