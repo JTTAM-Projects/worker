@@ -45,7 +45,10 @@ erDiagram
         int tasker_profile_id PK
         string user_id FK "unique"
         text bio
-        int location_id FK "optional, for home base"
+        string street_address "optional, for home base"
+        string postal_code "optional"
+        string city "optional"
+        string country "optional"
         decimal average_rating
         boolean is_verified
     }
@@ -54,7 +57,10 @@ erDiagram
         long employer_profile_id PK
         string user_id FK "unique"
         string employer_type "e.g., INDIVIDUAL, COMPANY"
-        int location_id FK "optional"
+        string street_address "optional"
+        string postal_code "optional"
+        string city "optional"
+        string country "optional"
         text bio "optional"
         string company_name "optional"
         string business_id "optional"
@@ -140,9 +146,6 @@ erDiagram
     User }o--o| Application : "applies with"
     User }o--o| Message : "sends"
     User }o--o| Review : "as reviewer/reviewee"
-
-    Location }o--o| Tasker_Profile : "optional home base"
-    Location }o--o| Employer_Profile : "optional default address"
 
     Job_Category ||--o{ Task : "categorizes"
 
