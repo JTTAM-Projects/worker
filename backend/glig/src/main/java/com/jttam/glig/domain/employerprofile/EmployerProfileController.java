@@ -12,7 +12,7 @@ import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("employer-profiles")
+@RequestMapping("/api/employer-profiles")
 public class EmployerProfileController {
 
     private final EmployerProfileService employerProfileService;
@@ -29,14 +29,17 @@ public class EmployerProfileController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployerProfileResponse> createProfile(@Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> createProfile(
+            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
+        System.out.println("username: " + userId);
         EmployerProfileResponse response = employerProfileService.createEmployerProfile(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/me")
-    public ResponseEntity<EmployerProfileResponse> updateMyProfile(@Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> updateMyProfile(
+            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         EmployerProfileResponse response = employerProfileService.updateEmployerProfile(request, userId);
         return ResponseEntity.ok(response);

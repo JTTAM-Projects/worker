@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 
 public class CreateEmployerProfileRequest {
 
-    @NotNull(message = "User ID cannot be null")
     private String userId;
 
     @NotNull(message = "Employer type cannot be null")
