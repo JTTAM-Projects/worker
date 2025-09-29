@@ -14,7 +14,6 @@ public class EmployerProfileService {
 
     private final EmployerProfileRepository employerProfileRepository;
     private final EmployerProfileMapper employerProfileMapper;
-    private final GlobalServiceMethods globalServiceMethods;
 
     @Autowired
     public EmployerProfileService(
@@ -23,7 +22,6 @@ public class EmployerProfileService {
             GlobalServiceMethods globalServiceMethods) {
         this.employerProfileRepository = employerProfileRepository;
         this.employerProfileMapper = employerProfileMapper;
-        this.globalServiceMethods = globalServiceMethods;
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +39,7 @@ public class EmployerProfileService {
 
         EmployerProfile newProfile = employerProfileMapper.toEmployerProfile(request);
         newProfile.setUserId(userId);
-        
+
         EmployerProfile savedProfile = employerProfileRepository.save(newProfile);
         return employerProfileMapper.toEmployerProfileResponse(savedProfile);
     }
@@ -52,7 +50,7 @@ public class EmployerProfileService {
                 .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
 
         employerProfileMapper.updateEmployerProfileFromDto(request, existingProfile);
-        
+
         EmployerProfile updatedProfile = employerProfileRepository.save(existingProfile);
         return employerProfileMapper.toEmployerProfileResponse(updatedProfile);
     }
@@ -61,7 +59,7 @@ public class EmployerProfileService {
     public void deleteEmployerProfile(String userId) {
         EmployerProfile employerProfile = employerProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
-        
+
         employerProfile.setStatus(ProfileStatus.DELETED);
         employerProfileRepository.save(employerProfile);
     }
