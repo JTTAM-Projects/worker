@@ -32,7 +32,6 @@ public class EmployerProfileController {
     public ResponseEntity<EmployerProfileResponse> createProfile(
             @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
-        System.out.println("username: " + userId);
         EmployerProfileResponse response = employerProfileService.createEmployerProfile(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
