@@ -1,5 +1,7 @@
 package com.jttam.glig.domain.apply;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -12,6 +14,8 @@ public interface ApplyMapper {
     ApplyDto toApplyDTO(Apply apply);
 
     Apply toApplyEntity(ApplyDto applyDto);
+
+    List<ApplyListDTO> toApplyDtoList(List<Apply> applies);
 
     Apply updateApply(ApplyDto applyDto, @MappingTarget Apply apply);
 

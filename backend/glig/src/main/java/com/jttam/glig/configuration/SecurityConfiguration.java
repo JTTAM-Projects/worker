@@ -22,14 +22,13 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/task/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
 
     // Allow CORS for all origins and methods
-    //ONLY FOR DEVELOPMENT PURPOSES. RESTRICT IN PRODUCTION.
+    // ONLY FOR DEVELOPMENT PURPOSES. RESTRICT IN PRODUCTION.
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
