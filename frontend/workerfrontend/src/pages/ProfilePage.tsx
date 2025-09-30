@@ -3,37 +3,78 @@ import React from "react";
 import ProfileAboutSection from "../features/Profile/ProfileAboutSection";
 import ProfileSkillsSection from "../features/Profile/UserSkillsSection";
 import UserProfileCard from "../features/Profile/UserProfileCard";
+import TaskList from "../features/task/components/TaskList";
+import type { Task } from "../features/task/types";
 
 export default function ProfilePage() {
-    const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isLoading } = useAuth0();
 
-    if (isLoading) {
-        return <div>Loading ...</div>;
-    }
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
 
-    return (
-        <section className="bg-gray-50 min-h-screen w-full">
-            <main className="container mx-auto px-6 py-12 grid gap-10">
-                <UserProfileCard />
-                <ProfileAboutSection />
-                <ProfileSkillsSection />
-                    <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-500">Sähköposti</h3>
-                            <p className="mt-1 text-gray-800">{user?.email || "Email not found"}</p>
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-500">Puhelinnumero</h3>
-                            <p className="mt-1 text-gray-800">123456</p>
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-500">Sijainti</h3>
-                            <p className="mt-1 text-gray-800">Helsinki, FI</p>
-                        </div>
-                    </div>
+  // Mock-työilmoitukset
+  const omatTyot: Task[] = [
+    {
+      id: "own-1",
+      otsikko: "Varaston hyllyjen kokoaminen",
+      kategoria: "tech",
+      hinta: "120 €",
+      sijainti: "Espoo",
+      pvm: "2025-10-05",
+    },
+    {
+      id: "own-2",
+      otsikko: "Pihan syyssiivous ja haravointi",
+      kategoria: "garden",
+      hinta: "80 €",
+      sijainti: "Helsinki",
+      pvm: "2025-10-07",
+    },
+    {
+      id: "own-3",
+      otsikko: "Tietokoneen perushuolto ja Windowsin optimointi",
+      kategoria: "tech",
+      hinta: "70 €",
+      sijainti: "Vantaa",
+      pvm: "2025-10-12",
+    },
+  ];
 
-            </main>
+  return (
+    <section className="bg-gray-50 min-h-screen w-full">
+      <main className="container mx-auto px-6 py-12 grid gap-10">
+        <UserProfileCard />
+        <ProfileAboutSection />
+        <ProfileSkillsSection />
+        <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Sähköposti</h3>
+            <p className="mt-1 text-gray-800">
+              {user?.email || "Email not found"}
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Puhelinnumero</h3>
+            <p className="mt-1 text-gray-800">123456</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Sijainti</h3>
+            <p className="mt-1 text-gray-800">Helsinki, FI</p>
+          </div>
+        </div>
+
+        <section>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Omat työilmoitukset
+            </h2>
+            <p className="text-gray-600 mb-6">
+                Tässä näet kaikki työilmoituksesi, joihin etsit työntekijöitä.
+            </p>
+            <TaskList tasks={omatTyot} />
         </section>
-    );
+      </main>
+    </section>
+  );
 }
