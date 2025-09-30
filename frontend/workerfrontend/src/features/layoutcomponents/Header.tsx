@@ -1,8 +1,10 @@
 import LoginButton from "../authentication/login";
 import LogoutButton from "../authentication/logout";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       {/* navigaatio */}
@@ -24,6 +26,39 @@ export default function Header() {
         </div>
         {/* oikean reunan painikkeet */}
         <div className="flex items-center space-x-4">
+          {isAuthenticated ? (
+            <Link
+              to="/profile"
+              className="
+              bg-green-500 
+              text-white 
+              px-4 
+              py-2 
+              rounded-md 
+              hover:bg-green-600 
+              hover:border-green-400 
+              text-sm 
+              font-medium"
+            >
+              Profile
+            </Link>
+          ) : (
+            <button
+              onClick={() => loginWithRedirect()}
+              className="
+              bg-green-500 
+              text-white 
+              px-4 
+              py-2 
+              rounded-md 
+              hover:bg-green-600 
+              hover:border-green-400 
+              text-sm 
+              font-medium"
+            >
+              Profile
+            </button>
+          )}
           <LoginButton />
           <LogoutButton />
           <button className="p-2 rounded-md hover:bg-gray-100">
