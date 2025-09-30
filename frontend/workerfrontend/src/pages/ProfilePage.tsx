@@ -17,27 +17,27 @@ export default function ProfilePage() {
   const omatTyot: Task[] = [
     {
       id: "own-1",
-      otsikko: "Varaston hyllyjen kokoaminen",
-      kategoria: "tech",
-      hinta: "120 €",
-      sijainti: "Espoo",
-      pvm: "2025-10-05",
+      title: "Varaston hyllyjen kokoaminen",
+      category: "tech",
+      price: "120 €",
+      location: "Espoo",
+      date: "2025-10-05",
     },
     {
       id: "own-2",
-      otsikko: "Pihan syyssiivous ja haravointi",
-      kategoria: "garden",
-      hinta: "80 €",
-      sijainti: "Helsinki",
-      pvm: "2025-10-07",
+      title: "Pihan syyssiivous ja haravointi",
+      category: "garden",
+      price: "80 €",
+      location: "Helsinki",
+      date: "2025-10-07",
     },
     {
       id: "own-3",
-      otsikko: "Tietokoneen perushuolto ja Windowsin optimointi",
-      kategoria: "tech",
-      hinta: "70 €",
-      sijainti: "Vantaa",
-      pvm: "2025-10-12",
+      title: "Tietokoneen perushuolto ja Windowsin optimointi",
+      category: "tech",
+      price: "70 €",
+      location: "Vantaa",
+      date: "2025-10-12",
     },
   ];
 
@@ -66,13 +66,13 @@ export default function ProfilePage() {
         </div>
 
         <section>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                Omat työilmoitukset
-            </h2>
-            <p className="text-gray-600 mb-6">
-                Tässä näet kaikki työilmoituksesi, joihin etsit työntekijöitä.
-            </p>
-            <TaskList tasks={omatTyot} />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Omat työilmoitukset
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Tässä näet kaikki työilmoituksesi, joihin etsit työntekijöitä.
+          </p>
+          <TaskList tasks={omatTyot} />
         </section>
       </main>
     </section>
