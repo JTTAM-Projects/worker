@@ -14,21 +14,21 @@ export default function TaskList({ tasks }: TaskListProps) {
             className="bg-white rounded-lg border border-gray-200 p-5 hover:bg-gray-100 hover:border-green-400 transition"
           >
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-800">{t.otsikko}</h4>
-              <span className="text-gray-700 font-medium">{t.hinta}</span>
+              <h4 className="font-semibold text-gray-800">{t.title}</h4>
+              <span className="text-gray-700 font-medium">{t.price}</span>
             </div>
             <div className="text-sm text-gray-600 flex items-center gap-4">
               <span className="flex items-center">
                 <span className="material-icons mr-1 text-green-400">
                   place
                 </span>
-                {t.sijainti}
+                {t.location}
               </span>
               <span className="flex items-center">
                 <span className="material-icons mr-1 text-green-400">
                   event
                 </span>
-                {t.pvm}
+                {t.date}
               </span>
             </div>
           </div>

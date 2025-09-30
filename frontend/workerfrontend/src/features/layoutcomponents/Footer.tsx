@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className="bg-gray-100 border-t border-gray-200">
-      <div className="container mx-auto px-6 py-6 text-sm text-gray-600">
+      <div className="container mx-auto px-6 py-4 text-sm text-gray-600">
         {/* alatunnisteen sisältö */}
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* linkit */}

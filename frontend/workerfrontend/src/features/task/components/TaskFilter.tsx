@@ -1,14 +1,11 @@
-import type { Kategoria } from "../types";
+import type { Category } from "../types";
 
 interface TaskFilterProps {
-  kategoria: Kategoria;
-  setKategoria: (kategoria: Kategoria) => void;
+  category: Category;
+  setCategory: (category: Category) => void;
 }
 
-export default function TaskFilter({
-  kategoria,
-  setKategoria,
-}: TaskFilterProps) {
+export default function TaskFilter({ category, setCategory }: TaskFilterProps) {
   const filterOptions = [
     { id: "cleaning", icon: "cleaning_services", label: "Siivous" },
     { id: "garden", icon: "local_florist", label: "Puutarhatyöt" },
@@ -20,15 +17,17 @@ export default function TaskFilter({
 
   return (
     <section className="grid gap-6">
-      <h2 className="text-2xl font-bold text-gray-800">Suosittuja tehtäviä</h2>
+      <h2 className="text-2xl font-bold text-gray-800">
+        Suosittuja kategorioita
+      </h2>
       <div className="flex flex-wrap gap-4">
         {filterOptions.map(({ id, icon, label }) => {
-          const active = kategoria === id;
+          const active = category === id;
           return (
             <button
               key={id}
               type="button"
-              onClick={() => setKategoria(id)}
+              onClick={() => setCategory(id)}
               className={`flex items-center bg-white border rounded-lg px-4 py-3 transition
                 ${
                   active

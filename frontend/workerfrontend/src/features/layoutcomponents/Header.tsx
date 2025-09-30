@@ -11,15 +11,18 @@ export default function Header() {
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
         {/* navigaatio-linkit (vasen) */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-gray-600 hover:text-green-400">
+          <Link to="/" className="text-gray-600 hover:text-green-400">
             Miten toimii
-          </a>
-          <a href="#" className="text-gray-600 hover:text-green-400">
+          </Link>
+          <Link
+            to="/create-task"
+            className="text-gray-600 hover:text-green-400"
+          >
             Luo tehtävä
-          </a>
-          <a href="#" className="text-gray-600 hover:text-green-400">
+          </Link>
+          <Link to="/tasks" className="text-gray-600 hover:text-green-400">
             Selaa tehtäviä
-          </a>
+          </Link>
         </div>
         {/* oikean reunan painikkeet */}
         <div className="flex items-center space-x-4">
