@@ -1,3 +1,5 @@
+import LoginButton from "../authentication/login";
+import LogoutButton from "../authentication/logout";
 import { Link } from "react-router-dom";
 
 export default function Header() {
@@ -22,18 +24,8 @@ export default function Header() {
         </div>
         {/* oikean reunan painikkeet */}
         <div className="flex items-center space-x-4">
-          <Link
-            to="/register"
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 hover:border-green-400 text-sm font-medium"
-          >
-            Rekisteröidy
-          </Link>
-          <Link
-            to="/login"
-            className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 hover:border-green-400 text-sm font-medium"
-          >
-            Kirjaudu sisään
-          </Link>
+          <LoginButton />
+          <LogoutButton />
           <button className="p-2 rounded-md hover:bg-gray-100">
             <span className="material-icons">menu</span>
           </button>

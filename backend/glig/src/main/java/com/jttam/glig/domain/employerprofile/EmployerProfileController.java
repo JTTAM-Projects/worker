@@ -29,14 +29,16 @@ public class EmployerProfileController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployerProfileResponse> createProfile(@Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> createProfile(
+            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         EmployerProfileResponse response = employerProfileService.createEmployerProfile(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/me")
-    public ResponseEntity<EmployerProfileResponse> updateMyProfile(@Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> updateMyProfile(
+            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         EmployerProfileResponse response = employerProfileService.updateEmployerProfile(request, userId);
         return ResponseEntity.ok(response);

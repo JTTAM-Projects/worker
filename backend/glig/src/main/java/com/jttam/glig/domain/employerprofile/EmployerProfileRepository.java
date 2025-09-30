@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployerProfileRepository extends JpaRepository<EmployerProfile, Long> {
     Optional<EmployerProfile> findByUserId(String userId);
+    boolean existsByUserId(String userId);
 }

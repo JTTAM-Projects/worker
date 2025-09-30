@@ -42,7 +42,7 @@ public class User {
     }
 
     public User(String businessId, String address, String phoneNumber, String mail) {
-        businessId = businessId;
+        this.businessId = businessId;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.mail = mail;
@@ -61,7 +61,7 @@ public class User {
     }
 
     public void setBusinessId(String businessId) {
-        businessId = businessId;
+        this.businessId = businessId;
     }
 
     public String getAddress() {

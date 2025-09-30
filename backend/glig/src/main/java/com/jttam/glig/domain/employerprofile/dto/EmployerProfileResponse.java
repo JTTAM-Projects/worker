@@ -9,7 +9,10 @@ public class EmployerProfileResponse {
     private Long employerProfileId;
     private String userId;
     private EmployerType employerType;
-    private Integer locationId;
+    private String streetAddress;
+    private String postalCode;
+    private String city;
+    private String country;
     private String bio;
     private String companyName;
     private String businessId;
@@ -23,11 +26,14 @@ public class EmployerProfileResponse {
     public EmployerProfileResponse() {
     }
 
-    public EmployerProfileResponse(Long employerProfileId, String userId, EmployerType employerType, Integer locationId, String bio, String companyName, String businessId, String websiteLink, String profileImageUrl, boolean isVerified, Instant createdAt, Instant updatedAt, ProfileStatus status) {
+    public EmployerProfileResponse(Long employerProfileId, String userId, EmployerType employerType, String streetAddress, String postalCode, String city, String country, String bio, String companyName, String businessId, String websiteLink, String profileImageUrl, boolean isVerified, Instant createdAt, Instant updatedAt, ProfileStatus status) {
         this.employerProfileId = employerProfileId;
         this.userId = userId;
         this.employerType = employerType;
-        this.locationId = locationId;
+        this.streetAddress = streetAddress;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
         this.bio = bio;
         this.companyName = companyName;
         this.businessId = businessId;
@@ -64,12 +70,36 @@ public class EmployerProfileResponse {
         this.employerType = employerType;
     }
 
-    public Integer getLocationId() {
-        return locationId;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setLocationId(Integer locationId) {
-        this.locationId = locationId;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getBio() {
