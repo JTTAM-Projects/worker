@@ -1,17 +1,14 @@
 package com.jttam.glig.domain.apply;
 
-import java.util.List;
-
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
@@ -53,9 +50,11 @@ public class ApplyController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/user-applies")
-    public List<ApplyListDTO> getAllUserApplies(@AuthenticationPrincipal Jwt jwt) {
+    public Page<ApplyListDTO> getAllUserAppliesAndReturnPage(
+            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            ApplyDataGridFilters filters, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetAllUserApplies(username);
+        return service.tryGetAllUserApplies(pageable, filters, username);
     }
 
     @Operation(summary = "Create a new apply for a task", description = "Creates a new apply for a specific task by the authenticated user.")

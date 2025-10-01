@@ -2,6 +2,7 @@ package com.jttam.glig.domain.apply;
 
 import java.time.LocalDateTime;
 
+import com.jttam.glig.domain.baseclass.baseClass;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.user.User;
 
@@ -18,7 +19,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "applies")
 @IdClass(ApplyId.class)
-public class Apply {
+public class Apply extends baseClass {
 
     @Id
     @ManyToOne
@@ -102,6 +103,13 @@ public class Apply {
 
     public void setApplyStatus(ApplyStatus applyStatus) {
         this.applyStatus = applyStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Apply [username=" + user.getUserName() + ", taskId=" + task.getId() + ", priceSuggestion="
+                + priceSuggestion + ", timeSuggestion="
+                + timeSuggestion + ", description=" + description + ", applyStatus=" + applyStatus + "]";
     }
 
 }

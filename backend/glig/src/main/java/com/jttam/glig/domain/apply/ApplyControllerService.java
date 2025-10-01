@@ -1,8 +1,10 @@
 package com.jttam.glig.domain.apply;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
+import com.jttam.glig.service.Specifications;
 
 @Service
 public class ApplyControllerService {
@@ -33,14 +36,17 @@ public class ApplyControllerService {
     public ApplyDto tryGetSingleApplyDtoById(Long taskId, String username) {
         ApplyId applyId = new ApplyId(taskId, username);
         Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND", "Cannot find apply with given details"));
+                .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND",
+                        "Cannot find apply with given details " + applyId.toString()));
         ApplyDto applyDto = mapper.toApplyDTO(apply);
         return applyDto;
     }
 
-    public List<ApplyListDTO> tryGetAllUserApplies(String username) {
-        List<Apply> applies = applyRepository.findAllByUser_UserName(username);
-        List<ApplyListDTO> listOfApplyDto = mapper.toApplyDtoList(applies);
+    public Page<ApplyListDTO> tryGetAllUserApplies(Pageable pageable, ApplyDataGridFilters filters,
+            String username) {
+        Specification<Apply> spec = Specifications.withApplyFilters(filters, username);
+        Page<Apply> applies = applyRepository.findAll(spec, pageable);
+        Page<ApplyListDTO> listOfApplyDto = mapper.toApplyDtoListPage(applies);
         return listOfApplyDto;
     }
 
