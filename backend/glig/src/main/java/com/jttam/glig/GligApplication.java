@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.jttam.glig.testdata.TaskTestData;
+import com.jttam.glig.testdata.TestDataService;
 
 @SpringBootApplication
 public class GligApplication implements CommandLineRunner {
 
 	@Autowired
-	private TaskTestData testData;
+	private TestDataService testDataService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GligApplication.class, args);

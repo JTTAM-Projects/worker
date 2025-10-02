@@ -11,7 +11,7 @@ spring:
         password: password
 okta:
     oauth2:
-        issuer: https://jk-projects.eu.auth0.com
+        issuer: https://jk-projects.eu.auth0.com/
         audience: https://glig.com
 logging:
     level:

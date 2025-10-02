@@ -59,4 +59,12 @@ public class TestDataService {
         taskData.cleanUp();
         userData.cleanUp();
     }
+
+    public void removeApplies() {
+        applyData.cleanUp();
+    }
+
+    public void removeTasks() {
+        taskData.cleanUp();
+    }
 }
