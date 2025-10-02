@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.jttam.glig.domain.apply.Apply;
+import com.jttam.glig.domain.baseclass.baseClass;
 import com.jttam.glig.domain.user.User;
 
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task extends baseClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,7 +66,7 @@ public class Task {
     }
 
     public Task(Category category, String title, int price, LocalDateTime startDate, LocalDateTime endDate,
-            String location, TaskStatus status, String description, User user, Set<Apply> applies) {
+            String location, TaskStatus status, String description, User user) {
         this.category = category;
         this.title = title;
         this.price = price;
@@ -163,6 +164,14 @@ public class Task {
 
     public void setApplies(Set<Apply> applies) {
         this.applies = applies;
+    }
+
+    @Override
+    public String toString() {
+        return "Task [id=" + id + ", category=" + category.getDisplayName() + ", title=" + title + ", price=" + price
+                + ", startDate="
+                + startDate + ", endDate=" + endDate + ", location=" + location + ", status=" + status.getDisplayName()
+                + ", description=" + description + ", user=" + user.getUserName() + "]";
     }
 
 }
