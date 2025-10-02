@@ -18,7 +18,7 @@ public class GligApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// testDataService.createAllTestData();
+		testDataService.createAllTestData();
 	}
 
 }

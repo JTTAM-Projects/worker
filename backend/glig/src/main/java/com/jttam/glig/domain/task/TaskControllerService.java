@@ -2,6 +2,9 @@ package com.jttam.glig.domain.task;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.ForbiddenException;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
+import com.jttam.glig.service.Specifications;
 
 import jakarta.transaction.Transactional;
 
@@ -45,9 +49,9 @@ public class TaskControllerService {
     }
 
     @Transactional
-    public List<TaskDto> tryGetAllUserTasks(String username) {
+    public List<TaskListDTO> tryGetAllUserTasks(String username) {
         List<Task> tasks = taskRepository.findAllByUser_UserName(username);
-        return mapper.toTaskDTOList(tasks);
+        return mapper.toTaskDtoList(tasks);
     }
 
     @Transactional
@@ -74,5 +78,13 @@ public class TaskControllerService {
         }
         taskRepository.deleteById(taskId);
         return new ResponseEntity<>(new Message("SUCCESS", "Task deleted successfully"), HttpStatus.OK);
+    }
+
+    @Transactional
+    public Page<TaskListDTO> tryGetAllTaskByGivenFiltersAndSorts(Pageable pageable, TaskDataGridFilters filters) {
+        Specification<Task> spec = Specifications.withTaskFilters(filters);
+        Page<Task> tasks = taskRepository.findAll(spec, pageable);
+        Page<TaskListDTO> pageOfTasks = mapper.toTaskListDtoPage(tasks);
+        return pageOfTasks;
     }
 }
