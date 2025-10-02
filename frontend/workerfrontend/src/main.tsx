@@ -13,6 +13,8 @@ createRoot(document.getElementById("root")!).render(
         clientId="aDYOG7a9fYDDBoTgWX9AW3BKYdv6XdlJ"
         authorizationParams={{
           redirect_uri: window.location.origin,
+          audience: "https://jk-projects.eu.auth0.com/api/v2/",
+          scope: "openid profile email read:current_user update:current_user_metadata"
         }}
       >
         <App />
