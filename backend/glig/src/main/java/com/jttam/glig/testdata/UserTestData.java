@@ -25,11 +25,13 @@ public class UserTestData {
         User u2 = new User("User2", "8765432-1", "Mallitie 2", "0507654321", "testi2@testi.com");
         User u3 = new User("User3", "1122334-5", "Esimerkkikatu 3", "0441122334", "testi3@testi.com");
         User u4 = new User("User4", "5566778-9", "Testitie 4", "0455566778", "testi4@testi.com");
+        User auth0testUser = new User("auth0|68d505ed399d6048c5f38275", "", "", "", "test@test.com");
 
         users.put("user1", userRepository.save(u1));
         users.put("user2", userRepository.save(u2));
         users.put("user3", userRepository.save(u3));
         users.put("user4", userRepository.save(u4));
+        users.put("auth0", userRepository.save(auth0testUser));
 
         return users;
     }

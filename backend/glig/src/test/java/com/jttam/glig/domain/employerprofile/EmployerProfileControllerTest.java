@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
+import com.jttam.glig.testdata.TestDataService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ class EmployerProfileControllerTest {
 
         @MockBean
         private EmployerProfileService employerProfileService;
+
+        @MockBean
+        private TestDataService testDataService;
 
         private EmployerProfileResponse employerProfileResponse;
         private CreateEmployerProfileRequest createRequest;
