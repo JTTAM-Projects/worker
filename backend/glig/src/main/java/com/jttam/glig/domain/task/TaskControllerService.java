@@ -12,6 +12,8 @@ import com.jttam.glig.exception.custom.ForbiddenException;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TaskControllerService {
 
@@ -25,6 +27,7 @@ public class TaskControllerService {
         this.mapper = mapper;
     }
 
+    @Transactional
     public Task findTaskByGivenUserNameAndTaskId(String username, Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NotFoundException("TASK_NOT_FOUND", "Cannot find task by given id"));
@@ -34,17 +37,20 @@ public class TaskControllerService {
         return task;
     }
 
+    @Transactional
     public TaskDto tryGetSingleTaskDtoById(Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NotFoundException("TASK_NOT_FOUND", "Cannot find task by given id"));
         return mapper.toTaskDto(task);
     }
 
+    @Transactional
     public List<TaskDto> tryGetAllUserTasks(String username) {
         List<Task> tasks = taskRepository.findAllByUser_UserName(username);
         return mapper.toTaskDTOList(tasks);
     }
 
+    @Transactional
     public ResponseEntity<TaskDto> tryCreateNewTask(TaskDto taskDto, String username) {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found"));
@@ -53,6 +59,7 @@ public class TaskControllerService {
         return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
 
+    @Transactional
     public ResponseEntity<TaskDto> tryEditTask(Long taskId, TaskDto taskDto, String username) {
         Task task = findTaskByGivenUserNameAndTaskId(username, taskId);
         Task updatedTask = mapper.updateTask(taskDto, task);
@@ -60,6 +67,7 @@ public class TaskControllerService {
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Message> tryDeleteTask(Long taskId, String username) {
         if (!taskRepository.existsById(taskId)) {
             throw new NotFoundException("TASK_NOT_FOUND", "Cannot find task by given task id");

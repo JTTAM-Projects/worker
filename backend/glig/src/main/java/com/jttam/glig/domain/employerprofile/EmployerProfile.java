@@ -77,6 +77,26 @@ public class EmployerProfile implements Serializable {
     @Column(name = "status", nullable = false)
     private ProfileStatus status = ProfileStatus.ACTIVE;
 
+    public EmployerProfile() {
+    }
+
+    public EmployerProfile(String userId, EmployerType employerType, String streetAddress, String postalCode,
+            String city, String country, String bio, String companyName, String businessId, String websiteLink,
+            String profileImageUrl, boolean isVerified) {
+        this.userId = userId;
+        this.employerType = employerType;
+        this.streetAddress = streetAddress;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.bio = bio;
+        this.companyName = companyName;
+        this.businessId = businessId;
+        this.websiteLink = websiteLink;
+        this.profileImageUrl = profileImageUrl;
+        this.isVerified = isVerified;
+    }
+
     public Long getEmployerProfileId() {
         return employerProfileId;
     }
