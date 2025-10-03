@@ -159,6 +159,25 @@ erDiagram
     Application ||--o| Conversation : "can lead to"
     Conversation ||--o{ Message : "contains"
 ```
+## Swagger-UI
+
+When you run Java-application on localhost, you can find api-documentation in this address:
+[Swagger-ui](http://localhost:8080/swagger-ui/index.html#/)
+
+## Backend
+
+Java version 17.0.12
+
+**MacOS & Windows**  
+Terminal commands:
+
+```bash
+cd glig
+```
+
+```bash
+./mvnw spring-boot:run
+```
 
 ## Authors
 * Aku Ihamuotila

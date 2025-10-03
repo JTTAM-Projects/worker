@@ -20,12 +20,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred",
-                request.getDescription(false));
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest
+    // request) {
+    // ErrorResponse errorResponse = new ErrorResponse("INTERNAL_ERROR", "An
+    // unexpected error occurred",
+    // request.getDescription(false));
+    // return new ResponseEntity<ErrorResponse>(errorResponse,
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException ex, WebRequest request) {

@@ -62,4 +62,9 @@ public class ApplyId implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ApplyId [task=" + task + ", user=" + user + "]";
+    }
+
 }

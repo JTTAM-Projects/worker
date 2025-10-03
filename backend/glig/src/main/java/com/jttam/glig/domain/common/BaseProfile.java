@@ -21,7 +21,6 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class BaseProfile implements Serializable {
 
-    // A unique identifier linking this profile to a user in an external system.
     @NotBlank(message = "User ID cannot be blank.")
     @Size(max = 255, message = "User ID must be less than 255 characters.")
     @Column(name = "user_id", unique = true, nullable = false, updatable = false)
@@ -70,7 +69,6 @@ public abstract class BaseProfile implements Serializable {
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified = false;
 
-    // The current status of the profile.
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ProfileStatus status = ProfileStatus.ACTIVE;
@@ -87,6 +85,26 @@ public abstract class BaseProfile implements Serializable {
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
+
+    // --- Constructors ---
+
+    /**
+     * Protected no-argument constructor for JPA.
+     */
+    protected BaseProfile() {
+    }
+
+    public BaseProfile(String userId, String streetAddress, String postalCode, String city, String country, String bio, String websiteLink, String profileImageUrl, boolean isVerified) {
+        this.userId = userId;
+        this.streetAddress = streetAddress;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.bio = bio;
+        this.websiteLink = websiteLink;
+        this.profileImageUrl = profileImageUrl;
+        this.isVerified = isVerified;
+    }
 
     // --- Getters and Setters ---
 

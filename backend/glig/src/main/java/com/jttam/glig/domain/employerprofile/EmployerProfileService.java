@@ -1,5 +1,6 @@
 package com.jttam.glig.domain.employerprofile;
 
+import com.jttam.glig.domain.common.ProfileStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,23 +8,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
-import com.jttam.glig.service.GlobalServiceMethods;
 
 @Service
 public class EmployerProfileService {
 
     private final EmployerProfileRepository employerProfileRepository;
     private final EmployerProfileMapper employerProfileMapper;
-    private final GlobalServiceMethods globalServiceMethods;
 
     @Autowired
     public EmployerProfileService(
             EmployerProfileRepository employerProfileRepository,
-            EmployerProfileMapper employerProfileMapper,
-            GlobalServiceMethods globalServiceMethods) {
+            EmployerProfileMapper employerProfileMapper) {
         this.employerProfileRepository = employerProfileRepository;
         this.employerProfileMapper = employerProfileMapper;
-        this.globalServiceMethods = globalServiceMethods;
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +38,7 @@ public class EmployerProfileService {
 
         EmployerProfile newProfile = employerProfileMapper.toEntity(request);
         newProfile.setUserId(userId);
-        
+
         EmployerProfile savedProfile = employerProfileRepository.save(newProfile);
         return employerProfileMapper.toResponse(savedProfile);
     }

@@ -41,8 +41,9 @@ public class User {
     public User() {
     }
 
-    public User(String businessId, String address, String phoneNumber, String mail) {
-        businessId = businessId;
+    public User(String userName, String businessId, String address, String phoneNumber, String mail) {
+        this.userName = userName;
+        this.businessId = businessId;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.mail = mail;
@@ -61,7 +62,7 @@ public class User {
     }
 
     public void setBusinessId(String businessId) {
-        businessId = businessId;
+        this.businessId = businessId;
     }
 
     public String getAddress() {
@@ -102,6 +103,12 @@ public class User {
 
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    @Override
+    public String toString() {
+        return "User [userName=" + userName + ", businessId=" + businessId + ", address=" + address + ", phoneNumber="
+                + phoneNumber + ", mail=" + mail + "]";
     }
 
 }

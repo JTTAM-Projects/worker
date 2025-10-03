@@ -23,7 +23,6 @@ public class EmployerProfile extends BaseProfile {
     @Column(name = "employer_profile_id")
     private Long employerProfileId;
 
-    // A profile must have a type.
     @Enumerated(EnumType.STRING)
     @Column(name = "employer_type", nullable = false)
     private EmployerType employerType;
@@ -34,7 +33,20 @@ public class EmployerProfile extends BaseProfile {
     @Column(name = "business_id")
     private String businessId;
 
-    // Getters and setters
+    public EmployerProfile() {
+        super();
+    }
+
+    public EmployerProfile(String userId, EmployerType employerType, String streetAddress, String postalCode,
+            String city, String country, String bio, String companyName, String businessId, String websiteLink,
+            String profileImageUrl, boolean isVerified) {
+        super(userId, streetAddress, postalCode, city, country, bio, websiteLink, profileImageUrl, isVerified);
+        this.employerType = employerType;
+        this.companyName = companyName;
+        this.businessId = businessId;
+    }
+
+     // Getters and setters
 
     public Long getEmployerProfileId() {
         return employerProfileId;

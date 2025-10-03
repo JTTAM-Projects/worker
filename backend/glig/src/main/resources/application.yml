@@ -9,11 +9,10 @@ spring:
         driver-class-name: org.h2.Driver
         username: sa
         password: password
-server:
-    port: 8080
-    servlet:
-        context-path: /api
 okta:
     oauth2:
-        issuer: https://jk-projects.eu.auth0.com
+        issuer: https://jk-projects.eu.auth0.com/
         audience: https://glig.com
+logging:
+    level:
+        root: info
