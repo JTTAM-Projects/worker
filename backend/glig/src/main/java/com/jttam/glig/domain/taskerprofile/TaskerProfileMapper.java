@@ -12,7 +12,7 @@ public interface TaskerProfileMapper {
 
     @Mapping(target = "taskerProfileId", ignore = true)
     @Mapping(target = "averageRating", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -20,11 +20,12 @@ public interface TaskerProfileMapper {
     @Mapping(target = "deletedAt", ignore = true)
     TaskerProfile toEntity(TaskerProfileRequest request);
 
+    @Mapping(target = "userId", source = "user.userName")
     TaskerProfileResponse toResponse(TaskerProfile taskerProfile);
 
     @Mapping(target = "taskerProfileId", ignore = true)
     @Mapping(target = "averageRating", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

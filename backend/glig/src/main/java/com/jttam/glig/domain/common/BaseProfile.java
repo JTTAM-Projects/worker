@@ -1,10 +1,14 @@
 package com.jttam.glig.domain.common;
 
+import com.jttam.glig.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,10 +25,10 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class BaseProfile implements Serializable {
 
-    @NotBlank(message = "User ID cannot be blank.")
-    @Size(max = 255, message = "User ID must be less than 255 characters.")
-    @Column(name = "user_id", unique = true, nullable = false, updatable = false)
-    private String userId;
+    @NotNull(message = "User cannot be null.")
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true, updatable = false)
+    private User user;
 
     @NotBlank(message = "First name cannot be blank.")
     @Size(max = 100, message = "First name must be less than 100 characters.")
@@ -94,8 +98,8 @@ public abstract class BaseProfile implements Serializable {
     protected BaseProfile() {
     }
 
-    public BaseProfile(String userId, String streetAddress, String postalCode, String city, String country, String bio, String websiteLink, String profileImageUrl, boolean isVerified) {
-        this.userId = userId;
+    public BaseProfile(User user, String streetAddress, String postalCode, String city, String country, String bio, String websiteLink, String profileImageUrl, boolean isVerified) {
+        this.user = user;
         this.streetAddress = streetAddress;
         this.postalCode = postalCode;
         this.city = city;
@@ -108,12 +112,12 @@ public abstract class BaseProfile implements Serializable {
 
     // --- Getters and Setters ---
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getFirstName() {
