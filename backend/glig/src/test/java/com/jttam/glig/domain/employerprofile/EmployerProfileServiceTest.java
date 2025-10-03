@@ -3,6 +3,8 @@ package com.jttam.glig.domain.employerprofile;
 import com.jttam.glig.domain.common.ProfileStatus;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
+import com.jttam.glig.domain.user.User;
+import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +28,14 @@ class EmployerProfileServiceTest {
     @Mock
     private EmployerProfileMapper employerProfileMapper;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private EmployerProfileService employerProfileService;
 
     private String userId;
+    private User user;
     private EmployerProfile employerProfile;
     private EmployerProfileRequest createRequest;
     private EmployerProfileResponse employerProfileResponse;
@@ -38,9 +44,12 @@ class EmployerProfileServiceTest {
     void setUp() {
         userId = "auth0|12345";
 
+        user = new User();
+        user.setUserName(userId);
+
         employerProfile = new EmployerProfile();
         employerProfile.setEmployerProfileId(1L);
-        employerProfile.setUserId(userId);
+        employerProfile.setUser(user);
         employerProfile.setCompanyName("Test Corp");
         employerProfile.setStreetAddress("123 Test St");
         employerProfile.setCity("Testville");
@@ -63,7 +72,8 @@ class EmployerProfileServiceTest {
 
     @Test
     void getEmployerProfile_shouldReturnProfile_whenExists() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.of(employerProfile));
         when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
         EmployerProfileResponse result = employerProfileService.getEmployerProfile(userId);
@@ -71,23 +81,27 @@ class EmployerProfileServiceTest {
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
         assertEquals("123 Test St", result.getStreetAddress());
-        verify(employerProfileRepository).findByUserId(userId);
+        verify(userRepository).findById(userId);
+        verify(employerProfileRepository).findByUser(user);
     }
 
     @Test
     void getEmployerProfile_shouldThrowNotFoundException_whenNotExists() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
             employerProfileService.getEmployerProfile(userId);
         });
 
-        verify(employerProfileRepository).findByUserId(userId);
+        verify(userRepository).findById(userId);
+        verify(employerProfileRepository).findByUser(user);
     }
 
     @Test
     void createEmployerProfile_shouldCreateAndReturnProfile() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
         when(employerProfileMapper.toEntity(any(EmployerProfileRequest.class))).thenReturn(employerProfile);
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
         when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
@@ -102,7 +116,8 @@ class EmployerProfileServiceTest {
 
     @Test
     void createEmployerProfile_shouldThrowException_whenProfileAlreadyExists() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.of(employerProfile));
 
         assertThrows(IllegalStateException.class, () -> {
             employerProfileService.createEmployerProfile(userId, createRequest);
@@ -113,7 +128,8 @@ class EmployerProfileServiceTest {
 
     @Test
     void updateEmployerProfile_shouldUpdateAndReturnProfile() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.of(employerProfile));
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
         when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
@@ -128,7 +144,8 @@ class EmployerProfileServiceTest {
 
     @Test
     void updateEmployerProfile_shouldThrowException_whenProfileNotFound() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
             employerProfileService.updateEmployerProfile(userId, createRequest);
@@ -139,18 +156,21 @@ class EmployerProfileServiceTest {
 
     @Test
     void deleteEmployerProfile_shouldSetStatusToDeleted() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.of(employerProfile));
 
         employerProfileService.deleteEmployerProfile(userId);
 
-        verify(employerProfileRepository).findByUserId(userId);
+        verify(userRepository).findById(userId);
+        verify(employerProfileRepository).findByUser(user);
         verify(employerProfileRepository).save(employerProfile);
         assertEquals(ProfileStatus.DELETED, employerProfile.getStatus());
     }
 
     @Test
     void deleteEmployerProfile_shouldThrowException_whenProfileNotFound() {
-        when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(employerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
             employerProfileService.deleteEmployerProfile(userId);

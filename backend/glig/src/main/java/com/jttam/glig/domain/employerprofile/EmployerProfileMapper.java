@@ -9,18 +9,20 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface EmployerProfileMapper {
+    @Mapping(target = "userId", source = "user.userName")
     EmployerProfileResponse toResponse(EmployerProfile employerProfile);
+    
     @Mapping(target = "employerProfileId", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    
     EmployerProfile toEntity(EmployerProfileRequest request);
+    
     @Mapping(target = "employerProfileId", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

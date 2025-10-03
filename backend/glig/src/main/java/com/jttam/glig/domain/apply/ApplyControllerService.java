@@ -66,17 +66,11 @@ public class ApplyControllerService {
         Task task = taskRepository.getReferenceById(taskId);
         User user = userRepository.getReferenceById(username);
 
-        if (user != null) {
-            if (task != null) {
-                Apply newApply = mapper.toApplyEntity(applyDto);
-                newApply.setUser(user);
-                newApply.setTask(task);
-                applyRepository.save(newApply);
-                return new ResponseEntity<>(applyDto, HttpStatus.CREATED);
-            }
-            throw new NotFoundException("TASK_NOT_FOUND", "Cannot find task by given taskId");
-        }
-        throw new NotFoundException("USER_NOT_FOUND", "Cannot find user for given username in jwt");
+        Apply newApply = mapper.toApplyEntity(applyDto);
+        newApply.setUser(user);
+        newApply.setTask(task);
+        applyRepository.save(newApply);
+        return new ResponseEntity<>(applyDto, HttpStatus.CREATED);
     }
 
     @Transactional

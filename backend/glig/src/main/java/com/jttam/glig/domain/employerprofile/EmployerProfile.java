@@ -3,6 +3,7 @@ package com.jttam.glig.domain.employerprofile;
 import org.hibernate.annotations.Where;
 
 import com.jttam.glig.domain.common.BaseProfile;
+import com.jttam.glig.domain.user.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -37,10 +38,10 @@ public class EmployerProfile extends BaseProfile {
         super();
     }
 
-    public EmployerProfile(String userId, EmployerType employerType, String streetAddress, String postalCode,
+    public EmployerProfile(User user, EmployerType employerType, String streetAddress, String postalCode,
             String city, String country, String bio, String companyName, String businessId, String websiteLink,
             String profileImageUrl, boolean isVerified) {
-        super(userId, streetAddress, postalCode, city, country, bio, websiteLink, profileImageUrl, isVerified);
+        super(user, streetAddress, postalCode, city, country, bio, websiteLink, profileImageUrl, isVerified);
         this.employerType = employerType;
         this.companyName = companyName;
         this.businessId = businessId;

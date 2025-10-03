@@ -1,6 +1,7 @@
 package com.jttam.glig.domain.taskerprofile;
 
 import com.jttam.glig.domain.common.BaseProfile;
+import com.jttam.glig.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,18 @@ public class TaskerProfile extends BaseProfile {
 
     @Column(name = "average_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
+
+    // Constructors
+    public TaskerProfile() {
+        super();
+    }
+
+    public TaskerProfile(User user, String streetAddress, String postalCode,
+                         String city, String country, String bio, String websiteLink,
+                         String profileImageUrl, boolean isVerified, BigDecimal averageRating) {
+        super(user, streetAddress, postalCode, city, country, bio, websiteLink, profileImageUrl, isVerified);
+        this.averageRating = averageRating;
+    }
 
     // Getters and setters
     public Long getTaskerProfileId() {
