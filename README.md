@@ -44,18 +44,28 @@ erDiagram
     Tasker_Profile {
         int tasker_profile_id PK
         string user_id FK "unique"
-        text bio
-        string street_address "optional, for home base"
+        string first_name
+        string last_name
+        text bio "optional"
+        string street_address "optional"
         string postal_code "optional"
         string city "optional"
         string country "optional"
+        string website_link "optional"
+        string profile_image_url "optional"
         decimal average_rating
         boolean is_verified
+        string status "e.g., ACTIVE, DELETED"
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at "optional"
     }
 
     Employer_Profile {
         long employer_profile_id PK
         string user_id FK "unique"
+        string first_name
+        string last_name
         string employer_type "e.g., INDIVIDUAL, COMPANY"
         string street_address "optional"
         string postal_code "optional"
