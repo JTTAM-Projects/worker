@@ -2,12 +2,14 @@ package com.jttam.glig.domain.employerprofile.dto;
 
 import java.time.Instant;
 import com.jttam.glig.domain.employerprofile.EmployerType;
-import com.jttam.glig.domain.employerprofile.ProfileStatus;
+import com.jttam.glig.domain.common.ProfileStatus;
 
 public class EmployerProfileResponse {
 
     private Long employerProfileId;
     private String userId;
+    private String firstName;
+    private String lastName;
     private EmployerType employerType;
     private String streetAddress;
     private String postalCode;
@@ -60,6 +62,22 @@ public class EmployerProfileResponse {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public EmployerType getEmployerType() {

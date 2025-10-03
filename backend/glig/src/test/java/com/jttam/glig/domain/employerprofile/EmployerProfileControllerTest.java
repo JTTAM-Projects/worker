@@ -1,9 +1,10 @@
 package com.jttam.glig.domain.employerprofile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
+import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
+import com.jttam.glig.domain.common.ProfileStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ class EmployerProfileControllerTest {
     private EmployerProfileService employerProfileService;
 
     private EmployerProfileResponse employerProfileResponse;
-    private CreateEmployerProfileRequest createRequest;
+    private EmployerProfileRequest createRequest;
     private Jwt jwt;
 
     private static final String USER_ID = "auth0|12345";
@@ -54,7 +55,7 @@ class EmployerProfileControllerTest {
         employerProfileResponse.setCountry("Testland");
         employerProfileResponse.setStatus(ProfileStatus.ACTIVE);
 
-        createRequest = new CreateEmployerProfileRequest();
+        createRequest = new EmployerProfileRequest();
         createRequest.setCompanyName("Test Corp");
         createRequest.setEmployerType(EmployerType.COMPANY);
         createRequest.setStreetAddress("123 Test St");
@@ -72,7 +73,7 @@ class EmployerProfileControllerTest {
     void getMyProfile_shouldReturnProfile_whenFound() throws Exception {
         given(employerProfileService.getEmployerProfile(USER_ID)).willReturn(employerProfileResponse);
 
-        mockMvc.perform(get("/api/employer-profiles/me")
+        mockMvc.perform(get("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -84,18 +85,17 @@ class EmployerProfileControllerTest {
     void getMyProfile_shouldReturnNotFound_whenNotFound() throws Exception {
         given(employerProfileService.getEmployerProfile(USER_ID)).willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(get("/api/employer-profiles/me")
+        mockMvc.perform(get("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void createMyProfile_shouldReturnCreatedProfile() throws Exception {
-        given(employerProfileService.createEmployerProfile(any(CreateEmployerProfileRequest.class), anyString())).willReturn(employerProfileResponse);
+        given(employerProfileService.createEmployerProfile(anyString(), any(EmployerProfileRequest.class))).willReturn(employerProfileResponse);
 
-        mockMvc.perform(post("/api/employer-profiles")
+        mockMvc.perform(post("/api/v1/employer-profiles")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
@@ -105,11 +105,11 @@ class EmployerProfileControllerTest {
 
     @Test
     void createMyProfile_shouldReturnBadRequest_whenRequestInvalid() throws Exception {
-        CreateEmployerProfileRequest invalidRequest = new CreateEmployerProfileRequest(); // missing required fields
+        EmployerProfileRequest invalidRequest = new EmployerProfileRequest(); // missing required fields
 
-        mockMvc.perform(post("/api/employer-profiles")
+        mockMvc.perform(post("/api/v1/employer-profiles")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf())
+                        
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
@@ -117,11 +117,11 @@ class EmployerProfileControllerTest {
 
     @Test
     void updateMyProfile_shouldReturnUpdatedProfile() throws Exception {
-        given(employerProfileService.updateEmployerProfile(any(CreateEmployerProfileRequest.class), anyString())).willReturn(employerProfileResponse);
+        given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class))).willReturn(employerProfileResponse);
 
-        mockMvc.perform(put("/api/employer-profiles/me")
+        mockMvc.perform(put("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf())
+                        
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isOk())
@@ -131,11 +131,11 @@ class EmployerProfileControllerTest {
 
     @Test
     void updateMyProfile_shouldReturnNotFound_whenNotFound() throws Exception {
-        given(employerProfileService.updateEmployerProfile(any(CreateEmployerProfileRequest.class), anyString())).willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
+        given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class))).willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(put("/api/employer-profiles/me")
+        mockMvc.perform(put("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf())
+                        
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isNotFound());
@@ -145,9 +145,9 @@ class EmployerProfileControllerTest {
     void deleteMyProfile_shouldReturnNoContent_whenSuccessful() throws Exception {
         doNothing().when(employerProfileService).deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/employer-profiles/me")
+        mockMvc.perform(delete("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf()))
+                        )
                 .andExpect(status().isNoContent());
 
         verify(employerProfileService).deleteEmployerProfile(USER_ID);
@@ -157,9 +157,9 @@ class EmployerProfileControllerTest {
     void deleteMyProfile_shouldReturnNotFound_whenProfileNotFound() throws Exception {
         doThrow(new NotFoundException("NOT_FOUND", "Profile not found")).when(employerProfileService).deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/employer-profiles/me")
+        mockMvc.perform(delete("/api/v1/employer-profiles/me")
                         .with(authentication(new JwtAuthenticationToken(jwt)))
-                        .with(csrf()))
+                        )
                 .andExpect(status().isNotFound());
     }
 }
