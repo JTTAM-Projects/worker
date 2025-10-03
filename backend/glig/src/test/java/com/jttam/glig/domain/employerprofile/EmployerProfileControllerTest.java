@@ -5,6 +5,8 @@ import com.jttam.glig.domain.common.ProfileStatus;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
+import com.jttam.glig.testdata.TestDataService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ class EmployerProfileControllerTest {
     @MockBean
     private EmployerProfileService employerProfileService;
 
+    @MockBean
+    private TestDataService testDataService;
+
     private EmployerProfileResponse employerProfileResponse;
     private EmployerProfileRequest createRequest;
     private Jwt jwt;
@@ -46,18 +51,32 @@ class EmployerProfileControllerTest {
         employerProfileResponse = new EmployerProfileResponse();
         employerProfileResponse.setEmployerProfileId(1L);
         employerProfileResponse.setUserId(USER_ID);
+        employerProfileResponse.setFirstName("Test");
+        employerProfileResponse.setLastName("User");
         employerProfileResponse.setCompanyName("Test Corp");
         employerProfileResponse.setStreetAddress("123 Test St");
+        employerProfileResponse.setPostalCode("12345");
         employerProfileResponse.setCity("Testville");
         employerProfileResponse.setCountry("Testland");
+        employerProfileResponse.setBio("This is a test bio.");
+        employerProfileResponse.setBusinessId("1234567-8");
+        employerProfileResponse.setWebsiteLink("https://testcorp.com");
+        employerProfileResponse.setProfileImageUrl("https://testcorp.com/profile.jpg");
         employerProfileResponse.setStatus(ProfileStatus.ACTIVE);
 
         createRequest = new EmployerProfileRequest();
+        createRequest.setFirstName("Test");
+        createRequest.setLastName("User");
         createRequest.setCompanyName("Test Corp");
         createRequest.setEmployerType(EmployerType.COMPANY);
         createRequest.setStreetAddress("123 Test St");
+        createRequest.setPostalCode("12345");
         createRequest.setCity("Testville");
         createRequest.setCountry("Testland");
+        createRequest.setBio("This is a test bio.");
+        createRequest.setBusinessId("1234567-8");
+        createRequest.setWebsiteLink("https://testcorp.com");
+        createRequest.setProfileImageUrl("https://testcorp.com/profile.jpg");
 
         jwt = Jwt.withTokenValue("token")
                 .header("alg", "none")
@@ -70,7 +89,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.getEmployerProfile(USER_ID)).willReturn(employerProfileResponse);
 
         mockMvc.perform(get("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt)))
+                .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.companyName").value("Test Corp"))
@@ -83,7 +102,7 @@ class EmployerProfileControllerTest {
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
         mockMvc.perform(get("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt)))
+                .with(jwt().jwt(jwt)))
                 .andExpect(status().isNotFound());
     }
 
@@ -93,10 +112,10 @@ class EmployerProfileControllerTest {
                 .willReturn(employerProfileResponse);
 
         mockMvc.perform(post("/api/v1/employer-profiles")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createRequest)))
+                .with(jwt().jwt(jwt))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.companyName").value("Test Corp"))
                 .andExpect(jsonPath("$.streetAddress").value("123 Test St"));
@@ -107,10 +126,10 @@ class EmployerProfileControllerTest {
         EmployerProfileRequest invalidRequest = new EmployerProfileRequest(); // missing required fields
 
         mockMvc.perform(post("/api/v1/employer-profiles")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .with(jwt().jwt(jwt))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -120,10 +139,10 @@ class EmployerProfileControllerTest {
                 .willReturn(employerProfileResponse);
 
         mockMvc.perform(put("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createRequest)))
+                .with(jwt().jwt(jwt))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("Test Corp"))
                 .andExpect(jsonPath("$.streetAddress").value("123 Test St"));
@@ -135,10 +154,10 @@ class EmployerProfileControllerTest {
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
         mockMvc.perform(put("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createRequest)))
+                .with(jwt().jwt(jwt))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isNotFound());
     }
 
@@ -147,8 +166,8 @@ class EmployerProfileControllerTest {
         doNothing().when(employerProfileService).deleteEmployerProfile(USER_ID);
 
         mockMvc.perform(delete("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf()))
+                .with(jwt().jwt(jwt))
+                .with(csrf()))
                 .andExpect(status().isNoContent());
 
         verify(employerProfileService).deleteEmployerProfile(USER_ID);
@@ -160,8 +179,8 @@ class EmployerProfileControllerTest {
                 .deleteEmployerProfile(USER_ID);
 
         mockMvc.perform(delete("/api/v1/employer-profiles/me")
-                        .with(jwt().jwt(jwt))
-                        .with(csrf()))
+                .with(jwt().jwt(jwt))
+                .with(csrf()))
                 .andExpect(status().isNotFound());
     }
 }
