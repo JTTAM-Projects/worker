@@ -1,0 +1,152 @@
+package com.jttam.glig.domain.taskerprofile;
+
+import com.jttam.glig.domain.common.ProfileStatus;
+import com.jttam.glig.domain.taskerprofile.dto.TaskerProfileRequest;
+import com.jttam.glig.domain.taskerprofile.dto.TaskerProfileResponse;
+import com.jttam.glig.exception.custom.NotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class TaskerProfileServiceTest {
+
+    @Mock
+    private TaskerProfileRepository taskerProfileRepository;
+
+    @Mock
+    private TaskerProfileMapper taskerProfileMapper;
+
+    @InjectMocks
+    private TaskerProfileService taskerProfileService;
+
+    private String userId;
+    private TaskerProfile taskerProfile;
+    private TaskerProfileRequest taskerProfileRequest;
+    private TaskerProfileResponse taskerProfileResponse;
+
+    @BeforeEach
+    void setUp() {
+        userId = "auth0|12345";
+
+        taskerProfile = new TaskerProfile();
+        taskerProfile.setTaskerProfileId(1L);
+        taskerProfile.setUserId(userId);
+        taskerProfile.setFirstName("Test");
+        taskerProfile.setLastName("Tasker");
+        taskerProfile.setStatus(ProfileStatus.ACTIVE);
+
+        taskerProfileRequest = new TaskerProfileRequest();
+        taskerProfileRequest.setFirstName("Test");
+        taskerProfileRequest.setLastName("Tasker");
+
+        taskerProfileResponse = new TaskerProfileResponse();
+        taskerProfileResponse.setTaskerProfileId(1L);
+        taskerProfileResponse.setFirstName("Test");
+        taskerProfileResponse.setLastName("Tasker");
+    }
+
+    @Test
+    void getTaskerProfile_shouldReturnProfile_whenExists() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(taskerProfile));
+        when(taskerProfileMapper.toResponse(any(TaskerProfile.class))).thenReturn(taskerProfileResponse);
+
+        TaskerProfileResponse result = taskerProfileService.getTaskerProfile(userId);
+
+        assertNotNull(result);
+        assertEquals("Test", result.getFirstName());
+        verify(taskerProfileRepository).findByUserId(userId);
+    }
+
+    @Test
+    void getTaskerProfile_shouldThrowNotFoundException_whenNotExists() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> {
+            taskerProfileService.getTaskerProfile(userId);
+        });
+
+        verify(taskerProfileRepository).findByUserId(userId);
+    }
+
+    @Test
+    void createTaskerProfile_shouldCreateAndReturnProfile() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(taskerProfileMapper.toEntity(any(TaskerProfileRequest.class))).thenReturn(taskerProfile);
+        when(taskerProfileRepository.save(any(TaskerProfile.class))).thenReturn(taskerProfile);
+        when(taskerProfileMapper.toResponse(any(TaskerProfile.class))).thenReturn(taskerProfileResponse);
+
+        TaskerProfileResponse result = taskerProfileService.createTaskerProfile(userId, taskerProfileRequest);
+
+        assertNotNull(result);
+        assertEquals("Test", result.getFirstName());
+        verify(taskerProfileRepository).save(any(TaskerProfile.class));
+    }
+
+    @Test
+    void createTaskerProfile_shouldThrowException_whenProfileAlreadyExists() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(taskerProfile));
+
+        assertThrows(IllegalStateException.class, () -> {
+            taskerProfileService.createTaskerProfile(userId, taskerProfileRequest);
+        });
+
+        verify(taskerProfileRepository, never()).save(any(TaskerProfile.class));
+    }
+
+    @Test
+    void updateTaskerProfile_shouldUpdateAndReturnProfile() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(taskerProfile));
+        when(taskerProfileRepository.save(any(TaskerProfile.class))).thenReturn(taskerProfile);
+        when(taskerProfileMapper.toResponse(any(TaskerProfile.class))).thenReturn(taskerProfileResponse);
+
+        TaskerProfileResponse result = taskerProfileService.updateTaskerProfile(userId, taskerProfileRequest);
+
+        assertNotNull(result);
+        assertEquals("Test", result.getFirstName());
+        verify(taskerProfileMapper).updateFromRequest(taskerProfileRequest, taskerProfile);
+        verify(taskerProfileRepository).save(taskerProfile);
+    }
+
+    @Test
+    void updateTaskerProfile_shouldThrowException_whenProfileNotFound() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> {
+            taskerProfileService.updateTaskerProfile(userId, taskerProfileRequest);
+        });
+
+        verify(taskerProfileRepository, never()).save(any(TaskerProfile.class));
+    }
+
+    @Test
+    void deleteTaskerProfile_shouldSetStatusToDeleted() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(taskerProfile));
+
+        taskerProfileService.deleteTaskerProfile(userId);
+
+        verify(taskerProfileRepository).findByUserId(userId);
+        verify(taskerProfileRepository).save(taskerProfile);
+        assertEquals(ProfileStatus.DELETED, taskerProfile.getStatus());
+    }
+
+    @Test
+    void deleteTaskerProfile_shouldThrowException_whenProfileNotFound() {
+        when(taskerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> {
+            taskerProfileService.deleteTaskerProfile(userId);
+        });
+
+        verify(taskerProfileRepository, never()).save(any(TaskerProfile.class));
+    }
+}

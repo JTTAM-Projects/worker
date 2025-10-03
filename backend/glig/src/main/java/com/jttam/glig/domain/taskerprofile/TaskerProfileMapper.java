@@ -1,30 +1,34 @@
-package com.jttam.glig.domain.employerprofile;
+package com.jttam.glig.domain.taskerprofile;
 
-import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
-import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
+import com.jttam.glig.domain.taskerprofile.dto.TaskerProfileRequest;
+import com.jttam.glig.domain.taskerprofile.dto.TaskerProfileResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
-public interface EmployerProfileMapper {
-    EmployerProfileResponse toResponse(EmployerProfile employerProfile);
-    @Mapping(target = "employerProfileId", ignore = true)
+public interface TaskerProfileMapper {
+
+    @Mapping(target = "taskerProfileId", ignore = true)
+    @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    
-    EmployerProfile toEntity(EmployerProfileRequest request);
-    @Mapping(target = "employerProfileId", ignore = true)
+    TaskerProfile toEntity(TaskerProfileRequest request);
+
+    TaskerProfileResponse toResponse(TaskerProfile taskerProfile);
+
+    @Mapping(target = "taskerProfileId", ignore = true)
+    @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "verified", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    void updateFromRequest(EmployerProfileRequest request, @MappingTarget EmployerProfile employerProfile);
+    void updateFromRequest(TaskerProfileRequest request, @MappingTarget TaskerProfile taskerProfile);
 }

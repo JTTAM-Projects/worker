@@ -6,9 +6,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class CreateEmployerProfileRequest {
+public class EmployerProfileRequest {
 
     private String userId;
+
+    @NotBlank(message = "First name cannot be blank.")
+    @Size(max = 100, message = "First name must be less than 100 characters.")
+    private String firstName;
+
+    @NotBlank(message = "Last name cannot be blank.")
+    @Size(max = 100, message = "Last name must be less than 100 characters.")
+    private String lastName;
 
     @NotNull(message = "Employer type cannot be null")
     private EmployerType employerType;
@@ -41,16 +49,30 @@ public class CreateEmployerProfileRequest {
     @Size(max = 2048, message = "Profile image URL is too long")
     private String profileImageUrl;
 
-    // --- Note ---
-    // No employerProfileId, isVerified, createdAt, or updatedAt.
-    // The server will handle generating these values.
-
+    // Getters and setters
+    
     public String getUserId() {
         return userId;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public EmployerType getEmployerType() {

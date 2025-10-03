@@ -1,6 +1,7 @@
 package com.jttam.glig.domain.employerprofile;
 
-import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
+import com.jttam.glig.domain.common.ProfileStatus;
+import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class EmployerProfileServiceTest {
 
     private String userId;
     private EmployerProfile employerProfile;
-    private CreateEmployerProfileRequest createRequest;
+    private EmployerProfileRequest createRequest;
     private EmployerProfileResponse employerProfileResponse;
 
     @BeforeEach
@@ -46,7 +47,7 @@ class EmployerProfileServiceTest {
         employerProfile.setCountry("Testland");
         employerProfile.setStatus(ProfileStatus.ACTIVE);
 
-        createRequest = new CreateEmployerProfileRequest();
+        createRequest = new EmployerProfileRequest();
         createRequest.setCompanyName("Test Corp");
         createRequest.setStreetAddress("123 Test St");
         createRequest.setCity("Testville");
@@ -63,7 +64,7 @@ class EmployerProfileServiceTest {
     @Test
     void getEmployerProfile_shouldReturnProfile_whenExists() {
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
-        when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
+        when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
         EmployerProfileResponse result = employerProfileService.getEmployerProfile(userId);
 
@@ -87,11 +88,11 @@ class EmployerProfileServiceTest {
     @Test
     void createEmployerProfile_shouldCreateAndReturnProfile() {
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
-        when(employerProfileMapper.toEmployerProfile(any(CreateEmployerProfileRequest.class))).thenReturn(employerProfile);
+        when(employerProfileMapper.toEntity(any(EmployerProfileRequest.class))).thenReturn(employerProfile);
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
-        when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
+        when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
-        EmployerProfileResponse result = employerProfileService.createEmployerProfile(createRequest, userId);
+        EmployerProfileResponse result = employerProfileService.createEmployerProfile(userId, createRequest);
 
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
@@ -104,7 +105,7 @@ class EmployerProfileServiceTest {
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
 
         assertThrows(IllegalStateException.class, () -> {
-            employerProfileService.createEmployerProfile(createRequest, userId);
+            employerProfileService.createEmployerProfile(userId, createRequest);
         });
 
         verify(employerProfileRepository, never()).save(any(EmployerProfile.class));
@@ -114,14 +115,14 @@ class EmployerProfileServiceTest {
     void updateEmployerProfile_shouldUpdateAndReturnProfile() {
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.of(employerProfile));
         when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
-        when(employerProfileMapper.toEmployerProfileResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
+        when(employerProfileMapper.toResponse(any(EmployerProfile.class))).thenReturn(employerProfileResponse);
 
-        EmployerProfileResponse result = employerProfileService.updateEmployerProfile(createRequest, userId);
+        EmployerProfileResponse result = employerProfileService.updateEmployerProfile(userId, createRequest);
 
         assertNotNull(result);
         assertEquals("Test Corp", result.getCompanyName());
         assertEquals("123 Test St", result.getStreetAddress());
-        verify(employerProfileMapper).updateEmployerProfileFromDto(createRequest, employerProfile);
+        verify(employerProfileMapper).updateFromRequest(createRequest, employerProfile);
         verify(employerProfileRepository).save(employerProfile);
     }
 
@@ -130,7 +131,7 @@ class EmployerProfileServiceTest {
         when(employerProfileRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            employerProfileService.updateEmployerProfile(createRequest, userId);
+            employerProfileService.updateEmployerProfile(userId, createRequest);
         });
 
         verify(employerProfileRepository, never()).save(any(EmployerProfile.class));
