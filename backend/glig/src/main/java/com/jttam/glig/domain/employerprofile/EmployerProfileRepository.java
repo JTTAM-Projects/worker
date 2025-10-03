@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployerProfileRepository extends JpaRepository<EmployerProfile, Long> {
     Optional<EmployerProfile> findByUser(User user);
-    Optional<EmployerProfile> findByUser_UserId(String userId);
+
+    Optional<EmployerProfile> findByUser_UserName(String userId);
+
     boolean existsByUser(User user);
 }
