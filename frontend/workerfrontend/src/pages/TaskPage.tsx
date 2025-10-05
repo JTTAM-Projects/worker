@@ -3,63 +3,48 @@ import SearchBar from "../features/task/components/SearchBar";
 import TaskFilter from "../features/task/components/TaskFilter";
 import TaskList from "../features/task/components/TaskList";
 import type { Category } from "../features/task/types";
+import { useTasks } from "../features/task/hooks/useTasks";
 
 export default function TaskPage() {
-  const tasks = [
-    {
-      id: "t1",
-      title: "Keittiön siivous",
-      category: "cleaning",
-      price: "35 €",
-      location: "Espoo",
-      date: "15.9.",
-    },
-    {
-      id: "t2",
-      title: "Pihan haravointi",
-      category: "garden",
-      price: "40 €",
-      location: "Helsinki",
-      date: "16.9.",
-    },
-    {
-      id: "t3",
-      title: "Tietokoneen nopeutus",
-      category: "tech",
-      price: "45 €",
-      location: "Vantaa",
-      date: "16.9.",
-    },
-    {
-      id: "t4",
-      title: "Koiran ulkoilutus",
-      category: "pets",
-      price: "15 €",
-      location: "Espoo",
-      date: "15.9.",
-    },
-    {
-      id: "t5",
-      title: "Auton sisäpuhdistus",
-      category: "vehicles",
-      price: "40 €",
-      location: "Kauniainen",
-      date: "17.9.",
-    },
-  ] as const;
-
-  const [category, setCategory] = useState<Category>("all");
+  const [category, setCategory] = useState<Category | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
 
+  const { data, isLoading, isError, error } = useTasks({
+    page,
+    size: 12,
+    category: category !== "all" ? category : undefined,
+    status: "ACTIVE",
+  });
+
+  // Client-side search filtering (backend doesn't support search yet)
   const filteredTasks = useMemo(() => {
-    return tasks.filter((t) => {
-      const isCategoryMatch = category === "all" || t.category === category;
-      const isSearchMatch = t.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return isCategoryMatch && isSearchMatch;
-    });
-  }, [category, searchQuery]);
+    if (!data?.content) return [];
+
+    if (!searchQuery) return data.content;
+
+    return data.content.filter((task) =>
+      task.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data?.content, searchQuery]);
+
+  if (isLoading) {
+    return (
+      <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
+        <div className="text-center text-gray-600">Ladataan tehtäviä...</div>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
+        <div className="text-center text-red-600">
+          Virhe ladattaessa tehtäviä: {error.message}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
@@ -75,6 +60,28 @@ export default function TaskPage() {
       </section>
 
       <TaskList tasks={filteredTasks} />
+
+      {data && (
+        <div className="flex justify-center items-center gap-4">
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 0}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Edellinen
+          </button>
+          <span className="text-gray-700">
+            Sivu {page + 1} / {data.totalPages}
+          </span>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={page >= data.totalPages - 1}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Seuraava
+          </button>
+        </div>
+      )}
     </main>
   );
 }
