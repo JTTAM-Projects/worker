@@ -13,6 +13,7 @@ export interface FetchTasksParams {
   status?: TaskStatus;
 }
 
+// Fetch tasks with optional pagination and filtering
 export async function fetchTasks(params: FetchTasksParams = {}): Promise<PaginatedResponse<Task>> {
   const { page = 0, size = 10, category, status } = params;
 
@@ -37,6 +38,24 @@ export async function fetchTasks(params: FetchTasksParams = {}): Promise<Paginat
 
   if (!response.ok) {
     throw new Error(`Failed to fetch tasks: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+// Fetch user's own tasks (requires authentication)
+export async function fetchUserTasks(getAccessToken: () => Promise<string>): Promise<Task[]> {
+  const token = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/task/user-tasks`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user tasks: ${response.statusText}`);
   }
 
   return response.json();
