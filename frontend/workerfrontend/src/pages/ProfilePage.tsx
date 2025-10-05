@@ -1,5 +1,4 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import React from "react";
 import ProfileAboutSection from "../features/Profile/ProfileAboutSection";
 import ProfileSkillsSection from "../features/Profile/UserSkillsSection";
 import UserProfileCard from "../features/Profile/UserProfileCard";
@@ -16,28 +15,82 @@ export default function ProfilePage() {
   // Mock-työilmoitukset
   const omatTyot: Task[] = [
     {
-      id: "own-1",
+      id: 1,
       title: "Varaston hyllyjen kokoaminen",
-      category: "tech",
-      price: "120 €",
+      category: "OTHER",
+      price: 120,
       location: "Espoo",
-      date: "2025-10-05",
+      startDate: "2025-10-05T10:00:00",
+      endDate: "2025-10-05T16:00:00",
+      status: "ACTIVE",
+      description: "Varaston hyllyt tarvitsevat kokoamista.",
+      user: user
+        ? {
+            userName: user.name || "Unknown",
+            mail: user.email || "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Espoo, FI",
+          }
+        : {
+            userName: "Unknown",
+            mail: "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Espoo, FI",
+          },
     },
     {
-      id: "own-2",
+      id: 2,
       title: "Pihan syyssiivous ja haravointi",
-      category: "garden",
-      price: "80 €",
+      category: "GARDEN",
+      price: 80,
       location: "Helsinki",
-      date: "2025-10-07",
+      startDate: "2025-10-07T09:00:00",
+      endDate: "2025-10-07T15:00:00",
+      status: "ACTIVE",
+      description: "Syksyn lehdet ja pihan siistiminen.",
+      user: user
+        ? {
+            userName: user.name || "Unknown",
+            mail: user.email || "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Helsinki, FI",
+          }
+        : {
+            userName: "Unknown",
+            mail: "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Helsinki, FI",
+          },
     },
     {
-      id: "own-3",
+      id: 3,
       title: "Tietokoneen perushuolto ja Windowsin optimointi",
-      category: "tech",
-      price: "70 €",
+      category: "OTHER",
+      price: 70,
       location: "Vantaa",
-      date: "2025-10-12",
+      startDate: "2025-10-12T11:00:00",
+      endDate: "2025-10-12T14:00:00",
+      status: "ACTIVE",
+      description: "Tietokoneen huolto ja optimointi.",
+      user: user
+        ? {
+            userName: user.name || "Unknown",
+            mail: user.email || "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Vantaa, FI",
+          }
+        : {
+            userName: "Unknown",
+            mail: "unknown@example.com",
+            businessId: "1234567-8",
+            phoneNumber: "123456",
+            address: "Vantaa, FI",
+          },
     },
   ];
 

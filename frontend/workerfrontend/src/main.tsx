@@ -25,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
           clientId="aDYOG7a9fYDDBoTgWX9AW3BKYdv6XdlJ"
           authorizationParams={{
             redirect_uri: window.location.origin,
+            audience: "https://glig.com", // 👈 API audience - PAKOLLINEN tokenille!
           }}
         >
           <App />

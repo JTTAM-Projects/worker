@@ -4,62 +4,24 @@ import TaskFilter from "../features/task/components/TaskFilter";
 import TaskList from "../features/task/components/TaskList";
 import TaskerPromoCard from "../features/task/components/TaskerPromoCard";
 import type { Category } from "../features/task/types";
+import { useTasks } from "../features/task/hooks/useTasks";
 import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   /* ======================== DATA AND STATE ======================== */
-  /* ----- demo data for filtering ----- */
-  const tasks = [
-    {
-      id: "t1",
-      title: "Keittiön siivous",
-      category: "cleaning",
-      price: "35 €",
-      location: "Espoo",
-      date: "15.9.",
-    },
-    {
-      id: "t2",
-      title: "Pihan haravointi",
-      category: "garden",
-      price: "40 €",
-      location: "Helsinki",
-      date: "16.9.",
-    },
-    {
-      id: "t3",
-      title: "Tietokoneen nopeutus",
-      category: "tech",
-      price: "45 €",
-      location: "Vantaa",
-      date: "16.9.",
-    },
-    {
-      id: "t4",
-      title: "Koiran ulkoilutus",
-      category: "pets",
-      price: "15 €",
-      location: "Espoo",
-      date: "15.9.",
-    },
-    {
-      id: "t5",
-      title: "Auton sisäpuhdistus",
-      category: "vehicles",
-      price: "40 €",
-      location: "Kauniainen",
-      date: "17.9.",
-    },
-  ] as const;
-
   /* ----- selected category (Popular Tasks buttons) ----- */
-  const [category, setCategory] = useState<Category>("all");
+  const [category, setCategory] = useState<Category | "all">("all");
 
-  /* ----- filtered tasks for the banner list ----- */
-  const filteredTasks = useMemo(
-    () => tasks.filter((t) => category === "all" || t.category === category),
-    [category]
-  );
+  /* ----- fetch tasks from backend ----- */
+  const { data, isLoading, error } = useTasks({
+    page: 0,
+    size: 12,
+    status: "ACTIVE",
+    category: category === "all" ? undefined : category,
+  });
+
+  /* ----- filtered tasks from backend response ----- */
+  const filteredTasks = useMemo(() => data?.content || [], [data]);
 
   /* ======================== PAGE ======================== */
   return (
@@ -102,7 +64,24 @@ export default function LandingPage() {
 
       <TaskFilter category={category} setCategory={setCategory} />
 
-      <TaskList tasks={filteredTasks} />
+      {/* Loading state */}
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-gray-600">Ladataan tehtäviä...</p>
+        </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="text-center py-8">
+          <p className="text-red-600">
+            Virhe tehtävien lataamisessa. Yritä uudelleen myöhemmin.
+          </p>
+        </div>
+      )}
+
+      {/* Tasks list */}
+      {!isLoading && !error && <TaskList tasks={filteredTasks} />}
     </main>
   );
 }
