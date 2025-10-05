@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface TaskerProfileRepository extends JpaRepository<TaskerProfile, Long> {
     Optional<TaskerProfile> findByUser(User user);
-    Optional<TaskerProfile> findByUser_UserId(String userId);
+
+    Optional<TaskerProfile> findByUser_UserName(String userId);
 }
