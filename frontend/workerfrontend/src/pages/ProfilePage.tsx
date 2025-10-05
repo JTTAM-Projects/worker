@@ -3,101 +3,21 @@ import ProfileAboutSection from "../features/Profile/ProfileAboutSection";
 import ProfileSkillsSection from "../features/Profile/UserSkillsSection";
 import UserProfileCard from "../features/Profile/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
-import type { Task } from "../features/task/types";
+import { useUserTasks } from "../features/task/hooks/useUserTasks";
 
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth0();
+  const { user } = useAuth0();
+  const { data: userTasksData, isLoading, error } = useUserTasks();
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
-
-  // Mock-työilmoitukset
-  const omatTyot: Task[] = [
-    {
-      id: 1,
-      title: "Varaston hyllyjen kokoaminen",
-      category: "OTHER",
-      price: 120,
-      location: "Espoo",
-      startDate: "2025-10-05T10:00:00",
-      endDate: "2025-10-05T16:00:00",
-      status: "ACTIVE",
-      description: "Varaston hyllyt tarvitsevat kokoamista.",
-      user: user
-        ? {
-            userName: user.name || "Unknown",
-            mail: user.email || "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Espoo, FI",
-          }
-        : {
-            userName: "Unknown",
-            mail: "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Espoo, FI",
-          },
-    },
-    {
-      id: 2,
-      title: "Pihan syyssiivous ja haravointi",
-      category: "GARDEN",
-      price: 80,
-      location: "Helsinki",
-      startDate: "2025-10-07T09:00:00",
-      endDate: "2025-10-07T15:00:00",
-      status: "ACTIVE",
-      description: "Syksyn lehdet ja pihan siistiminen.",
-      user: user
-        ? {
-            userName: user.name || "Unknown",
-            mail: user.email || "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Helsinki, FI",
-          }
-        : {
-            userName: "Unknown",
-            mail: "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Helsinki, FI",
-          },
-    },
-    {
-      id: 3,
-      title: "Tietokoneen perushuolto ja Windowsin optimointi",
-      category: "OTHER",
-      price: 70,
-      location: "Vantaa",
-      startDate: "2025-10-12T11:00:00",
-      endDate: "2025-10-12T14:00:00",
-      status: "ACTIVE",
-      description: "Tietokoneen huolto ja optimointi.",
-      user: user
-        ? {
-            userName: user.name || "Unknown",
-            mail: user.email || "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Vantaa, FI",
-          }
-        : {
-            userName: "Unknown",
-            mail: "unknown@example.com",
-            businessId: "1234567-8",
-            phoneNumber: "123456",
-            address: "Vantaa, FI",
-          },
-    },
-  ];
+  // Get user tasks from backend, filters only ACTIVE tasks
+  const activeUserTasks = (userTasksData || []).filter(
+    (task) => task.status === "ACTIVE"
+  );
 
   return (
     <section className="bg-gray-50 min-h-screen w-full">
       <main className="container mx-auto px-6 py-12 grid gap-10">
-        <UserProfileCard />
+        <UserProfileCard user={user} />
         <ProfileAboutSection />
         <ProfileSkillsSection />
         <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
@@ -123,9 +43,25 @@ export default function ProfilePage() {
             Omat työilmoitukset
           </h2>
           <p className="text-gray-600 mb-6">
-            Tässä näet kaikki työilmoituksesi, joihin etsit työntekijöitä.
+            Tässä näet kaikki <span className="font-semibold">aktiiviset</span>{" "}
+            työilmoituksesi, joihin etsit työntekijöitä.
           </p>
-          <TaskList tasks={omatTyot} />
+
+          {isLoading && (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Ladataan tehtäviä...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="text-center py-8">
+              <p className="text-red-600">
+                Virhe tehtävien lataamisessa. Yritä uudelleen myöhemmin.
+              </p>
+            </div>
+          )}
+
+          {!isLoading && !error && <TaskList tasks={activeUserTasks} />}
         </section>
       </main>
     </section>
