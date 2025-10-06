@@ -1,6 +1,6 @@
 package com.jttam.glig.review.dto;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record ReviewResponse(
     Long id,
@@ -10,8 +10,8 @@ public record ReviewResponse(
     String revieweeUsername,
     int rating,
     String comment,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt
+    Instant createdAt,
+    Instant updatedAt
 ) {
     @Override
     public String toString() {
