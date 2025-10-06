@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * Handles CRUD operations and queries for task reviews.
  */
 @RestController
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/reviews")
 @Tag(name = "Review", description = "Operations related to task reviews")
 public class ReviewController {
 
@@ -43,10 +43,10 @@ public class ReviewController {
     })
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
-            @Valid @RequestBody ReviewRequest request,
-            @AuthenticationPrincipal Jwt jwt) {
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ReviewRequest request) {
         String reviewerUsername = jwt.getSubject();
-        ReviewResponse response = reviewService.createReview(request, reviewerUsername);
+        ReviewResponse response = reviewService.createReview(reviewerUsername, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -111,8 +111,8 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable Long reviewId,
-            @Valid @RequestBody ReviewRequest request,
-            @AuthenticationPrincipal Jwt jwt) {
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ReviewRequest request) {
         String reviewerUsername = jwt.getSubject();
         ReviewResponse response = reviewService.updateReview(reviewId, reviewerUsername, request);
         return ResponseEntity.ok(response);

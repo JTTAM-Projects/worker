@@ -39,7 +39,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponse createReview(ReviewRequest request, String reviewerUsername) {
+    public ReviewResponse createReview(String reviewerUsername, ReviewRequest request) {
         Task task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new NotFoundException("TASK_NOT_FOUND", "Task with ID " + request.taskId() + " not found."));
 

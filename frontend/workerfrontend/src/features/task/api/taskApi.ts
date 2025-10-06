@@ -86,7 +86,7 @@ export async function createTask(
 ): Promise<Task> {
   const token = await getAccessTokenSilently();
 
-  const response = await fetch(`${API_BASE_URL}/task/create-task`, {
+  const response = await fetch(`${API_BASE_URL}/task`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -95,7 +95,7 @@ class EmployerProfileControllerTest {
     void getMyProfile_shouldReturnProfile_whenFound() throws Exception {
         given(employerProfileService.getEmployerProfile(USER_ID)).willReturn(employerProfileResponse);
 
-        mockMvc.perform(get("/api/v1/employer-profiles/me")
+        mockMvc.perform(get("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -108,7 +108,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.getEmployerProfile(USER_ID))
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(get("/api/v1/employer-profiles/me")
+        mockMvc.perform(get("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt)))
                 .andExpect(status().isNotFound());
     }
@@ -118,7 +118,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.createEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willReturn(employerProfileResponse);
 
-        mockMvc.perform(post("/api/v1/employer-profiles")
+        mockMvc.perform(post("/api/employer-profiles")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class EmployerProfileControllerTest {
             null, null, null, null, null, null, null, null, null, null, null, null, null
         ); // missing required fields
 
-        mockMvc.perform(post("/api/v1/employer-profiles")
+        mockMvc.perform(post("/api/employer-profiles")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willReturn(employerProfileResponse);
 
-        mockMvc.perform(put("/api/v1/employer-profiles/me")
+        mockMvc.perform(put("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -162,7 +162,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(put("/api/v1/employer-profiles/me")
+        mockMvc.perform(put("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -174,7 +174,7 @@ class EmployerProfileControllerTest {
     void deleteMyProfile_shouldReturnNoContent_whenSuccessful() throws Exception {
         doNothing().when(employerProfileService).deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/v1/employer-profiles/me")
+        mockMvc.perform(delete("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -187,7 +187,7 @@ class EmployerProfileControllerTest {
         doThrow(new NotFoundException("NOT_FOUND", "Profile not found")).when(employerProfileService)
                 .deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/v1/employer-profiles/me")
+        mockMvc.perform(delete("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isNotFound());

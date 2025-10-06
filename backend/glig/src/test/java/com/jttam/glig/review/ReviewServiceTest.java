@@ -130,7 +130,7 @@ class ReviewServiceTest {
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
         when(reviewMapper.toReviewResponse(any(Review.class))).thenReturn(reviewResponse);
 
-        ReviewResponse result = reviewService.createReview(reviewRequest, "employer123");
+        ReviewResponse result = reviewService.createReview("employer123", reviewRequest);
 
         assertNotNull(result);
         assertEquals(5, result.rating());
@@ -153,7 +153,7 @@ class ReviewServiceTest {
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
         when(reviewMapper.toReviewResponse(any(Review.class))).thenReturn(reviewResponse);
 
-        ReviewResponse result = reviewService.createReview(taskerReviewRequest, "tasker456");
+        ReviewResponse result = reviewService.createReview("tasker456", taskerReviewRequest);
 
         assertNotNull(result);
         verify(reviewRepository).save(any(Review.class));
@@ -164,7 +164,7 @@ class ReviewServiceTest {
         when(taskRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            reviewService.createReview(reviewRequest, "employer123");
+            reviewService.createReview("employer123", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -177,7 +177,7 @@ class ReviewServiceTest {
         ReviewRequest activeTaskRequest = new ReviewRequest(2L, "tasker456", 5, "Test");
 
         assertThrows(ForbiddenException.class, () -> {
-            reviewService.createReview(activeTaskRequest, "employer123");
+            reviewService.createReview("employer123", activeTaskRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -189,7 +189,7 @@ class ReviewServiceTest {
         when(reviewRepository.existsByTask_IdAndReviewer_UserName(1L, "employer123")).thenReturn(true);
 
         assertThrows(ConflictException.class, () -> {
-            reviewService.createReview(reviewRequest, "employer123");
+            reviewService.createReview("employer123", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -202,7 +202,7 @@ class ReviewServiceTest {
         when(applicationRepository.findAcceptedApplicationForTask(1L)).thenReturn(Optional.empty());
 
         assertThrows(ForbiddenException.class, () -> {
-            reviewService.createReview(reviewRequest, "employer123");
+            reviewService.createReview("employer123", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -216,7 +216,7 @@ class ReviewServiceTest {
         when(userRepository.findByUserName("employer123")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            reviewService.createReview(reviewRequest, "employer123");
+            reviewService.createReview("employer123", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -231,7 +231,7 @@ class ReviewServiceTest {
         when(userRepository.findByUserName("tasker456")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
-            reviewService.createReview(reviewRequest, "employer123");
+            reviewService.createReview("employer123", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
@@ -246,7 +246,7 @@ class ReviewServiceTest {
         when(userRepository.findByUserName("tasker456")).thenReturn(Optional.of(tasker));
 
         assertThrows(ForbiddenException.class, () -> {
-            reviewService.createReview(reviewRequest, "random789");
+            reviewService.createReview("random789", reviewRequest);
         });
 
         verify(reviewRepository, never()).save(any(Review.class));
