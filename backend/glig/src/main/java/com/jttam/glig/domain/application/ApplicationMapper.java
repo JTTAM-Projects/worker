@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import java.util.List;
 
@@ -12,28 +12,28 @@ import com.jttam.glig.domain.task.TaskMapper;
 import com.jttam.glig.domain.user.UserMapper;
 
 @Mapper(componentModel = "spring", uses = { TaskMapper.class, UserMapper.class })
-public interface ApplyMapper {
+public interface ApplicationMapper {
 
-    ApplyDto toApplyDTO(Apply apply);
+    ApplicationDto toApplicationDTO(Application apply);
 
     @Mapping(target = "category", source = "task.category")
     @Mapping(target = "taskTitle", source = "task.title")
     @Mapping(target = "user", source = "task.user")
-    ApplyListDTO toApplyListDTO(Apply apply);
+    ApplicationListDTO toApplicationListDTO(Application apply);
 
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Apply toApplyEntity(ApplyDto applyDto);
+    Application toApplicationEntity(ApplicationDto applyDto);
 
-    List<ApplyListDTO> toApplyDtoList(List<Apply> applies);
+    List<ApplicationListDTO> toApplicationDtoList(List<Application> applies);
 
-    default Page<ApplyListDTO> toApplyDtoListPage(Page<Apply> page) {
-        List<ApplyListDTO> dtoList = toApplyDtoList(page.getContent());
+    default Page<ApplicationListDTO> toApplicationDtoListPage(Page<Application> page) {
+        List<ApplicationListDTO> dtoList = toApplicationDtoList(page.getContent());
         return new PageImpl<>(dtoList, page.getPageable(), page.getTotalElements());
     }
 
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Apply updateApply(ApplyDto applyDto, @MappingTarget Apply apply);
+    Application updateApplication(ApplicationDto applyDto, @MappingTarget Application apply);
 
 }

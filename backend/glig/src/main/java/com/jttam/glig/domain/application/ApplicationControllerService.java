@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import java.util.Optional;
 
@@ -20,15 +20,15 @@ import com.jttam.glig.service.Specifications;
 import jakarta.transaction.Transactional;
 
 @Service
-public class ApplyControllerService {
+public class ApplicationControllerService {
 
-    private final ApplyRepository applyRepository;
+    private final ApplicationRepository applyRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    private final ApplyMapper mapper;
+    private final ApplicationMapper mapper;
 
-    public ApplyControllerService(ApplyRepository applyRepository, TaskRepository taskRepository,
-            UserRepository userRepository, ApplyMapper mapper) {
+    public ApplicationControllerService(ApplicationRepository applyRepository, TaskRepository taskRepository,
+            UserRepository userRepository, ApplicationMapper mapper) {
         this.applyRepository = applyRepository;
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
@@ -36,28 +36,28 @@ public class ApplyControllerService {
     }
 
     @Transactional
-    public ApplyDto tryGetSingleApplyDtoById(Long taskId, String username) {
-        ApplyId applyId = new ApplyId(taskId, username);
-        Apply apply = applyRepository.findById(applyId)
+    public ApplicationDto tryGetSingleApplyDtoById(Long taskId, String username) {
+        ApplicationId applyId = new ApplicationId(taskId, username);
+        Application apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND",
                         "Cannot find apply with given details " + applyId.toString()));
-        ApplyDto applyDto = mapper.toApplyDTO(apply);
+        ApplicationDto applyDto = mapper.toApplicationDTO(apply);
         return applyDto;
     }
 
     @Transactional
-    public Page<ApplyListDTO> tryGetAllUserApplies(Pageable pageable, ApplyDataGridFilters filters,
+    public Page<ApplicationListDTO> tryGetAllUserApplies(Pageable pageable, ApplicationDataGridFilters filters,
             String username) {
-        Specification<Apply> spec = Specifications.withApplyFilters(filters, username);
-        Page<Apply> applies = applyRepository.findAll(spec, pageable);
-        Page<ApplyListDTO> listOfApplyDto = mapper.toApplyDtoListPage(applies);
+        Specification<Application> spec = Specifications.withApplicationFilters(filters, username);
+        Page<Application> applies = applyRepository.findAll(spec, pageable);
+        Page<ApplicationListDTO> listOfApplyDto = mapper.toApplicationDtoListPage(applies);
         return listOfApplyDto;
     }
 
     @Transactional
-    public ResponseEntity<?> tryCreateNewApplyForTask(Long taskId, ApplyDto applyDto, String username) {
-        ApplyId applyId = new ApplyId(taskId, username);
-        Optional<Apply> apply = applyRepository.findById(applyId);
+    public ResponseEntity<?> tryCreateNewApplyForTask(Long taskId, ApplicationDto applyDto, String username) {
+        ApplicationId applyId = new ApplicationId(taskId, username);
+        Optional<Application> apply = applyRepository.findById(applyId);
         if (apply.isPresent()) {
             return new ResponseEntity<Message>(new Message("ERROR", "User has already apply for this task"),
                     HttpStatus.CONFLICT);
@@ -66,7 +66,7 @@ public class ApplyControllerService {
         Task task = taskRepository.getReferenceById(taskId);
         User user = userRepository.getReferenceById(username);
 
-        Apply newApply = mapper.toApplyEntity(applyDto);
+        Application newApply = mapper.toApplicationEntity(applyDto);
         newApply.setUser(user);
         newApply.setTask(task);
         applyRepository.save(newApply);
@@ -74,18 +74,18 @@ public class ApplyControllerService {
     }
 
     @Transactional
-    public ResponseEntity<ApplyDto> tryEditApply(Long taskId, ApplyDto applyDto, String username) {
-        ApplyId applyId = new ApplyId(taskId, username);
-        Apply apply = applyRepository.findById(applyId)
+    public ResponseEntity<ApplicationDto> tryEditApply(Long taskId, ApplicationDto applyDto, String username) {
+        ApplicationId applyId = new ApplicationId(taskId, username);
+        Application apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND", "Cannot find apply with given details"));
-        Apply updatedApply = mapper.updateApply(applyDto, apply);
+        Application updatedApply = mapper.updateApplication(applyDto, apply);
         applyRepository.save(updatedApply);
         return new ResponseEntity<>(applyDto, HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<Message> tryDeleteApply(Long taskId, String username) {
-        ApplyId applyId = new ApplyId(taskId, username);
+        ApplicationId applyId = new ApplicationId(taskId, username);
         if (!applyRepository.existsById(applyId)) {
             throw new NotFoundException("APPLY_NOT_FOUND", "Cannot find apply with given details to delete");
         }

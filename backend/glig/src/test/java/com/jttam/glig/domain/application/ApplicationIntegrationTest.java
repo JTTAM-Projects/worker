@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -24,7 +24,7 @@ import jakarta.transaction.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class ApplyIntegrationTest {
+public class ApplicationIntegrationTest {
 
     @Autowired
     TaskRepository taskRepository;
@@ -61,7 +61,7 @@ public class ApplyIntegrationTest {
 
         Long grassTaskId = taskRepository.findByTitle("Leikkaa nurmikko").get(0).getId();
 
-        mockMvc.perform(get("/api/apply/task/" + grassTaskId)
+        mockMvc.perform(get("/api/task/" + grassTaskId + "/application")
                 .with(jwt().jwt(user2Jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -70,11 +70,11 @@ public class ApplyIntegrationTest {
     }
 
     @Test
-    void GetPageOfTasksByGivenCorrectUserNameAndSortindAndFilteringParameters() throws Exception {
+    void GetPageOfApplicationsByGivenCorrectUserNameAndFilteringParameters() throws Exception {
 
         testDataService.consoleLogDataBase();
 
-        mockMvc.perform(get("/api/apply/user-applies?applyStatus=CANCELLED")
+        mockMvc.perform(get("/api/user-applications?applicationStatus=CANCELLED")
                 .with(jwt().jwt(user2Jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())

@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 import com.jttam.glig.domain.user.UserDto;
 
 public record TaskDto(Long id,
-                UserDto user,
-                @NotBlank Category category,
-                @NotBlank String title,
-                @NotNull Integer price,
-                @NotNull LocalDateTime startDate,
-                @NotNull LocalDateTime endDate,
-                @NotBlank String location,
-                TaskStatus status,
-                String description) {
+        UserDto user,
+        @NotNull(message = "Category is required") Category category,
+        @NotBlank(message = "Title is required") String title,
+        @NotNull(message = "Price is required") Integer price,
+        @NotNull(message = "Start date is required") LocalDateTime startDate,
+        @NotNull(message = "End date is required") LocalDateTime endDate,
+        @NotBlank(message = "Location is required") String location,
+        TaskStatus status,
+        String description) {
 }

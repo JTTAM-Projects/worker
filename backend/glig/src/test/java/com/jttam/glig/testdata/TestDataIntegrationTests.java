@@ -48,7 +48,7 @@ public class TestDataIntegrationTests {
 
         testDataService.removeApplies();
 
-        mockMvc.perform(get("/api/apply/user-applies")
+        mockMvc.perform(get("/api/user-applications")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -60,7 +60,7 @@ public class TestDataIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Database reseted succesfully"));
 
-        mockMvc.perform(get("/api/apply/user-applies")
+        mockMvc.perform(get("/api/user-applications")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())

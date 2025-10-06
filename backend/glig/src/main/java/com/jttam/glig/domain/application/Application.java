@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +18,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "applies")
-@IdClass(ApplyId.class)
-public class Apply extends baseClass {
+@IdClass(ApplicationId.class)
+public class Application extends baseClass {
 
     @Id
     @ManyToOne
@@ -42,19 +42,19 @@ public class Apply extends baseClass {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "apply_status")
-    ApplyStatus applyStatus = ApplyStatus.PENDING;
+    ApplicationStatus applicationStatus = ApplicationStatus.PENDING;
 
-    public Apply() {
+    public Application() {
     }
 
-    public Apply(User user, Task task, int priceSuggestion, LocalDateTime timeSuggestion, String description,
-            ApplyStatus applyStatus) {
+    public Application(User user, Task task, int priceSuggestion, LocalDateTime timeSuggestion, String description,
+            ApplicationStatus applyStatus) {
         this.user = user;
         this.task = task;
         this.priceSuggestion = priceSuggestion;
         this.timeSuggestion = timeSuggestion;
         this.description = description;
-        this.applyStatus = applyStatus;
+        this.applicationStatus = applyStatus;
     }
 
     public User getUser() {
@@ -97,19 +97,19 @@ public class Apply extends baseClass {
         this.description = description;
     }
 
-    public ApplyStatus getApplyStatus() {
-        return applyStatus;
+    public ApplicationStatus getApplicationStatus() {
+        return applicationStatus;
     }
 
-    public void setApplyStatus(ApplyStatus applyStatus) {
-        this.applyStatus = applyStatus;
+    public void setApplicationStatus(ApplicationStatus applyStatus) {
+        this.applicationStatus = applyStatus;
     }
 
     @Override
     public String toString() {
         return "Apply [username=" + user.getUserName() + ", taskId=" + task.getId() + ", priceSuggestion="
                 + priceSuggestion + ", timeSuggestion="
-                + timeSuggestion + ", description=" + description + ", applyStatus=" + applyStatus + "]";
+                + timeSuggestion + ", description=" + description + ", applyStatus=" + applicationStatus + "]";
     }
 
 }

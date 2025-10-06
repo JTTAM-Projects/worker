@@ -1,6 +1,6 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
-public enum ApplyStatus {
+public enum ApplicationStatus {
     PENDING("Application pending"),
     ACCEPTED("Application accepted"),
     REJECTED("Application rejected"),
@@ -8,7 +8,7 @@ public enum ApplyStatus {
 
     private final String displayName;
 
-    private ApplyStatus(String displayName) {
+    private ApplicationStatus(String displayName) {
         this.displayName = displayName;
     }
 
