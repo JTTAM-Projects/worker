@@ -4,29 +4,26 @@ import com.jttam.glig.review.dto.ReviewRequest;
 import com.jttam.glig.review.dto.ReviewResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
 public interface ReviewMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "task", ignore = true)
-    @Mapping(target = "reviewer", ignore = true)
-    @Mapping(target = "reviewee", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "comment", source = "comment")
-    Review toEntity(ReviewRequest request);
+    @Mapping(source = "task.id", target = "taskId")
+    @Mapping(source = "task.title", target = "taskTitle")
+    @Mapping(source = "reviewer.userName", target = "reviewerUsername")
+    @Mapping(source = "reviewee.userName", target = "revieweeUsername")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
+    ReviewResponse toReviewResponse(Review review);
 
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "taskId", source = "task.id")
-    @Mapping(target = "taskTitle", source = "task.title")
-    @Mapping(target = "reviewerUsername", source = "reviewer.userName")
-    @Mapping(target = "revieweeUsername", source = "reviewee.userName")
-    @Mapping(target = "rating", source = "rating")
-    @Mapping(target = "comment", source = "comment")
-    @Mapping(target = "createdAt", source = "createdAt")
-    @Mapping(target = "updatedAt", source = "updatedAt")
-    ReviewResponse toResponse(Review review);
+    Review toReviewEntity(ReviewRequest reviewRequest);
+
+    void updateReviewFromRequest(ReviewRequest reviewRequest, @MappingTarget Review review);
 }
