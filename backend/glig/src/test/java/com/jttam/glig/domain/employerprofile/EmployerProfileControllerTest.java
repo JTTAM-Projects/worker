@@ -48,35 +48,42 @@ class EmployerProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        employerProfileResponse = new EmployerProfileResponse();
-        employerProfileResponse.setEmployerProfileId(1L);
-        employerProfileResponse.setUserId(USER_ID);
-        employerProfileResponse.setFirstName("Test");
-        employerProfileResponse.setLastName("User");
-        employerProfileResponse.setCompanyName("Test Corp");
-        employerProfileResponse.setStreetAddress("123 Test St");
-        employerProfileResponse.setPostalCode("12345");
-        employerProfileResponse.setCity("Testville");
-        employerProfileResponse.setCountry("Testland");
-        employerProfileResponse.setBio("This is a test bio.");
-        employerProfileResponse.setBusinessId("1234567-8");
-        employerProfileResponse.setWebsiteLink("https://testcorp.com");
-        employerProfileResponse.setProfileImageUrl("https://testcorp.com/profile.jpg");
-        employerProfileResponse.setStatus(ProfileStatus.ACTIVE);
+        employerProfileResponse = new EmployerProfileResponse(
+            1L,                                   // employerProfileId
+            USER_ID,                              // userId
+            "Test",                               // firstName
+            "User",                               // lastName
+            EmployerType.COMPANY,                 // employerType
+            "123 Test St",                        // streetAddress
+            "12345",                              // postalCode
+            "Testville",                          // city
+            "Testland",                           // country
+            "This is a test bio.",                // bio
+            "Test Corp",                          // companyName
+            "1234567-8",                          // businessId
+            "https://testcorp.com",               // websiteLink
+            "https://testcorp.com/profile.jpg",   // profileImageUrl
+            false,                                // isVerified
+            null,                                 // createdAt
+            null,                                 // updatedAt
+            ProfileStatus.ACTIVE                  // status
+        );
 
-        createRequest = new EmployerProfileRequest();
-        createRequest.setFirstName("Test");
-        createRequest.setLastName("User");
-        createRequest.setCompanyName("Test Corp");
-        createRequest.setEmployerType(EmployerType.COMPANY);
-        createRequest.setStreetAddress("123 Test St");
-        createRequest.setPostalCode("12345");
-        createRequest.setCity("Testville");
-        createRequest.setCountry("Testland");
-        createRequest.setBio("This is a test bio.");
-        createRequest.setBusinessId("1234567-8");
-        createRequest.setWebsiteLink("https://testcorp.com");
-        createRequest.setProfileImageUrl("https://testcorp.com/profile.jpg");
+        createRequest = new EmployerProfileRequest(
+            null,                                 // userId
+            "Test",                               // firstName
+            "User",                               // lastName
+            EmployerType.COMPANY,                 // employerType
+            "123 Test St",                        // streetAddress
+            "12345",                              // postalCode
+            "Testville",                          // city
+            "Testland",                           // country
+            "This is a test bio.",                // bio
+            "Test Corp",                          // companyName
+            "1234567-8",                          // businessId
+            "https://testcorp.com",               // websiteLink
+            "https://testcorp.com/profile.jpg"    // profileImageUrl
+        );
 
         jwt = Jwt.withTokenValue("token")
                 .header("alg", "none")
@@ -123,7 +130,9 @@ class EmployerProfileControllerTest {
 
     @Test
     void createMyProfile_shouldReturnBadRequest_whenRequestInvalid() throws Exception {
-        EmployerProfileRequest invalidRequest = new EmployerProfileRequest(); // missing required fields
+        EmployerProfileRequest invalidRequest = new EmployerProfileRequest(
+            null, null, null, null, null, null, null, null, null, null, null, null, null
+        ); // missing required fields
 
         mockMvc.perform(post("/api/v1/employer-profiles")
                 .with(jwt().jwt(jwt))
