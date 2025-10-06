@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.jttam.glig.domain.application.Application;
-import com.jttam.glig.domain.baseclass.baseClass;
+import com.jttam.glig.domain.common.baseClass;
 import com.jttam.glig.domain.user.User;
 
 import jakarta.persistence.CascadeType;

@@ -1,4 +1,4 @@
-package com.jttam.glig.domain.baseclass;
+package com.jttam.glig.domain.common;
 
 import java.time.Instant;
 
@@ -9,7 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class baseClass {
+public abstract class baseClass {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
