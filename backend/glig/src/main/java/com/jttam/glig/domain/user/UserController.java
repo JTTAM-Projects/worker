@@ -44,7 +44,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid user data provided or user already exists"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    @PostMapping("/create")
+    @PostMapping("/me")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
@@ -60,7 +60,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "User profile to edit not found")
     })
-    @PutMapping("/edit")
+    @PutMapping("/me")
     public ResponseEntity<UserDto> editUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
@@ -75,7 +75,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "User profile to delete not found")
     })
-    @DeleteMapping("/delete")
+    @DeleteMapping("/me")
     public ResponseEntity<UserDto> deleteUser(
             @AuthenticationPrincipal Jwt jwt) {
 

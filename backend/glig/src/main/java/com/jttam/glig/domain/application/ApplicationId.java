@@ -1,16 +1,16 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import java.io.Serializable;
 
-public class ApplyId implements Serializable {
+public class ApplicationId implements Serializable {
 
     private Long task;
     private String user;
 
-    public ApplyId() {
+    public ApplicationId() {
     }
 
-    public ApplyId(Long task, String user) {
+    public ApplicationId(Long task, String user) {
         this.task = task;
         this.user = user;
     }
@@ -48,7 +48,7 @@ public class ApplyId implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ApplyId other = (ApplyId) obj;
+        ApplicationId other = (ApplicationId) obj;
         if (task == null) {
             if (other.task != null)
                 return false;

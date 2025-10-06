@@ -2,7 +2,8 @@ package com.jttam.glig.domain.user;
 
 import java.util.HashSet;
 import java.util.Set;
-import com.jttam.glig.domain.apply.Apply;
+
+import com.jttam.glig.domain.application.Application;
 import com.jttam.glig.domain.task.Task;
 
 import jakarta.persistence.CascadeType;
@@ -33,7 +34,7 @@ public class User {
     String mail = "";
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
-    private Set<Apply> applies = new HashSet<>();
+    private Set<Application> applies = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
     private Set<Task> tasks = new HashSet<>();
@@ -89,11 +90,11 @@ public class User {
         this.mail = mail;
     }
 
-    public Set<Apply> getApplies() {
+    public Set<Application> getApplies() {
         return applies;
     }
 
-    public void setApplies(Set<Apply> applies) {
+    public void setApplies(Set<Application> applies) {
         this.applies = applies;
     }
 

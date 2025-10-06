@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.jttam.glig.domain.apply.Apply;
-import com.jttam.glig.domain.apply.ApplyRepository;
+import com.jttam.glig.domain.application.Application;
+import com.jttam.glig.domain.application.ApplicationRepository;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
 import com.jttam.glig.domain.user.User;
@@ -18,17 +18,18 @@ import jakarta.transaction.Transactional;
 @Service
 public class TestDataService {
 
-    ApplyRepository applyRepository;
+    ApplicationRepository applicationRepository;
     UserRepository userRepository;
     TaskRepository taskRepository;
 
-    private ApplyTestData applyData;
+    private ApplicationTestData applyData;
     private UserTestData userData;
     private TaskTestData taskData;
 
-    public TestDataService(ApplyRepository applyRepository, UserRepository userRepository,
-            TaskRepository taskRepository, ApplyTestData applyData, UserTestData userData, TaskTestData taskData) {
-        this.applyRepository = applyRepository;
+    public TestDataService(ApplicationRepository applyRepository, UserRepository userRepository,
+            TaskRepository taskRepository, ApplicationTestData applyData, UserTestData userData,
+            TaskTestData taskData) {
+        this.applicationRepository = applyRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
         this.applyData = applyData;
@@ -39,7 +40,7 @@ public class TestDataService {
     private static final Logger logger = LoggerFactory.getLogger(TestDataService.class);
 
     public void consoleLogDataBase() {
-        applyRepository.findAll().forEach(apply -> logger.info(apply.toString()));
+        applicationRepository.findAll().forEach(apply -> logger.info(apply.toString()));
         taskRepository.findAll().forEach(task -> logger.info(task.toString()));
         userRepository.findAll().forEach(user -> logger.info(user.toString()));
     }
@@ -51,7 +52,7 @@ public class TestDataService {
 
         Map<String, User> users = userData.createTestUsers();
         Map<String, Task> tasks = taskData.createTestTasks(users);
-        Map<String, Apply> applies = applyData.createTestApplies(users, tasks);
+        Map<String, Application> applications = applyData.createTestApplications(users, tasks);
     }
 
     public void resetDataBase() {
