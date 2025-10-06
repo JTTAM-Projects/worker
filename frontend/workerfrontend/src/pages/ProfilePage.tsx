@@ -20,7 +20,7 @@ export default function ProfilePage() {
       return <div>Loading ...</div>;
   }
 
-  return isAuthenticated && (
+  return (
     <section className="bg-gray-50 min-h-screen w-full">
       <main className="container mx-auto px-6 py-12 grid gap-10">
         <UserProfileCard user={user}/>
