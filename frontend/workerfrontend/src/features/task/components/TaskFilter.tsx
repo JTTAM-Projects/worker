@@ -1,18 +1,17 @@
 import type { Category } from "../types";
 
 interface TaskFilterProps {
-  category: Category;
-  setCategory: (category: Category) => void;
+  category: Category | "all";
+  setCategory: (category: Category | "all") => void;
 }
 
 export default function TaskFilter({ category, setCategory }: TaskFilterProps) {
   const filterOptions = [
-    { id: "cleaning", icon: "cleaning_services", label: "Siivous" },
-    { id: "garden", icon: "local_florist", label: "Puutarhatyöt" },
-    { id: "tech", icon: "support_agent", label: "Tekninen apu" },
-    { id: "pets", icon: "pets", label: "Lemmikkien hoito" },
-    { id: "vehicles", icon: "local_car_wash", label: "Auton pesu" },
-    { id: "all", icon: "filter_list", label: "Kaikki" },
+    { id: "CLEANING" as const, icon: "cleaning_services", label: "Siivous" },
+    { id: "GARDEN" as const, icon: "local_florist", label: "Puutarhatyöt" },
+    { id: "MOVING" as const, icon: "local_shipping", label: "Muuttoapu" },
+    { id: "OTHER" as const, icon: "help_outline", label: "Muu" },
+    { id: "all" as const, icon: "filter_list", label: "Kaikki" },
   ] as const;
 
   return (
