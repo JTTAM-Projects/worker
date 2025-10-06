@@ -1,10 +1,10 @@
-import type { Task, PaginatedResponse, Category, TaskStatus } from '../types';
+import type { Task, PaginatedResponse, Category, TaskStatus } from "../types";
 
 // This is a file for interacting with the backend task API.
 // It uses the Fetch API to make HTTP requests.
 // GET requests are public and don't require authentication.
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = "http://localhost:8080/api";
 
 export interface FetchTasksParams {
   page?: number;
@@ -14,7 +14,9 @@ export interface FetchTasksParams {
 }
 
 // Fetch tasks with optional pagination and filtering
-export async function fetchTasks(params: FetchTasksParams = {}): Promise<PaginatedResponse<Task>> {
+export async function fetchTasks(
+  params: FetchTasksParams = {}
+): Promise<PaginatedResponse<Task>> {
   const { page = 0, size = 10, category, status } = params;
 
   const queryParams = new URLSearchParams({
@@ -23,18 +25,21 @@ export async function fetchTasks(params: FetchTasksParams = {}): Promise<Paginat
   });
 
   if (category) {
-    queryParams.append('category', category);
+    queryParams.append("category", category);
   }
 
   if (status) {
-    queryParams.append('status', status);
+    queryParams.append("status", status);
   }
 
-  const response = await fetch(`${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to fetch tasks: ${response.statusText}`);
@@ -44,18 +49,55 @@ export async function fetchTasks(params: FetchTasksParams = {}): Promise<Paginat
 }
 
 // Fetch user's own tasks (requires authentication)
-export async function fetchUserTasks(getAccessToken: () => Promise<string>): Promise<Task[]> {
+export async function fetchUserTasks(
+  getAccessToken: () => Promise<string>
+): Promise<Task[]> {
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/user-tasks`, {
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch user tasks: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export interface CreateTaskInput {
+  category: Category;
+  title: string;
+  price: number;
+  startDate: string;
+  endDate: string;
+  location: string;
+  description?: string;
+  status?: TaskStatus; // testi ei välttämättä pakollinen rivi
+}
+
+// Create a new task (requires authentication)
+export async function createTask(
+  getAccessTokenSilently: () => Promise<string>,
+  payload: CreateTaskInput
+): Promise<Task> {
+  const token = await getAccessTokenSilently();
+
+  const response = await fetch(`${API_BASE_URL}/task/create-task`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(`Failed to create task: ${response.status} ${text}`);
   }
 
   return response.json();
