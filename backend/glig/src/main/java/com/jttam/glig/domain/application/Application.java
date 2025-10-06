@@ -2,7 +2,7 @@ package com.jttam.glig.domain.application;
 
 import java.time.LocalDateTime;
 
-import com.jttam.glig.domain.baseclass.baseClass;
+import com.jttam.glig.domain.common.baseClass;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.user.User;
 

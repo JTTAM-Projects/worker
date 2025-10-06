@@ -54,14 +54,35 @@ class TaskerProfileServiceTest {
         taskerProfile.setLastName("Tasker");
         taskerProfile.setStatus(ProfileStatus.ACTIVE);
 
-        taskerProfileRequest = new TaskerProfileRequest();
-        taskerProfileRequest.setFirstName("Test");
-        taskerProfileRequest.setLastName("Tasker");
+        taskerProfileRequest = new TaskerProfileRequest(
+            "Test",
+            "Tasker",
+            "Test bio",
+            "123 Street",
+            "12345",
+            "Test City",
+            "Test Country",
+            null,
+            null
+        );
 
-        taskerProfileResponse = new TaskerProfileResponse();
-        taskerProfileResponse.setTaskerProfileId(1L);
-        taskerProfileResponse.setFirstName("Test");
-        taskerProfileResponse.setLastName("Tasker");
+        taskerProfileResponse = new TaskerProfileResponse(
+            1L,
+            userId,
+            "Test",
+            "Tasker",
+            null,
+            "Test bio",
+            "123 Street",
+            "12345",
+            "Test City",
+            "Test Country",
+            null,
+            null,
+            false,
+            null,
+            null
+        );
     }
 
     @Test
@@ -73,7 +94,7 @@ class TaskerProfileServiceTest {
         TaskerProfileResponse result = taskerProfileService.getTaskerProfile(userId);
 
         assertNotNull(result);
-        assertEquals("Test", result.getFirstName());
+        assertEquals("Test", result.firstName());
         verify(userRepository).findById(userId);
         verify(taskerProfileRepository).findByUser(user);
     }
@@ -102,7 +123,7 @@ class TaskerProfileServiceTest {
         TaskerProfileResponse result = taskerProfileService.createTaskerProfile(userId, taskerProfileRequest);
 
         assertNotNull(result);
-        assertEquals("Test", result.getFirstName());
+        assertEquals("Test", result.firstName());
         verify(taskerProfileRepository).save(any(TaskerProfile.class));
     }
 
@@ -128,7 +149,7 @@ class TaskerProfileServiceTest {
         TaskerProfileResponse result = taskerProfileService.updateTaskerProfile(userId, taskerProfileRequest);
 
         assertNotNull(result);
-        assertEquals("Test", result.getFirstName());
+        assertEquals("Test", result.firstName());
         verify(taskerProfileMapper).updateFromRequest(taskerProfileRequest, taskerProfile);
         verify(taskerProfileRepository).save(taskerProfile);
     }

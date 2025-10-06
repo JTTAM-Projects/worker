@@ -168,6 +168,12 @@ public class ApplicationTestData {
                         "Test user apply 16", ApplicationStatus.CANCELLED));
         applications.put("testApplication16", testApplication16);
 
+        // ACCEPTED application for user3 on completedTask1 (for review test data)
+        Application acceptedForCompletedTask1 = applicationRepository
+                .save(new Application(user3, completedTask1, 80, LocalDateTime.now().minusDays(5),
+                        "I can handle this!", ApplicationStatus.ACCEPTED));
+        applications.put("acceptedForCompletedTask1", acceptedForCompletedTask1);
+
         return applications;
     }
 

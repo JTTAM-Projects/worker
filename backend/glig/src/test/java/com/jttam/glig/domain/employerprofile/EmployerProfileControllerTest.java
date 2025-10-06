@@ -48,35 +48,42 @@ class EmployerProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        employerProfileResponse = new EmployerProfileResponse();
-        employerProfileResponse.setEmployerProfileId(1L);
-        employerProfileResponse.setUserId(USER_ID);
-        employerProfileResponse.setFirstName("Test");
-        employerProfileResponse.setLastName("User");
-        employerProfileResponse.setCompanyName("Test Corp");
-        employerProfileResponse.setStreetAddress("123 Test St");
-        employerProfileResponse.setPostalCode("12345");
-        employerProfileResponse.setCity("Testville");
-        employerProfileResponse.setCountry("Testland");
-        employerProfileResponse.setBio("This is a test bio.");
-        employerProfileResponse.setBusinessId("1234567-8");
-        employerProfileResponse.setWebsiteLink("https://testcorp.com");
-        employerProfileResponse.setProfileImageUrl("https://testcorp.com/profile.jpg");
-        employerProfileResponse.setStatus(ProfileStatus.ACTIVE);
+        employerProfileResponse = new EmployerProfileResponse(
+            1L,                                   // employerProfileId
+            USER_ID,                              // userId
+            "Test",                               // firstName
+            "User",                               // lastName
+            EmployerType.COMPANY,                 // employerType
+            "123 Test St",                        // streetAddress
+            "12345",                              // postalCode
+            "Testville",                          // city
+            "Testland",                           // country
+            "This is a test bio.",                // bio
+            "Test Corp",                          // companyName
+            "1234567-8",                          // businessId
+            "https://testcorp.com",               // websiteLink
+            "https://testcorp.com/profile.jpg",   // profileImageUrl
+            false,                                // isVerified
+            null,                                 // createdAt
+            null,                                 // updatedAt
+            ProfileStatus.ACTIVE                  // status
+        );
 
-        createRequest = new EmployerProfileRequest();
-        createRequest.setFirstName("Test");
-        createRequest.setLastName("User");
-        createRequest.setCompanyName("Test Corp");
-        createRequest.setEmployerType(EmployerType.COMPANY);
-        createRequest.setStreetAddress("123 Test St");
-        createRequest.setPostalCode("12345");
-        createRequest.setCity("Testville");
-        createRequest.setCountry("Testland");
-        createRequest.setBio("This is a test bio.");
-        createRequest.setBusinessId("1234567-8");
-        createRequest.setWebsiteLink("https://testcorp.com");
-        createRequest.setProfileImageUrl("https://testcorp.com/profile.jpg");
+        createRequest = new EmployerProfileRequest(
+            null,                                 // userId
+            "Test",                               // firstName
+            "User",                               // lastName
+            EmployerType.COMPANY,                 // employerType
+            "123 Test St",                        // streetAddress
+            "12345",                              // postalCode
+            "Testville",                          // city
+            "Testland",                           // country
+            "This is a test bio.",                // bio
+            "Test Corp",                          // companyName
+            "1234567-8",                          // businessId
+            "https://testcorp.com",               // websiteLink
+            "https://testcorp.com/profile.jpg"    // profileImageUrl
+        );
 
         jwt = Jwt.withTokenValue("token")
                 .header("alg", "none")
@@ -88,7 +95,7 @@ class EmployerProfileControllerTest {
     void getMyProfile_shouldReturnProfile_whenFound() throws Exception {
         given(employerProfileService.getEmployerProfile(USER_ID)).willReturn(employerProfileResponse);
 
-        mockMvc.perform(get("/api/v1/employer-profiles/me")
+        mockMvc.perform(get("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -101,7 +108,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.getEmployerProfile(USER_ID))
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(get("/api/v1/employer-profiles/me")
+        mockMvc.perform(get("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt)))
                 .andExpect(status().isNotFound());
     }
@@ -111,7 +118,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.createEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willReturn(employerProfileResponse);
 
-        mockMvc.perform(post("/api/v1/employer-profiles")
+        mockMvc.perform(post("/api/employer-profiles")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,9 +130,11 @@ class EmployerProfileControllerTest {
 
     @Test
     void createMyProfile_shouldReturnBadRequest_whenRequestInvalid() throws Exception {
-        EmployerProfileRequest invalidRequest = new EmployerProfileRequest(); // missing required fields
+        EmployerProfileRequest invalidRequest = new EmployerProfileRequest(
+            null, null, null, null, null, null, null, null, null, null, null, null, null
+        ); // missing required fields
 
-        mockMvc.perform(post("/api/v1/employer-profiles")
+        mockMvc.perform(post("/api/employer-profiles")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +147,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willReturn(employerProfileResponse);
 
-        mockMvc.perform(put("/api/v1/employer-profiles/me")
+        mockMvc.perform(put("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +162,7 @@ class EmployerProfileControllerTest {
         given(employerProfileService.updateEmployerProfile(anyString(), any(EmployerProfileRequest.class)))
                 .willThrow(new NotFoundException("NOT_FOUND", "Profile not found"));
 
-        mockMvc.perform(put("/api/v1/employer-profiles/me")
+        mockMvc.perform(put("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +174,7 @@ class EmployerProfileControllerTest {
     void deleteMyProfile_shouldReturnNoContent_whenSuccessful() throws Exception {
         doNothing().when(employerProfileService).deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/v1/employer-profiles/me")
+        mockMvc.perform(delete("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -178,7 +187,7 @@ class EmployerProfileControllerTest {
         doThrow(new NotFoundException("NOT_FOUND", "Profile not found")).when(employerProfileService)
                 .deleteEmployerProfile(USER_ID);
 
-        mockMvc.perform(delete("/api/v1/employer-profiles/me")
+        mockMvc.perform(delete("/api/employer-profiles/me")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isNotFound());

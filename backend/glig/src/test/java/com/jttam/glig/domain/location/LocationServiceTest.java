@@ -39,9 +39,15 @@ class LocationServiceTest {
         location.setLocationId(LOCATION_ID);
         location.setCity("Helsinki");
 
-        locationResponse = new LocationResponse();
-        locationResponse.setLocationId(LOCATION_ID);
-        locationResponse.setCity("Helsinki");
+        locationResponse = new LocationResponse(
+            LOCATION_ID,        // locationId
+            null,               // streetAddress
+            null,               // postalCode
+            "Helsinki",         // city
+            null,               // country
+            null,               // latitude
+            null                // longitude
+        );
     }
 
     @Test
@@ -55,8 +61,8 @@ class LocationServiceTest {
 
         // Then: We assert that the result is correct
         assertThat(result).isNotNull();
-        assertThat(result.getLocationId()).isEqualTo(LOCATION_ID);
-        assertThat(result.getCity()).isEqualTo("Helsinki");
+        assertThat(result.locationId()).isEqualTo(LOCATION_ID);
+        assertThat(result.city()).isEqualTo("Helsinki");
 
         // And verify that the dependencies were called
         verify(locationRepository).findById(LOCATION_ID);

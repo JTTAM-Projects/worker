@@ -56,18 +56,42 @@ class EmployerProfileServiceTest {
         employerProfile.setCountry("Testland");
         employerProfile.setStatus(ProfileStatus.ACTIVE);
 
-        createRequest = new EmployerProfileRequest();
-        createRequest.setCompanyName("Test Corp");
-        createRequest.setStreetAddress("123 Test St");
-        createRequest.setCity("Testville");
-        createRequest.setCountry("Testland");
+        createRequest = new EmployerProfileRequest(
+            null,
+            "John",
+            "Doe",
+            EmployerType.COMPANY,
+            "123 Test St",
+            "12345",
+            "Testville",
+            "Testland",
+            "Test bio",
+            "Test Corp",
+            "123456789",
+            null,
+            null
+        );
 
-        employerProfileResponse = new EmployerProfileResponse();
-        employerProfileResponse.setEmployerProfileId(1L);
-        employerProfileResponse.setCompanyName("Test Corp");
-        employerProfileResponse.setStreetAddress("123 Test St");
-        employerProfileResponse.setCity("Testville");
-        employerProfileResponse.setCountry("Testland");
+        employerProfileResponse = new EmployerProfileResponse(
+            1L,
+            userId,
+            "John",
+            "Doe",
+            EmployerType.COMPANY,
+            "123 Test St",
+            "12345",
+            "Testville",
+            "Testland",
+            "Test bio",
+            "Test Corp",
+            "123456789",
+            null,
+            null,
+            false,
+            null,
+            null,
+            ProfileStatus.ACTIVE
+        );
     }
 
     @Test
@@ -79,8 +103,8 @@ class EmployerProfileServiceTest {
         EmployerProfileResponse result = employerProfileService.getEmployerProfile(userId);
 
         assertNotNull(result);
-        assertEquals("Test Corp", result.getCompanyName());
-        assertEquals("123 Test St", result.getStreetAddress());
+        assertEquals("Test Corp", result.companyName());
+        assertEquals("123 Test St", result.streetAddress());
         verify(userRepository).findById(userId);
         verify(employerProfileRepository).findByUser(user);
     }
@@ -109,8 +133,8 @@ class EmployerProfileServiceTest {
         EmployerProfileResponse result = employerProfileService.createEmployerProfile(userId, createRequest);
 
         assertNotNull(result);
-        assertEquals("Test Corp", result.getCompanyName());
-        assertEquals("123 Test St", result.getStreetAddress());
+        assertEquals("Test Corp", result.companyName());
+        assertEquals("123 Test St", result.streetAddress());
         verify(employerProfileRepository).save(any(EmployerProfile.class));
     }
 
@@ -136,8 +160,8 @@ class EmployerProfileServiceTest {
         EmployerProfileResponse result = employerProfileService.updateEmployerProfile(userId, createRequest);
 
         assertNotNull(result);
-        assertEquals("Test Corp", result.getCompanyName());
-        assertEquals("123 Test St", result.getStreetAddress());
+        assertEquals("Test Corp", result.companyName());
+        assertEquals("123 Test St", result.streetAddress());
         verify(employerProfileMapper).updateFromRequest(createRequest, employerProfile);
         verify(employerProfileRepository).save(employerProfile);
     }

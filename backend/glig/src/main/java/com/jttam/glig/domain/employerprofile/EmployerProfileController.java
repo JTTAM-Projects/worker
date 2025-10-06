@@ -12,7 +12,7 @@ import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/employer-profiles")
+@RequestMapping("/api/employer-profiles")
 public class EmployerProfileController {
 
     private final EmployerProfileService employerProfileService;

@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TaskerProfileMapper {
 
     @Mapping(target = "taskerProfileId", ignore = true)
@@ -21,6 +21,7 @@ public interface TaskerProfileMapper {
     TaskerProfile toEntity(TaskerProfileRequest request);
 
     @Mapping(target = "userId", source = "user.userName")
+    @Mapping(target = "isVerified", source = "verified")
     TaskerProfileResponse toResponse(TaskerProfile taskerProfile);
 
     @Mapping(target = "taskerProfileId", ignore = true)
