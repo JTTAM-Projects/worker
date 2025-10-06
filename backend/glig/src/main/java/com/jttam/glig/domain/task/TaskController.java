@@ -72,7 +72,7 @@ public class TaskController {
             @ApiResponse(responseCode = "400", description = "Invalid task data provided"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    @PostMapping("/create-task")
+    @PostMapping
     public ResponseEntity<TaskDto> createTask(@Valid @RequestBody TaskDto taskDto, BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
@@ -89,7 +89,7 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Forbidden, user is not the owner of the task"),
             @ApiResponse(responseCode = "404", description = "Task to edit not found")
     })
-    @PutMapping("/{taskId}/edit")
+    @PutMapping("/{taskId}")
     public ResponseEntity<TaskDto> editTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
@@ -106,7 +106,7 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Forbidden, user is not the owner of the task"),
             @ApiResponse(responseCode = "404", description = "Task to delete not found")
     })
-    @DeleteMapping("/{taskId}/delete")
+    @DeleteMapping("/{taskId}")
     public ResponseEntity<Message> deleteTask(@PathVariable Long taskId,
             @AuthenticationPrincipal Jwt jwt) {
 

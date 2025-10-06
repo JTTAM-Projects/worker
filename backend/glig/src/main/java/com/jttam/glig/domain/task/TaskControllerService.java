@@ -58,9 +58,17 @@ public class TaskControllerService {
     public ResponseEntity<TaskDto> tryCreateNewTask(TaskDto taskDto, String username) {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found"));
+
         Task task = mapper.toTaskEntity(taskDto);
         task.setUser(user);
-        return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
+
+        if (task.getStatus() == null) {
+            task.setStatus(TaskStatus.ACTIVE);
+        }
+
+        Task saved = taskRepository.save(task);
+        TaskDto out = mapper.toTaskDto(saved);
+        return new ResponseEntity<>(out, HttpStatus.CREATED);
     }
 
     @Transactional

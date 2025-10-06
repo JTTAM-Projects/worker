@@ -22,6 +22,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/task/**").permitAll()
                         .requestMatchers("/api/task/user-tasks").authenticated()
                         .requestMatchers("GET", "/api/task/**").permitAll()
                         .anyRequest().authenticated())

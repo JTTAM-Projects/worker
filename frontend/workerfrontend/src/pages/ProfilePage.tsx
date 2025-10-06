@@ -7,8 +7,8 @@ import { useUserTasks } from "../features/task/hooks/useUserTasks";
 import UserProfileContactInfo from "../features/Profile/components/UserProfileContactInfo";
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
-  const { data: userTasksData, error } = useUserTasks();
+  const { user } = useAuth0();
+  const { data: userTasksData, isLoading, error } = useUserTasks();
   
   // Get user tasks from backend, filters only ACTIVE tasks
   const activeUserTasks = (userTasksData || []).filter(

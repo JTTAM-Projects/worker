@@ -6,6 +6,7 @@ import TaskerPromoCard from "../features/task/components/TaskerPromoCard";
 import type { Category } from "../features/task/types";
 import { useTasks } from "../features/task/hooks/useTasks";
 import { Link } from "react-router-dom";
+import CreateTask from "../features/task/components/CreateTask";
 
 export default function LandingPage() {
   const [category, setCategory] = useState<Category | "all">("all");
@@ -31,15 +32,19 @@ export default function LandingPage() {
           päivittäisten asioiden hoitamiseen. Luo tehtävä ja aloita heti.
         </p>
         <div className="mt-8 flex justify-center space-x-4 flex-wrap">
-          <Link
-            to="/tasks/create"
-            className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 font-medium"
-          >
-            Luo tehtävä
-          </Link>
+          <CreateTask>
+            <Link
+              to="#"
+              onClick={(e) => e.preventDefault()}
+              className="inline-flex h-12 w-44 items-center justify-center rounded-md bg-green-500 text-white hover:bg-green-600 font-medium"
+            >
+              Luo tehtävä
+            </Link>
+          </CreateTask>
+
           <Link
             to="/tasks"
-            className="bg-white border border-gray-300 px-6 py-3 rounded-md hover:bg-gray-100 hover:border-green-400 font-medium"
+            className="inline-flex h-12 w-44 items-center justify-center rounded-md bg-white border border-gray-300 hover:bg-gray-100 hover:border-green-400 font-medium"
           >
             Selaa tehtäviä
           </Link>
