@@ -17,6 +17,8 @@ import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
 import com.jttam.glig.service.Specifications;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ApplyControllerService {
 
@@ -33,6 +35,7 @@ public class ApplyControllerService {
         this.mapper = mapper;
     }
 
+    @Transactional
     public ApplyDto tryGetSingleApplyDtoById(Long taskId, String username) {
         ApplyId applyId = new ApplyId(taskId, username);
         Apply apply = applyRepository.findById(applyId)
@@ -42,6 +45,7 @@ public class ApplyControllerService {
         return applyDto;
     }
 
+    @Transactional
     public Page<ApplyListDTO> tryGetAllUserApplies(Pageable pageable, ApplyDataGridFilters filters,
             String username) {
         Specification<Apply> spec = Specifications.withApplyFilters(filters, username);
@@ -50,6 +54,7 @@ public class ApplyControllerService {
         return listOfApplyDto;
     }
 
+    @Transactional
     public ResponseEntity<?> tryCreateNewApplyForTask(Long taskId, ApplyDto applyDto, String username) {
         ApplyId applyId = new ApplyId(taskId, username);
         Optional<Apply> apply = applyRepository.findById(applyId);
@@ -61,19 +66,14 @@ public class ApplyControllerService {
         Task task = taskRepository.getReferenceById(taskId);
         User user = userRepository.getReferenceById(username);
 
-        if (user != null) {
-            if (task != null) {
-                Apply newApply = mapper.toApplyEntity(applyDto);
-                newApply.setUser(user);
-                newApply.setTask(task);
-                applyRepository.save(newApply);
-                return new ResponseEntity<>(applyDto, HttpStatus.CREATED);
-            }
-            throw new NotFoundException("TASK_NOT_FOUND", "Cannot find task by given taskId");
-        }
-        throw new NotFoundException("USER_NOT_FOUND", "Cannot find user for given username in jwt");
+        Apply newApply = mapper.toApplyEntity(applyDto);
+        newApply.setUser(user);
+        newApply.setTask(task);
+        applyRepository.save(newApply);
+        return new ResponseEntity<>(applyDto, HttpStatus.CREATED);
     }
 
+    @Transactional
     public ResponseEntity<ApplyDto> tryEditApply(Long taskId, ApplyDto applyDto, String username) {
         ApplyId applyId = new ApplyId(taskId, username);
         Apply apply = applyRepository.findById(applyId)
@@ -83,6 +83,7 @@ public class ApplyControllerService {
         return new ResponseEntity<>(applyDto, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Message> tryDeleteApply(Long taskId, String username) {
         ApplyId applyId = new ApplyId(taskId, username);
         if (!applyRepository.existsById(applyId)) {

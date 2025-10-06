@@ -1,66 +1,82 @@
 package com.jttam.glig.domain.employerprofile;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jttam.glig.domain.user.User;
+import com.jttam.glig.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
+import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
-import com.jttam.glig.service.GlobalServiceMethods;
 
 @Service
 public class EmployerProfileService {
 
     private final EmployerProfileRepository employerProfileRepository;
     private final EmployerProfileMapper employerProfileMapper;
+    private final UserRepository userRepository;
 
-    @Autowired
     public EmployerProfileService(
             EmployerProfileRepository employerProfileRepository,
             EmployerProfileMapper employerProfileMapper,
-            GlobalServiceMethods globalServiceMethods) {
+            UserRepository userRepository) {
         this.employerProfileRepository = employerProfileRepository;
         this.employerProfileMapper = employerProfileMapper;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
     public EmployerProfileResponse getEmployerProfile(String userId) {
-        EmployerProfile employerProfile = employerProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
-        return employerProfileMapper.toEmployerProfileResponse(employerProfile);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
+
+        EmployerProfile employerProfile = employerProfileRepository.findByUser(user)
+                .orElseThrow(() -> new NotFoundException("NOT_FOUND",
+                        "Employer profile not found for user."));
+        return employerProfileMapper.toResponse(employerProfile);
     }
 
     @Transactional
-    public EmployerProfileResponse createEmployerProfile(CreateEmployerProfileRequest request, String userId) {
-        employerProfileRepository.findByUserId(userId).ifPresent(profile -> {
+    public EmployerProfileResponse createEmployerProfile(String userId, EmployerProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
+
+        employerProfileRepository.findByUser(user).ifPresent(profile -> {
             throw new IllegalStateException("User already has an employer profile.");
         });
 
-        EmployerProfile newProfile = employerProfileMapper.toEmployerProfile(request);
-        newProfile.setUserId(userId);
+        EmployerProfile newProfile = employerProfileMapper.toEntity(request);
+        newProfile.setUser(user);
 
         EmployerProfile savedProfile = employerProfileRepository.save(newProfile);
-        return employerProfileMapper.toEmployerProfileResponse(savedProfile);
+        return employerProfileMapper.toResponse(savedProfile);
     }
 
     @Transactional
-    public EmployerProfileResponse updateEmployerProfile(CreateEmployerProfileRequest request, String userId) {
-        EmployerProfile existingProfile = employerProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
+    public EmployerProfileResponse updateEmployerProfile(String userId, EmployerProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
 
-        employerProfileMapper.updateEmployerProfileFromDto(request, existingProfile);
+        EmployerProfile existingProfile = employerProfileRepository.findByUser(user)
+                .orElseThrow(() -> new NotFoundException("NOT_FOUND",
+                        "Employer profile not found for user."));
+
+        employerProfileMapper.updateFromRequest(request, existingProfile);
 
         EmployerProfile updatedProfile = employerProfileRepository.save(existingProfile);
-        return employerProfileMapper.toEmployerProfileResponse(updatedProfile);
+        return employerProfileMapper.toResponse(updatedProfile);
     }
 
     @Transactional
     public void deleteEmployerProfile(String userId) {
-        EmployerProfile employerProfile = employerProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("NOT_FOUND", "Employer profile not found for user."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
 
-        employerProfile.setStatus(ProfileStatus.DELETED);
+        EmployerProfile employerProfile = employerProfileRepository.findByUser(user)
+                .orElseThrow(() -> new NotFoundException("NOT_FOUND",
+                        "Employer profile not found for user."));
+
+        employerProfile.setStatus(com.jttam.glig.domain.common.ProfileStatus.DELETED);
         employerProfileRepository.save(employerProfile);
     }
 }

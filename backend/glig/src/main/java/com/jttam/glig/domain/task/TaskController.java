@@ -2,6 +2,10 @@ package com.jttam.glig.domain.task;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/task")
@@ -39,13 +44,24 @@ public class TaskController {
         return service.tryGetSingleTaskDtoById(taskId);
     }
 
+    @Operation(summary = "Get all tasks", description = "Fetches all tasks depending on given filters and sorting parameters via query.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All tasks fetched succesfully")
+    })
+    @GetMapping("/all-tasks")
+    public Page<TaskListDTO> getAllTasks(
+            @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
+            TaskDataGridFilters filters) {
+        return service.tryGetAllTaskByGivenFiltersAndSorts(pageable, filters);
+    }
+
     @Operation(summary = "Get all tasks for the authenticated user", description = "Fetches all tasks for the currently authenticated user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks fetched successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/user-tasks")
-    public List<TaskDto> getAllUserTasks(@AuthenticationPrincipal Jwt jwt) {
+    public List<TaskListDTO> getAllUserTasks(@AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
         return service.tryGetAllUserTasks(username);
     }

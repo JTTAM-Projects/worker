@@ -6,13 +6,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
+import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/employer-profiles")
+@RequestMapping("/api/v1/employer-profiles")
 public class EmployerProfileController {
 
     private final EmployerProfileService employerProfileService;
@@ -23,31 +23,31 @@ public class EmployerProfileController {
 
     @GetMapping("/me")
     public ResponseEntity<EmployerProfileResponse> getMyProfile(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getSubject();
-        EmployerProfileResponse response = employerProfileService.getEmployerProfile(userId);
+        EmployerProfileResponse response = employerProfileService.getEmployerProfile(getUserId(jwt));
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<EmployerProfileResponse> createProfile(
-            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> createProfile(@Valid @RequestBody EmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
-        EmployerProfileResponse response = employerProfileService.createEmployerProfile(request, userId);
+        EmployerProfileResponse response = employerProfileService.createEmployerProfile(userId, request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/me")
-    public ResponseEntity<EmployerProfileResponse> updateMyProfile(
-            @Valid @RequestBody CreateEmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<EmployerProfileResponse> updateMyProfile(@Valid @RequestBody EmployerProfileRequest request, @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
-        EmployerProfileResponse response = employerProfileService.updateEmployerProfile(request, userId);
+        EmployerProfileResponse response = employerProfileService.updateEmployerProfile(userId, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteMyProfile(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getSubject();
-        employerProfileService.deleteEmployerProfile(userId);
+        employerProfileService.deleteEmployerProfile(getUserId(jwt));
         return ResponseEntity.noContent().build();
+    }
+
+    private String getUserId(Jwt jwt) {
+        return jwt.getSubject();
     }
 }

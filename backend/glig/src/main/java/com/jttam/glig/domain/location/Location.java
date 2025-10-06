@@ -35,6 +35,19 @@ public class Location {
     @Column(name = "longitude", precision = 9, scale = 7)
     private BigDecimal longitude;
 
+    public Location() {
+    }
+
+    public Location(String streetAddress, String postalCode, String city, String country, BigDecimal latitude,
+            BigDecimal longitude) {
+        this.streetAddress = streetAddress;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     // --- Getters and Setters ---
 
     public Integer getLocationId() {

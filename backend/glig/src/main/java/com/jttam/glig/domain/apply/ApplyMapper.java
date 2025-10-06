@@ -18,6 +18,7 @@ public interface ApplyMapper {
 
     @Mapping(target = "category", source = "task.category")
     @Mapping(target = "taskTitle", source = "task.title")
+    @Mapping(target = "user", source = "task.user")
     ApplyListDTO toApplyListDTO(Apply apply);
 
     @Mapping(target = "createdAt", ignore = true)

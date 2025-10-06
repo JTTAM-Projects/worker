@@ -1,29 +1,32 @@
 package com.jttam.glig.domain.employerprofile;
 
-import com.jttam.glig.domain.employerprofile.dto.CreateEmployerProfileRequest;
+import com.jttam.glig.domain.employerprofile.dto.EmployerProfileRequest;
 import com.jttam.glig.domain.employerprofile.dto.EmployerProfileResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface EmployerProfileMapper {
-
-    EmployerProfileResponse toEmployerProfileResponse(EmployerProfile employerProfile);
-
+    @Mapping(target = "userId", source = "user.userName")
+    EmployerProfileResponse toResponse(EmployerProfile employerProfile);
+    
     @Mapping(target = "employerProfileId", ignore = true)
-    @Mapping(target = "userId", ignore = true) // Keep ignoring userId from the request DTO
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "status", ignore = true)
-    EmployerProfile toEmployerProfile(CreateEmployerProfileRequest request);
-
+    @Mapping(target = "deletedAt", ignore = true)
+    EmployerProfile toEntity(EmployerProfileRequest request);
+    
     @Mapping(target = "employerProfileId", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "status", ignore = true)
-    void updateEmployerProfileFromDto(CreateEmployerProfileRequest dto, @MappingTarget EmployerProfile employerProfile);
+    @Mapping(target = "deletedAt", ignore = true)
+    void updateFromRequest(EmployerProfileRequest request, @MappingTarget EmployerProfile employerProfile);
 }
