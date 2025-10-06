@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.jttam.glig.domain.apply.Apply;
+import com.jttam.glig.domain.application.Application;
 import com.jttam.glig.domain.baseclass.baseClass;
 import com.jttam.glig.domain.user.User;
 
@@ -60,7 +60,7 @@ public class Task extends baseClass {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = false)
-    private Set<Apply> applies = new HashSet<>();
+    private Set<Application> applies = new HashSet<>();
 
     public Task() {
     }
@@ -158,11 +158,11 @@ public class Task extends baseClass {
         this.user = user;
     }
 
-    public Set<Apply> getApplies() {
+    public Set<Application> getApplies() {
         return applies;
     }
 
-    public void setApplies(Set<Apply> applies) {
+    public void setApplies(Set<Application> applies) {
         this.applies = applies;
     }
 

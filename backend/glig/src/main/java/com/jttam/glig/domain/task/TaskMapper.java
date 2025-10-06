@@ -8,10 +8,10 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import com.jttam.glig.domain.apply.ApplyMapper;
+import com.jttam.glig.domain.application.ApplicationMapper;
 import com.jttam.glig.domain.user.UserMapper;
 
-@Mapper(componentModel = "spring", uses = { UserMapper.class, ApplyMapper.class })
+@Mapper(componentModel = "spring", uses = { UserMapper.class, ApplicationMapper.class })
 public interface TaskMapper {
 
     TaskDto toTaskDto(Task task);

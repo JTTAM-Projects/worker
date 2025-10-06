@@ -1,8 +1,8 @@
-package com.jttam.glig.domain.apply;
+package com.jttam.glig.domain.application;
 
 import org.junit.jupiter.api.Test;
 
-public class ApplyControllerTest {
+public class ApplicationControllerTest {
     @Test
     void testCreateApplyForTask() {
 
