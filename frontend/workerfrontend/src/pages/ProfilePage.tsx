@@ -5,6 +5,7 @@ import UserProfileCard from "../features/Profile/components/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
 import { useUserTasks } from "../features/task/hooks/useUserTasks";
 import UserProfileContactInfo from "../features/Profile/components/UserProfileContactInfo";
+import EmployerDetails from "../features/Profile/components/EmployerDetails";
 
 export default function ProfilePage() {
   const { user } = useAuth0();
@@ -24,6 +25,7 @@ export default function ProfilePage() {
     <section className="bg-gray-50 min-h-screen w-full">
       <main className="container mx-auto px-6 py-12 grid gap-10">
         <UserProfileCard user={user}/>
+        {/*<EmployerDetails />  TODO: Fix apicalls*/}
         <ProfileAboutSection />
         <ProfileSkillsSection />
         <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>

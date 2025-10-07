@@ -25,7 +25,6 @@ export interface TaskerProfile {
 }
 
 export interface EmployerProfile {
-    employerProfileId: number,
     userId: string,
     firstName: string,
     lastName: string,
@@ -36,12 +35,9 @@ export interface EmployerProfile {
     country: string,    
     bio: string,
     companyName: string,
+    businessId: string,
     websiteLink: string,
     profileImageUrl: string,
-    createdAt: Date,
-    updatedAt: Date,
-    status: string,
-    verified: boolean
 }
 
 export interface Auth0User{

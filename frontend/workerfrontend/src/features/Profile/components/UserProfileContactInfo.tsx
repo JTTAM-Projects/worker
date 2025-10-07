@@ -16,16 +16,16 @@ export default function UserProfileContactInfo({ user }: UserProfileContactInfoP
                 </p>
             </div>
             <div>
-                <h3 className="text-sm font-medium text-gray-500">Y-tunnus</h3>
-                <p className="mt-1 text-gray-800">{userDetails?.businessId || "Puhelinnumeroa ei löytynyt"}</p>
-            </div>
-            <div>
                 <h3 className="text-sm font-medium text-gray-500">Puhelinnumero</h3>
                 <p className="mt-1 text-gray-800">{userDetails?.phoneNumber || "Puhelinnumeroa ei löytynyt"}</p>
             </div>
             <div>
                 <h3 className="text-sm font-medium text-gray-500">Osoite</h3>
                 <p className="mt-1 text-gray-800">{userDetails?.address || "Osoitetta ei löytynt"}</p>
+            </div>
+            <div>
+                <h3 className="text-sm font-medium text-gray-500">Y-tunnus</h3>
+                <p className="mt-1 text-gray-800">{userDetails?.businessId || "Osoitetta ei löytynt"}</p>
             </div>
             </div>
     );
