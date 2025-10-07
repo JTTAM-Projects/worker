@@ -7,9 +7,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EmployerProfileMapper {
     @Mapping(target = "userId", source = "user.userName")
+    @Mapping(target = "isVerified", source = "verified")
     EmployerProfileResponse toResponse(EmployerProfile employerProfile);
     
     @Mapping(target = "employerProfileId", ignore = true)
