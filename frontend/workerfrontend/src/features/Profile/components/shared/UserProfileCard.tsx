@@ -1,8 +1,9 @@
 import type { User } from "@auth0/auth0-react";
-import { useGetUserDetails } from "../hooks/userHooks";
-import UserDetailsEditForm from "./userDetailsEditForm";
+import { useGetUserDetails } from "../../hooks/userHooks";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import EmployerDetailsEditForm from "../employer/employerDetailsEditForm";
+import UserDetailsEditForm from "../userDetailsEditForm";
 
 interface UserProfileCardProps {
   user: User | undefined;
@@ -56,7 +57,7 @@ export default function UserProfileCard({ user }: UserProfileCardProps) {
         </div>
       </div>
       {isEditModeOn && (
-                <UserDetailsEditForm 
+                <EmployerDetailsEditForm 
                     initialValues={userDetails}
                     onSuccess={() => {
                         setIsEditModeOn(false);

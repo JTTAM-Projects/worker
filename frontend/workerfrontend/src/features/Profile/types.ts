@@ -25,6 +25,7 @@ export interface TaskerProfile {
 }
 
 export interface EmployerProfile {
+    //employerProfileId: number,
     userId: string,
     firstName: string,
     lastName: string,

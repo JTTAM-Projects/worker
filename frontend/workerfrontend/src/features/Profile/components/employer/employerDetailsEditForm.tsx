@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form';
-import { useUpdateUser } from '../hooks/userHooks';
-import { useCreateEmployerProfile, useGetEmployerProfile, useUpdateEmployer } from '../hooks/EmployerHooks'
-import type { User, EmployerProfile } from '../types';
+import { useUpdateUser } from '../../hooks/userHooks';
+import { useCreateEmployerProfile, useGetEmployerProfile, useUpdateEmployer } from '../../hooks/EmployerHooks'
+import type { User, EmployerProfile } from '../../types';
 import { useAuth0 } from '@auth0/auth0-react';
 
 
@@ -62,31 +62,46 @@ export default function EmployerDetailsEditForm({
           country: value.country, 
           bio: value.bio,
           companyName: value.companyName, 
-          businessId: value.businessId, 
+          companyBusinessId: value.businessId,
           websiteLink: value.websiteLink,
-          profileImageUrl: 'test',
+          profileImageUrl: value.profileImageUrl,
         }
 
         const employerToCreate = {
-          userId: user?.sub || '',
-          firstName: value.firstName, 
-          lastName: value.lastName, 
-          employerType: "INDIVIDUAL", 
-          streetAddress: value.streetAddress, 
-          postalCode: value.postalCode, 
-          city: value.city, 
-          country: value.country, 
+          employerProfileId: '', // or generate a new ID if needed
+          userId: user?.sub || '',  // Auth0 user ID
+          firstName: value.firstName,
+          lastName: value.lastName,
+          employerType: "INDIVIDUAL",  // Hardcoded as per requirement
+          streetAddress: value.streetAddress,
+          postalCode: value.postalCode,
+          city: value.city,
+          country: value.country,
           bio: value.bio || '',
-          companyName: value.companyName, 
-          businessId: value.businessId, 
+          companyName: value.companyName,
+          businessId: value.businessId,
           websiteLink: value.websiteLink || '',
-          profileImageUrl: value.profileImageUrl || ''
-        }
+          profileImageUrl: value.profileImageUrl || '',
+        };
 
         if (employerProfile) {
           await updateEmployer(employerUpdate);
         }else {
-          await createEmployer(employerToCreate);
+            await createEmployer(employerToCreate/* {
+            userId: employerToCreate.userId,
+            firstName: employerToCreate.firstName,
+            lastName: employerToCreate.lastName,
+            employerType: employerToCreate.employerType,
+            streetAddress: employerToCreate.streetAddress,
+            postalCode: employerToCreate.postalCode,
+            city: employerToCreate.city,
+            country: employerToCreate.country,
+            bio: employerToCreate.bio,
+            companyName: employerToCreate.companyName,
+            businessId: employerToCreate.businessId,
+            websiteLink: employerToCreate.websiteLink,
+            profileImageUrl: employerToCreate.profileImageUrl
+            } */);
         }
 
         await updateUser(userUpdate);
@@ -180,14 +195,13 @@ export default function EmployerDetailsEditForm({
                     />
                   </div>
                 )}
-              />
-              <h3 className="text-lg font-medium text-gray-900">Yrityksesi tiedot</h3>
+              />              
               <form.Field
-                name="companyName"
+                name="businessId"
                 children={(field) => (
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Yrityksen nimi
+                      Henkilökohtainen Y-tunnuksesi
                     </label>
                     <input
                       type="text"
@@ -198,13 +212,13 @@ export default function EmployerDetailsEditForm({
                   </div>
                 )}
               />
-
+              <h3 className="text-lg font-medium text-gray-900">Yrityksesi tiedot</h3>
               <form.Field
-                name="businessId"
+                name="companyName"
                 children={(field) => (
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Y-tunnus
+                      Yrityksen nimi
                     </label>
                     <input
                       type="text"
@@ -323,7 +337,7 @@ export default function EmployerDetailsEditForm({
                 children={(field) => (
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Y-tunnus
+                      Yrityksesi Y-tunnus
                     </label>
                     <input
                       type="text"

@@ -7,7 +7,7 @@ export function useGetEmployerProfile() {
     const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
 
     return useQuery({
-        queryKey: ['employerDetails', user?.sub],
+        queryKey: ['employerDetails'],
         queryFn: () => getEmployerProfile(getAccessTokenSilently),
         enabled: isAuthenticated
     });

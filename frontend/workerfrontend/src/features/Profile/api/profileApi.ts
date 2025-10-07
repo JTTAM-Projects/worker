@@ -24,7 +24,7 @@ export async function getUser(getAccessToken: () => Promise<string>, userName : 
 export async function getTaskerProfile(getAccessToken: () => Promise<string>): Promise<TaskerProfile> {
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_BASE_URL}/v1/tasker-profiles/me`, {
+    const response = await fetch(`${API_BASE_URL}/tasker-profiles/me`, {
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
@@ -32,23 +32,31 @@ export async function getTaskerProfile(getAccessToken: () => Promise<string>): P
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to fetch tasker profile: ${response.statusText}`);
     }
 
     return response.json();
 }
 
-export async function getEmployerProfile(getAccessToken: () => Promise<string>): Promise<EmployerProfile> {
+export async function getEmployerProfile(getAccessToken: () => Promise<string>): Promise<EmployerProfile | null> {
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_BASE_URL}/v1/employer-profiles/me`, {
+    const response = await fetch(`${API_BASE_URL}/employer-profiles/me`, {
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
         },
     });
 
+    if (response.status === 404) {
+        return null;
+    }
+
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to fetch employer profile: ${response.statusText}`);
     }
 
@@ -72,6 +80,8 @@ export async function createUser(
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to fetch profile: ${response.statusText}`);
     }
 
@@ -80,20 +90,35 @@ export async function createUser(
 
 export async function createEmployerProfile(
     getAccessToken: () => Promise<string>,
-    employerData: EmployerProfile
+    employerData: Partial<EmployerProfile>
 ): Promise<EmployerProfile>{
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_BASE_URL}/v1/employer-profiles`, {
+    const formattedData = {
+        ...employerData,
+        websiteLink: employerData.websiteLink 
+            ? employerData.websiteLink.startsWith('http') 
+                ? employerData.websiteLink 
+                : `https://${employerData.websiteLink}`
+            : '',
+        profileImageUrl: employerData.profileImageUrl
+            ? employerData.profileImageUrl.startsWith('http')
+                ? employerData.profileImageUrl
+                : `https://${employerData.profileImageUrl}`
+            : ''
+    };
+    const response = await fetch(`${API_BASE_URL}/employer-profiles`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(employerData)
+        body: JSON.stringify(formattedData)
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to fetch profile: ${response.statusText}`);
     }
 
@@ -106,7 +131,7 @@ export async function updateUser(
     userData: Partial<User>
 ): Promise<User> {
     const token = await getAccessToken();
-
+    
     const response = await fetch(`${API_BASE_URL}/user/me`, {
         method: 'PUT',
         headers: {
@@ -117,6 +142,8 @@ export async function updateUser(
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to update user: ${response.statusText}`);
     }
 
@@ -129,7 +156,7 @@ export async function updateEmployer(
 ): Promise<EmployerProfile> {
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_BASE_URL}/v1/employer-profiles/me`, {
+    const response = await fetch(`${API_BASE_URL}/employer-profiles/me`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -139,6 +166,8 @@ export async function updateEmployer(
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
         throw new Error(`Failed to update user: ${response.statusText}`);
     }
 
