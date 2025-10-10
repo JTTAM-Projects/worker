@@ -30,8 +30,8 @@ public class User {
     @Column(name = "phone_number")
     String phoneNumber = "";
 
-    @Column(name = "mail")
-    String mail = "";
+    @Column(name = "mail", nullable = false)
+    String mail;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
     private Set<Application> applies = new HashSet<>();

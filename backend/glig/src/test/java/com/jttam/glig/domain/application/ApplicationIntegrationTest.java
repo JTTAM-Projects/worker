@@ -19,11 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.jttam.glig.domain.task.TaskRepository;
 import com.jttam.glig.testdata.TestDataService;
 
-import jakarta.transaction.Transactional;
-
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class ApplicationIntegrationTest {
 
     @Autowired
@@ -71,8 +68,6 @@ public class ApplicationIntegrationTest {
 
     @Test
     void GetPageOfApplicationsByGivenCorrectUserNameAndFilteringParameters() throws Exception {
-
-        testDataService.consoleLogDataBase();
 
         mockMvc.perform(get("/api/user-applications?applicationStatus=CANCELLED")
                 .with(jwt().jwt(user2Jwt))

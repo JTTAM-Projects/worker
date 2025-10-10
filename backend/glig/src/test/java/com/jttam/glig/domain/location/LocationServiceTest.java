@@ -30,7 +30,7 @@ class LocationServiceTest {
 
     private Location location;
     private LocationResponse locationResponse;
-    private static final Integer LOCATION_ID = 1;
+    private static final Long LOCATION_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -40,13 +40,13 @@ class LocationServiceTest {
         location.setCity("Helsinki");
 
         locationResponse = new LocationResponse(
-            LOCATION_ID,        // locationId
-            null,               // streetAddress
-            null,               // postalCode
-            "Helsinki",         // city
-            null,               // country
-            null,               // latitude
-            null                // longitude
+                LOCATION_ID, // locationId
+                null, // streetAddress
+                null, // postalCode
+                "Helsinki", // city
+                null, // country
+                null, // latitude
+                null // longitude
         );
     }
 
@@ -71,10 +71,12 @@ class LocationServiceTest {
 
     @Test
     void getLocation_shouldThrowNotFoundException_whenNotFound() {
-        // Given: The repository will return an empty optional, simulating a not-found scenario
+        // Given: The repository will return an empty optional, simulating a not-found
+        // scenario
         when(locationRepository.findById(LOCATION_ID)).thenReturn(Optional.empty());
 
-        // When & Then: We assert that calling the service method throws the expected exception
+        // When & Then: We assert that calling the service method throws the expected
+        // exception
         assertThrows(NotFoundException.class, () -> {
             locationService.getLocation(LOCATION_ID);
         });

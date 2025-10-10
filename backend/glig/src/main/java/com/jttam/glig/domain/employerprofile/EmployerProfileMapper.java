@@ -12,7 +12,7 @@ public interface EmployerProfileMapper {
     @Mapping(target = "userId", source = "user.userName")
     @Mapping(target = "isVerified", source = "verified")
     EmployerProfileResponse toResponse(EmployerProfile employerProfile);
-    
+
     @Mapping(target = "employerProfileId", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)
@@ -21,7 +21,7 @@ public interface EmployerProfileMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     EmployerProfile toEntity(EmployerProfileRequest request);
-    
+
     @Mapping(target = "employerProfileId", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "verified", ignore = true)

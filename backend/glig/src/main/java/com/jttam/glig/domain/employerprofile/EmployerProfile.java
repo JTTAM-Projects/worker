@@ -47,7 +47,7 @@ public class EmployerProfile extends BaseProfile {
         this.businessId = businessId;
     }
 
-     // Getters and setters
+    // Getters and setters
 
     public Long getEmployerProfileId() {
         return employerProfileId;

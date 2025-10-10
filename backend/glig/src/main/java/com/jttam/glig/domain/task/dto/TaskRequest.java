@@ -1,20 +1,21 @@
-package com.jttam.glig.domain.task;
+package com.jttam.glig.domain.task.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
-import com.jttam.glig.domain.user.UserDto;
+import com.jttam.glig.domain.category.Category;
+import com.jttam.glig.domain.location.dto.LocationRequest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record TaskDto(Long id,
-        UserDto user,
-        @NotNull(message = "Category is required") Category category,
+public record TaskRequest(
+        @NotNull(message = "Category is required") Set<Category> categories,
         @NotBlank(message = "Title is required") String title,
         @NotNull(message = "Price is required") Integer price,
         @NotNull(message = "Start date is required") LocalDateTime startDate,
         @NotNull(message = "End date is required") LocalDateTime endDate,
-        @NotBlank(message = "Location is required") String location,
-        TaskStatus status,
+        @NotNull(message = "Location is required") LocationRequest location,
         String description) {
+
 }

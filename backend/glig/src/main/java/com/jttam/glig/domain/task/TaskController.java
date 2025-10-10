@@ -11,6 +11,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import com.jttam.glig.domain.task.dto.TaskResponse;
+import com.jttam.glig.domain.task.dto.TaskListDTO;
+import com.jttam.glig.domain.task.dto.TaskRequest;
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
 
@@ -40,7 +44,7 @@ public class TaskController {
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @GetMapping("/{taskId}")
-    public TaskDto getSingleTaskDto(@PathVariable Long taskId) {
+    public TaskResponse getSingleTaskDto(@PathVariable Long taskId) {
         return service.tryGetSingleTaskDtoById(taskId);
     }
 
@@ -52,18 +56,23 @@ public class TaskController {
     public Page<TaskListDTO> getAllTasks(
             @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
             TaskDataGridFilters filters) {
-        return service.tryGetAllTaskByGivenFiltersAndSorts(pageable, filters);
+
+        String username = null;
+
+        return service.tryGetAllTaskByGivenFiltersAndSortsAndUserName(pageable, filters, username);
     }
 
-    @Operation(summary = "Get all tasks for the authenticated user", description = "Fetches all tasks for the currently authenticated user.")
+    @Operation(summary = "Get all tasks for the authenticated user", description = "Fetches all tasks depending on given filters and sorting parameters via query for the currently authenticated user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks fetched successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/user-tasks")
-    public List<TaskListDTO> getAllUserTasks(@AuthenticationPrincipal Jwt jwt) {
+    public Page<TaskListDTO> getAllUserTasks(
+            @PageableDefault(size = 10, page = 0, direction = Sort.Direction.ASC) Pageable pageable,
+            TaskDataGridFilters filters, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetAllUserTasks(username);
+        return service.tryGetAllTaskByGivenFiltersAndSortsAndUserName(pageable, filters, username);
     }
 
     @Operation(summary = "Create a new task", description = "Creates a new task for the authenticated user.")
@@ -73,12 +82,13 @@ public class TaskController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping
-    public ResponseEntity<TaskDto> createTask(@Valid @RequestBody TaskDto taskDto, BindingResult bindingResult,
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest taskRequest,
+            BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
-        return service.tryCreateNewTask(taskDto, username);
+        return service.tryCreateNewTask(taskRequest, username);
     }
 
     @Operation(summary = "Edit an existing task", description = "Allows an authenticated user to edit their own task.")
@@ -90,13 +100,13 @@ public class TaskController {
             @ApiResponse(responseCode = "404", description = "Task to edit not found")
     })
     @PutMapping("/{taskId}")
-    public ResponseEntity<TaskDto> editTask(@PathVariable Long taskId, @Valid @RequestBody TaskDto taskDto,
+    public ResponseEntity<TaskResponse> editTask(@PathVariable Long taskId, @Valid @RequestBody TaskRequest taskRequest,
             BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
-        return service.tryEditTask(taskId, taskDto, username);
+        return service.tryEditTask(taskId, taskRequest, username);
     }
 
     @Operation(summary = "Delete a task", description = "Allows an authenticated user to delete their own task.")
