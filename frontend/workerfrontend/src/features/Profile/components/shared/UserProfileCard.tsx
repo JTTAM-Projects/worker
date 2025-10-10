@@ -3,13 +3,11 @@ import { useGetUserDetails } from "../../hooks/userHooks";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import EmployerDetailsEditForm from "../employer/employerDetailsEditForm";
-import UserDetailsEditForm from "../userDetailsEditForm";
-
-interface UserProfileCardProps {
+interface UserProfileProps {
   user: User | undefined;
 }
 
-export default function UserProfileCard({ user }: UserProfileCardProps) {
+export default function UserProfileCard({ user }: UserProfileProps) {
   
   const [isEditModeOn, setIsEditModeOn] = useState(false);
   const { data: userDetails } = useGetUserDetails();
@@ -42,7 +40,7 @@ export default function UserProfileCard({ user }: UserProfileCardProps) {
             {user?.name || "Username not found"}
           </h1>
           <p className="text-gray-500 mt-2">
-            {userDetails?.mail || "Email not found"}
+            {user?.email || "Email not found"}
           </p>
           <p className="text-green-600 font-medium mt-4">Viimeksi muokattu {formattedDate}</p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center md:justify-start">

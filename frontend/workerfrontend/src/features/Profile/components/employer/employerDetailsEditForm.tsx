@@ -68,11 +68,10 @@ export default function EmployerDetailsEditForm({
         }
 
         const employerToCreate = {
-          employerProfileId: '', // or generate a new ID if needed
           userId: user?.sub || '',  // Auth0 user ID
           firstName: value.firstName,
           lastName: value.lastName,
-          employerType: "INDIVIDUAL",  // Hardcoded as per requirement
+          employerType: "INDIVIDUAL",
           streetAddress: value.streetAddress,
           postalCode: value.postalCode,
           city: value.city,
@@ -87,21 +86,7 @@ export default function EmployerDetailsEditForm({
         if (employerProfile) {
           await updateEmployer(employerUpdate);
         }else {
-            await createEmployer(employerToCreate/* {
-            userId: employerToCreate.userId,
-            firstName: employerToCreate.firstName,
-            lastName: employerToCreate.lastName,
-            employerType: employerToCreate.employerType,
-            streetAddress: employerToCreate.streetAddress,
-            postalCode: employerToCreate.postalCode,
-            city: employerToCreate.city,
-            country: employerToCreate.country,
-            bio: employerToCreate.bio,
-            companyName: employerToCreate.companyName,
-            businessId: employerToCreate.businessId,
-            websiteLink: employerToCreate.websiteLink,
-            profileImageUrl: employerToCreate.profileImageUrl
-            } */);
+            await createEmployer(employerToCreate);
         }
 
         await updateUser(userUpdate);
@@ -122,7 +107,6 @@ export default function EmployerDetailsEditForm({
     />
     <div className="relative z-50 flex items-center justify-center min-h-screen p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
-        {/* Header - Fixed */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Muokkaa profiilia</h2>
