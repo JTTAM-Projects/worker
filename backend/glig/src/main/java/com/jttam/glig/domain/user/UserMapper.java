@@ -4,16 +4,21 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.jttam.glig.domain.user.dto.UserRequest;
+import com.jttam.glig.domain.user.dto.UserResponse;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserDto toUserDTO(User user);
+    UserResponse toUserResponse(User user);
 
+    @Mapping(target = "userName", ignore = true)
     @Mapping(target = "tasks", ignore = true)
     @Mapping(target = "applies", ignore = true)
-    User toUser(UserDto userDto);
+    User toUserEntity(UserRequest userRequest);
 
+    @Mapping(target = "userName", ignore = true)
     @Mapping(target = "tasks", ignore = true)
     @Mapping(target = "applies", ignore = true)
-    User updateUser(UserDto userDto, @MappingTarget User user);
+    User updateUser(UserRequest userRequest, @MappingTarget User user);
 }

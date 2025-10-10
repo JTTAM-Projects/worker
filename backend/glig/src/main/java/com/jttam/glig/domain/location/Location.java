@@ -5,8 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.jttam.glig.domain.task.Task;
 
 @Entity
 @Table(name = "location")
@@ -15,7 +20,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
-    private Integer locationId;
+    private Long locationId;
 
     @Column(name = "street_address")
     private String streetAddress;
@@ -35,6 +40,9 @@ public class Location {
     @Column(name = "longitude", precision = 9, scale = 7)
     private BigDecimal longitude;
 
+    @ManyToMany(mappedBy = "locations")
+    private Set<Task> tasks = new HashSet<>();
+
     public Location() {
     }
 
@@ -48,13 +56,11 @@ public class Location {
         this.longitude = longitude;
     }
 
-    // --- Getters and Setters ---
-
-    public Integer getLocationId() {
+    public Long getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Integer locationId) {
+    public void setLocationId(Long locationId) {
         this.locationId = locationId;
     }
 
@@ -105,4 +111,13 @@ public class Location {
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
     }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
 }

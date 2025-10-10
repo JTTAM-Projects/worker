@@ -6,6 +6,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.jttam.glig.domain.user.dto.UserRequest;
+import com.jttam.glig.domain.user.dto.UserResponse;
 import com.jttam.glig.service.GlobalServiceMethods;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping("/{username}")
-    public UserDto getSingleUser(@PathVariable String username) {
+    public UserResponse getSingleUser(@PathVariable String username) {
 
         return service.tryGetSingleUserDtoByUserName(username);
     }
@@ -45,12 +47,12 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping("/me")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult,
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequest userBody, BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
-        return service.tryCreateNewUser(userDto, username);
+        return service.tryCreateNewUser(userBody, username);
     }
 
     @Operation(summary = "Edit authenticated user's profile", description = "Allows an authenticated user to edit their own profile information.")
@@ -61,7 +63,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User profile to edit not found")
     })
     @PutMapping("/me")
-    public ResponseEntity<UserDto> editUser(@Valid @RequestBody UserDto userDto, BindingResult bindingResult,
+    public ResponseEntity<UserResponse> editUser(@Valid @RequestBody UserRequest userDto, BindingResult bindingResult,
             @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
@@ -76,7 +78,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User profile to delete not found")
     })
     @DeleteMapping("/me")
-    public ResponseEntity<UserDto> deleteUser(
+    public ResponseEntity<UserResponse> deleteUser(
             @AuthenticationPrincipal Jwt jwt) {
 
         String username = jwt.getSubject();

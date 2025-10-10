@@ -31,8 +31,8 @@ public class TaskerProfile extends BaseProfile {
     }
 
     public TaskerProfile(User user, String streetAddress, String postalCode,
-                         String city, String country, String bio, String websiteLink,
-                         String profileImageUrl, boolean isVerified, BigDecimal averageRating) {
+            String city, String country, String bio, String websiteLink,
+            String profileImageUrl, boolean isVerified, BigDecimal averageRating) {
         super(user, streetAddress, postalCode, city, country, bio, websiteLink, profileImageUrl, isVerified);
         this.averageRating = averageRating;
     }
