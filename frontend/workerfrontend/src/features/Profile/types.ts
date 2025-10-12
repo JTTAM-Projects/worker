@@ -1,3 +1,4 @@
+export type EmployerType = 'INDIVIDUAL' | 'COMPANY'
 export interface User {
   userName: string;
   mail: string;
@@ -7,11 +8,6 @@ export interface User {
 }
 
 export interface TaskerProfile { 
-    taskerProfileId: number,
-    userId: string,
-    averageRating: number,
-    createdAt: Date,
-    updatedAt: Date,
     firstName: string,
     lastName: string,
     bio: string,
@@ -21,11 +17,9 @@ export interface TaskerProfile {
     country: string,
     websiteLink: string,
     profileImageUrl: string,
-    verified: boolean
 }
 
 export interface EmployerProfile {
-    //employerProfileId: number,
     userId: string,
     firstName: string,
     lastName: string,

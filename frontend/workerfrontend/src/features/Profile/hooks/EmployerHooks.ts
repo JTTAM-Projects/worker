@@ -4,7 +4,7 @@ import { getEmployerProfile, updateEmployer, createEmployerProfile } from "../ap
 import type { EmployerProfile } from "../types";
 
 export function useGetEmployerProfile() {
-    const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
+    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
     return useQuery({
         queryKey: ['employerDetails'],

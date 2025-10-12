@@ -21,7 +21,7 @@ export async function getUser(getAccessToken: () => Promise<string>, userName : 
     return response.json();
 }
 
-export async function getTaskerProfile(getAccessToken: () => Promise<string>): Promise<TaskerProfile> {
+export async function getTaskerProfile(getAccessToken: () => Promise<string>): Promise<TaskerProfile | null> {
     const token = await getAccessToken();
 
     const response = await fetch(`${API_BASE_URL}/tasker-profiles/me`, {
@@ -30,6 +30,10 @@ export async function getTaskerProfile(getAccessToken: () => Promise<string>): P
         'Authorization': `Bearer ${token}`,
         },
     });
+
+    if (response.status === 404) {
+        return null;
+    }
 
     if (!response.ok) {
         const errorText = await response.text();
@@ -125,6 +129,43 @@ export async function createEmployerProfile(
     return response.json();
 }
 
+export async function createTaskerProfile(
+    getAccessToken: () => Promise<string>,
+    taskerData: Partial<TaskerProfile>
+): Promise<TaskerProfile>{
+    const token = await getAccessToken();
+
+    const formattedData = {
+        ...taskerData,
+        websiteLink: taskerData.websiteLink 
+            ? taskerData.websiteLink.startsWith('http') 
+                ? taskerData.websiteLink 
+                : `https://${taskerData.websiteLink}`
+            : '',
+        profileImageUrl: taskerData.profileImageUrl
+            ? taskerData.profileImageUrl.startsWith('http')
+                ? taskerData.profileImageUrl
+                : `https://${taskerData.profileImageUrl}`
+            : ''
+    };
+    const response = await fetch(`${API_BASE_URL}/tasker-profiles`, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formattedData)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error('createEmployer error response: ' + errorText)
+        throw new Error(`Failed to fetch profile: ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
 //PUT METHODS
 export async function updateUser(
     getAccessToken: () => Promise<string>,
@@ -156,13 +197,65 @@ export async function updateEmployer(
 ): Promise<EmployerProfile> {
     const token = await getAccessToken();
 
+    const formattedData = {
+        ...employerData,
+        websiteLink: employerData.websiteLink 
+            ? employerData.websiteLink.startsWith('http') 
+                ? employerData.websiteLink 
+                : `https://${employerData.websiteLink}`
+            : '',
+        profileImageUrl: employerData.profileImageUrl
+            ? employerData.profileImageUrl.startsWith('http')
+                ? employerData.profileImageUrl
+                : `https://${employerData.profileImageUrl}`
+            : ''
+    };  
+
     const response = await fetch(`${API_BASE_URL}/employer-profiles/me`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(employerData)
+        body: JSON.stringify(formattedData)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response: ' + errorText)
+        throw new Error(`Failed to update user: ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+export async function updateTasker(
+    getAccessToken: () => Promise<string>,
+    taskerData: Partial<TaskerProfile>
+): Promise<EmployerProfile> {
+    const token = await getAccessToken();
+
+    const formattedData = {
+        ...taskerData,
+        websiteLink: taskerData.websiteLink 
+            ? taskerData.websiteLink.startsWith('http') 
+                ? taskerData.websiteLink 
+                : `https://${taskerData.websiteLink}`
+            : '',
+        profileImageUrl: taskerData.profileImageUrl
+            ? taskerData.profileImageUrl.startsWith('http')
+                ? taskerData.profileImageUrl
+                : `https://${taskerData.profileImageUrl}`
+            : ''
+    };  
+
+    const response = await fetch(`${API_BASE_URL}/tasker-profiles/me`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formattedData)
     });
 
     if (!response.ok) {

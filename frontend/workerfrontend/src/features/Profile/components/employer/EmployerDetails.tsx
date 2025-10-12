@@ -37,21 +37,7 @@ export default function EmployerDetails(){
     
     const handleSaveClick = async () => {
         try {
-
-            //Format websitelinks to proper form
-            const formattedWebsiteLink = formData.websiteLink 
-                ? formData.websiteLink.startsWith('http') 
-                    ? formData.websiteLink 
-                    : `https://${formData.websiteLink}`
-                : '';
-
-            const formattedProfileImageUrl = formData.websiteLink 
-                ? formData.websiteLink.startsWith('http') 
-                    ? formData.websiteLink 
-                    : `https://${formData.websiteLink}`
-                : '';
-
-            if(employerDetails && userDetails){
+            if(employerDetails){
                 await updateEmployer({
                     firstName: formData.firstName,
                     lastName: formData.lastName,
@@ -63,8 +49,8 @@ export default function EmployerDetails(){
                     bio: formData.bio,
                     companyName: formData.companyName,
                     businessId: formData.businessId,
-                    websiteLink: formattedWebsiteLink,
-                    profileImageUrl: formattedProfileImageUrl
+                    websiteLink: formData.websiteLink,
+                    profileImageUrl: formData.profileImageUrl
                 });
                 await updateUser({
                     userName: formData.userId,
@@ -126,7 +112,8 @@ export default function EmployerDetails(){
                             name="companyName"
                             value={formData.companyName}
                             onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.companyName || "Nimeä ei löytynyt"}`} />
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                            placeholder={`${employerDetails?.companyName || "Nimeä ei löytynyt"}`} />
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Yrityksesi Y-tunnus</h3>
@@ -134,7 +121,8 @@ export default function EmployerDetails(){
                             name="businessId"
                             value={formData.businessId}
                             onChange={(e) => setFormData({ ...formData, businessId: e.target.value })}
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.businessId || "Y-tunnusta ei löytynyt"}`} />
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                            placeholder={`${employerDetails?.businessId || "Y-tunnusta ei löytynyt"}`} />
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Verkkosivu linkki</h3>
@@ -142,7 +130,8 @@ export default function EmployerDetails(){
                             name="websiteLink"
                             value={formData.websiteLink}
                             onChange={(e) => setFormData({ ...formData, websiteLink: e.target.value })}
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.websiteLink || "Linkkiä ei löytynyt"}`} />           
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                            placeholder={`${employerDetails?.websiteLink || "Linkkiä ei löytynyt"}`} />           
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Työnantaja tyyppi</h3>
@@ -159,50 +148,58 @@ export default function EmployerDetails(){
                     </div>
                 </div>
                     <div>
-                        <h3 className="text-sm font-medium text-gray-500">Tietoja Yrityksestäsi</h3>
+                        <h3 className="text-sm font-medium text-gray-500 pt-4">Tietoja Yrityksestäsi</h3>
                         <textarea 
                             name="bio"
                             value={formData.bio}
-                            onChange={(e) => setFormData({ ...formData, bio: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.bio || "Tietoja ei löytynyt"}`} />
+                            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                            placeholder={`${employerDetails?.bio || "Tietoja ei löytynyt"}`} />
                     </div>                    
                 <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Puhelinnumero</h3>
-                        <input type='text' className="mt-1 text-gray-800" 
+                        <input 
+                            type='text'  
                             name="phoneNumber"
                             value={formData.phoneNumber}
                             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} 
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                             placeholder={`${userDetails?.phoneNumber || "Puhelinnumeroa ei löytynyt"}`} />
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Osoite</h3>
-                        <div></div>
-                        <input type='text' 
-                            name="streetAddress"
-                            value={formData.streetAddress}
-                            onChange={(e) => setFormData({ ...formData, streetAddress: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.streetAddress || "Katu"}`} />
-                        <div></div>
-                        <input type='text'
-                            name="postalCode"
-                            value={formData.postalCode}
-                            onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.postalCode || "postikoodi"}`} />
-                        <div></div>
-                        <input type='text' 
-                            name="city"
-                            value={formData.city}
-                            onChange={(e) => setFormData({ ...formData, city: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.city || "Kaupunki"}`} />
-                        <div></div>
-                        <input type='text' 
-                            name="country"
-                            value={formData.country}
-                            onChange={(e) => setFormData({ ...formData, country: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.country || "Maa"}`} />
-                        <div></div>
+                        <div className="space-y-2">
+                            <input type='text' 
+                                name="streetAddress"
+                                value={formData.streetAddress}
+                                onChange={(e) => setFormData({ ...formData, streetAddress: e.target.value })} 
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                                placeholder={`${employerDetails?.streetAddress || "Katu"}`} 
+                            />
+                            <input type='text'
+                                name="postalCode"
+                                value={formData.postalCode}
+                                onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })} 
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                                placeholder={`${employerDetails?.postalCode || "postikoodi"}`} 
+                            />
+                            <input type='text' 
+                                name="city"
+                                value={formData.city}
+                                onChange={(e) => setFormData({ ...formData, city: e.target.value })} 
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                                placeholder={`${employerDetails?.city || "Kaupunki"}`} 
+                            />
+                            <input type='text' 
+                                name="country"
+                                value={formData.country}
+                                onChange={(e) => setFormData({ ...formData, country: e.target.value })} 
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                                placeholder={`${employerDetails?.country || "Maa"}`} 
+                            />
+                        </div>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Henkilökohtainen Y-tunnuksesi</h3>
@@ -210,7 +207,8 @@ export default function EmployerDetails(){
                             name="personalBusinessId"
                             value={formData.personalBusinessId}
                             onChange={(e) => setFormData({ ...formData, personalBusinessId: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${userDetails?.businessId || "Y-tunnusta ei löytynyt"}`} />
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                            placeholder={`${userDetails?.businessId || "Y-tunnusta ei löytynyt"}`} />
                     </div>
                 </div>
             </>
