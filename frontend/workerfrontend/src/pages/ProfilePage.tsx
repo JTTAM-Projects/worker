@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import ProfileAboutSection from "../features/Profile/components/ProfileAboutSection";
-import ProfileSkillsSection from "../features/Profile/components/UserSkillsSection";
 import UserProfileCard from "../features/Profile/components/shared/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
 import { useUserTasks } from "../features/task/hooks/useUserTasks";
-import UserProfileContactInfo from "../features/Profile/components/UserProfileContactInfo";
-// import EmployerDetails from "../features/Profile/components/employer/EmployerDetails"; TODO: Implement backendapi calls
+import EmployerDetails from "../features/Profile/components/employer/EmployerDetails"; //TODO: Implement backendapi calls
 import TaskerDetails from "../features/Profile/components/tasker/TaskerDetails";
-import EmployerDetailsProto2 from "../features/Profile/components/employer/EmployerDetailsProto2"; //TODO: remove when EmployerDetails is working
 
 
 export default function ProfilePage() {
@@ -53,7 +49,7 @@ export default function ProfilePage() {
           </button>
         </div>
         {activeTab === 'employer' ? (
-          <EmployerDetailsProto2 />
+          <EmployerDetails />
         ) : (
           <TaskerDetails />
         )}

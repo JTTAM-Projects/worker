@@ -70,7 +70,7 @@ export async function createUser(
 ): Promise<User>{
     const token = await getAccessToken();
 
-    const response = await fetch(`${API_BASE_URL}/user/create`, {
+    const response = await fetch(`${API_BASE_URL}/user/me`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export async function createUser(
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error('Error response: ' + errorText)
+        console.error('createUser Error response: ' + errorText)
         throw new Error(`Failed to fetch profile: ${response.statusText}`);
     }
 
@@ -118,7 +118,7 @@ export async function createEmployerProfile(
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error('Error response: ' + errorText)
+        console.error('createEmployer error response: ' + errorText)
         throw new Error(`Failed to fetch profile: ${response.statusText}`);
     }
 

@@ -38,7 +38,12 @@ export function useCreateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: () => createUser(getAccessTokenSilently, user),
+        mutationFn: async (userData: User) => {
+            if (!user?.sub) {
+                throw new Error("No user authenticated")
+            }
+            return createUser(getAccessTokenSilently, userData);
+        },
         onSuccess: (data) => {
             // Invalidate and refetch user queries
             queryClient.invalidateQueries({ queryKey: ['userDetails'] });

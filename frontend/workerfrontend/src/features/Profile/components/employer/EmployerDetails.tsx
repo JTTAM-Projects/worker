@@ -16,49 +16,87 @@ export default function EmployerDetails(){
     const [isEditing, setIsEditing] = useState(false);
 
     const [formData, setFormData] = useState({
-        companyName: employerDetails?.companyName || "",
+        userId: user?.sub || "",
+        firstName: user?.given_name || "Testi", //TODO: poista testi data
+        lastName: user?.family_name || "Testaaja", //TODO: poista testi data
+        employerType: employerDetails?.employerType || "",
+        streetAddress: employerDetails?.streetAddress || "",
+        postalCode: employerDetails?.postalCode || "",
+        city: employerDetails?.city || "",
+        country: employerDetails?.country || "",
+        bio: employerDetails?.bio || "",        
+        companyName: employerDetails?.companyName || "", 
         businessId: employerDetails?.businessId || "",
         websiteLink: employerDetails?.websiteLink || "",
-        employerType: employerDetails?.employerType || "",
-        bio: employerDetails?.bio || "",
-        email: user?.email || "",
+        profileImageUrl: employerDetails?.profileImageUrl || "",
         phoneNumber: userDetails?.phoneNumber || "",
         address: userDetails?.address || "",
-        personalBusinessId: userDetails?.businessId || ""
+        personalBusinessId: userDetails?.businessId || "",       
+        email: user?.email || "", 
     })
     
     const handleSaveClick = async () => {
         try {
-            if(employerDetails){
-                await updateEmployer({
-                    companyName: formData.companyName,
-                    businessId: formData.businessId,
-                    websiteLink: formData.websiteLink,
-                    employerType: formData.employerType,
-                    bio: formData.bio
-            });
 
-            await updateUser({
-                phoneNumber: formData.phoneNumber,
-                address: formData.address,
-                businessId: formData.personalBusinessId
-            });
-            } else {
-                await createEmployer({
-                    userId: user?.sub || '',                    
-                    firstName: employerDetails?.firstName || "",
-                    lastName: employerDetails?.lastName || "",
+            //Format websitelinks to proper form
+            const formattedWebsiteLink = formData.websiteLink 
+                ? formData.websiteLink.startsWith('http') 
+                    ? formData.websiteLink 
+                    : `https://${formData.websiteLink}`
+                : '';
+
+            const formattedProfileImageUrl = formData.websiteLink 
+                ? formData.websiteLink.startsWith('http') 
+                    ? formData.websiteLink 
+                    : `https://${formData.websiteLink}`
+                : '';
+
+            if(employerDetails && userDetails){
+                await updateEmployer({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    employerType: formData.employerType,
                     streetAddress: userDetails?.address || "",
-                    postalCode: userDetails?.postalCode || "",
-                    email: user?.email || "",
+                    postalCode: formData.postalCode || "",
+                    city: formData.city,
+                    country: formData.country,
+                    bio: formData.bio,
+                    companyName: formData.companyName,
+                    businessId: formData.businessId,
+                    websiteLink: formattedWebsiteLink,
+                    profileImageUrl: formattedProfileImageUrl
+                });
+                await updateUser({
+                    userName: formData.userId,
+                    mail: formData.email,
+                    phoneNumber: formData.phoneNumber,
+                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`,
+                    businessId: formData.personalBusinessId
+                });
+            } else {
+                await createUser({
+                    userName: formData.userId,
+                    mail: formData.email,
+                    businessId: formData.personalBusinessId,
+                    phoneNumber: formData.phoneNumber,
+                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`
+                })
+                await createEmployer({
+                    userId: formData.userId,                    
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    employerType: formData.employerType,
+                    streetAddress: userDetails?.address || "",
+                    postalCode: formData.postalCode || "",
+                    city: formData.city,
+                    country: formData.country,
+                    bio: formData.bio,
                     companyName: formData.companyName,
                     businessId: formData.businessId,
                     websiteLink: formData.websiteLink,
-                    employerType: formData.employerType,
-                    bio: formData.bio,
+                    profileImageUrl: formData.profileImageUrl,
                 })
             }
-
             setIsEditing(false);
         } catch (error) {
             console.error('Failed to update profile:', error);
@@ -108,12 +146,18 @@ export default function EmployerDetails(){
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Työnantaja tyyppi</h3>
-                        <input type='text'
-                            name="companyName"
-                            value={formData.companyName}
-                            onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.employerType || "Tietoa ei löytynyt"}`} />
+                        <select
+                            name="employerType"
+                            value={formData.employerType}
+                            onChange={(e) => setFormData({ ...formData, employerType: e.target.value })}
+                            className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                        >
+                            <option value="">Valitse työnantaja tyyppi</option>
+                            <option value="INDIVIDUAL">Yksityishenkilö</option>
+                            <option value="COMPANY">Yritys</option>
+                        </select>
                     </div>
+                </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Tietoja Yrityksestäsi</h3>
                         <textarea 
@@ -121,8 +165,7 @@ export default function EmployerDetails(){
                             value={formData.bio}
                             onChange={(e) => setFormData({ ...formData, bio: e.target.value })} 
                             className="mt-1 text-gray-800" placeholder={`${employerDetails?.bio || "Tietoja ei löytynyt"}`} />
-                    </div>
-                </div>                    
+                    </div>                    
                 <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
@@ -135,11 +178,31 @@ export default function EmployerDetails(){
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Osoite</h3>
+                        <div></div>
                         <input type='text' 
-                            name="address"
-                            value={formData.address}
-                            onChange={(e) => setFormData({ ...formData, address: e.target.value })} 
-                            className="mt-1 text-gray-800" placeholder={`${userDetails?.address || "Osoitetta ei löytynyt"}`} />
+                            name="streetAddress"
+                            value={formData.streetAddress}
+                            onChange={(e) => setFormData({ ...formData, streetAddress: e.target.value })} 
+                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.streetAddress || "Katu"}`} />
+                        <div></div>
+                        <input type='text'
+                            name="postalCode"
+                            value={formData.postalCode}
+                            onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })} 
+                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.postalCode || "postikoodi"}`} />
+                        <div></div>
+                        <input type='text' 
+                            name="city"
+                            value={formData.city}
+                            onChange={(e) => setFormData({ ...formData, city: e.target.value })} 
+                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.city || "Kaupunki"}`} />
+                        <div></div>
+                        <input type='text' 
+                            name="country"
+                            value={formData.country}
+                            onChange={(e) => setFormData({ ...formData, country: e.target.value })} 
+                            className="mt-1 text-gray-800" placeholder={`${employerDetails?.country || "Maa"}`} />
+                        <div></div>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Henkilökohtainen Y-tunnuksesi</h3>
@@ -170,10 +233,10 @@ export default function EmployerDetails(){
                         <h3 className="text-sm font-medium text-gray-500">Työnantaja tyyppi</h3>
                         <p className="mt-1 text-gray-800">{employerDetails?.employerType || "Tietoa ei löytynyt"}</p>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-500">Tietoja Yrityksestäsi</h3>
-                        <p className="text-gray-600 leading-relaxed">{employerDetails?.bio || "Tietoja ei löytynyt"}</p>
-                    </div>
+                </div>
+                <div>
+                    <h3 className="text-sm font-medium text-gray-500 pt-4">Tietoja Yrityksestäsi</h3>
+                    <p className="text-gray-600 leading-relaxed">{employerDetails?.bio || "Tietoja ei löytynyt"}</p>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 pt-4 pb-4">Yhteystiedot</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

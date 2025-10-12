@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGetUserDetails } from "../../hooks/userHooks";
+import ProfileSkillsSection from "../UserSkillsSection"
 import { useGetTaskerDetails } from '../../hooks/taskerHooks'
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -64,6 +65,7 @@ export default function TaskerDetails () {
                 <div>
                     <p className="mt-1 text-gray-800">Tietoja ei löytynyt</p>
                 </div>
+                <ProfileSkillsSection />
                 <h2 className="text-2xl font-bold text-gray-800 pt-4 pb-4">Yhteystiedot</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>

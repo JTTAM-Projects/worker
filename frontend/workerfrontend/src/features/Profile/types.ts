@@ -1,4 +1,3 @@
-export type EmployerType = 'INDIVIDUAL' | 'COMPANY'
 export interface User {
   userName: string;
   mail: string;

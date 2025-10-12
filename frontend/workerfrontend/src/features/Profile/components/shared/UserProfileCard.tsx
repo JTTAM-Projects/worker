@@ -12,7 +12,7 @@ export default function UserProfileCard({ user }: UserProfileProps) {
   const [isEditModeOn, setIsEditModeOn] = useState(false);
   const { data: userDetails } = useGetUserDetails();
   const queryClient = useQueryClient();
-  // DATA BACKENDIIN JA AUTH0 samaan aikaan updatessa
+
   
   const formattedDate = user?.updated_at
       ? new Date(user?.updated_at).toLocaleDateString("fi-FI", {
