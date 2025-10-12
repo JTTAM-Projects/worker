@@ -10,6 +10,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.jttam.glig.domain.application.dto.ApplicationResponse;
+import com.jttam.glig.domain.application.dto.ApplicationListDTO;
+import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
 
@@ -39,9 +42,9 @@ public class ApplicationController {
             @ApiResponse(responseCode = "404", description = "Application not found")
     })
     @GetMapping("/task/{taskId}/application")
-    public ApplicationDto getSingleApplicationDto(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
+    public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetSingleApplyDtoById(taskId, username);
+        return service.tryGetSingleApplicationsById(taskId, username);
     }
 
     @Operation(summary = "Get all applications for the authenticated user", description = "Fetches all applications made by the currently authenticated user.")
@@ -54,7 +57,7 @@ public class ApplicationController {
             @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
             ApplicationDataGridFilters filters, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetAllUserApplies(pageable, filters, username);
+        return service.tryGetAllUserApplications(pageable, filters, username);
     }
 
     @Operation(summary = "Create a new application for a task", description = "Creates a new application for a specific task by the authenticated user.")
@@ -66,12 +69,12 @@ public class ApplicationController {
     })
     @PostMapping("/task/{taskId}/application")
     public ResponseEntity<?> createApplicationForTask(@PathVariable Long taskId,
-            @Valid @RequestBody ApplicationDto applyDto,
+            @Valid @RequestBody ApplicationRequest applicationRequest,
             BindingResult bindingResult, @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
-        return service.tryCreateNewApplyForTask(taskId, applyDto, username);
+        return service.tryCreateNewApplicationForTask(taskId, applicationRequest, username);
     }
 
     @Operation(summary = "Edit an existing application", description = "Allows an authenticated user to edit their own application for a task.")
@@ -83,13 +86,13 @@ public class ApplicationController {
             @ApiResponse(responseCode = "404", description = "Application to edit not found")
     })
     @PutMapping("/task/{taskId}/application")
-    public ResponseEntity<ApplicationDto> editApplication(@PathVariable Long taskId,
-            @Valid @RequestBody ApplicationDto applyDto,
+    public ResponseEntity<ApplicationResponse> editApplication(@PathVariable Long taskId,
+            @Valid @RequestBody ApplicationRequest applicationRequest,
             BindingResult bindingResult, @AuthenticationPrincipal Jwt jwt) {
 
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
-        return service.tryEditApply(taskId, applyDto, username);
+        return service.tryEditApplication(taskId, applicationRequest, username);
     }
 
     @Operation(summary = "Delete an application", description = "Allows an authenticated user to delete their own application for a task.")
@@ -103,6 +106,6 @@ public class ApplicationController {
     public ResponseEntity<Message> deleteApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
 
         String username = jwt.getSubject();
-        return service.tryDeleteApply(taskId, username);
+        return service.tryDeleteApplication(taskId, username);
     }
 }

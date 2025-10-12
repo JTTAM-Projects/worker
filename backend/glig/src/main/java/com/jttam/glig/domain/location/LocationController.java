@@ -19,7 +19,7 @@ public class LocationController {
      * This is used to display the location(s) for a specific Task.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<LocationResponse> getLocationById(@PathVariable Integer id) {
+    public ResponseEntity<LocationResponse> getLocationById(@PathVariable Long id) {
         LocationResponse response = locationService.getLocation(id);
         return ResponseEntity.ok(response);
     }

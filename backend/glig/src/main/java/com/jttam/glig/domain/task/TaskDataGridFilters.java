@@ -1,5 +1,7 @@
 package com.jttam.glig.domain.task;
 
-public record TaskDataGridFilters(Category category, TaskStatus status) {
+import com.jttam.glig.domain.category.Category;
+
+public record TaskDataGridFilters(Category category, String categoryTitle, TaskStatus status) {
 
 }

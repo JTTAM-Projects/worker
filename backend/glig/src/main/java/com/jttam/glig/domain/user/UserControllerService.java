@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.jttam.glig.domain.user.dto.UserRequest;
+import com.jttam.glig.domain.user.dto.UserResponse;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
 
@@ -22,42 +24,44 @@ public class UserControllerService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
-    public User findUserByGivenJWT(String username) {
+    public User findUserByGivenUserName(String username) {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "Cannot find user by given jwt"));
         return user;
     }
 
     @Transactional
-    public UserDto tryGetSingleUserDtoByUserName(String username) {
-        User user = findUserByGivenJWT(username);
-        UserDto userDto = userMapper.toUserDTO(user);
+    public UserResponse tryGetSingleUserDtoByUserName(String username) {
+        User user = findUserByGivenUserName(username);
+        UserResponse userDto = userMapper.toUserResponse(user);
         return userDto;
     }
 
     @Transactional
-    public ResponseEntity<?> tryCreateNewUser(UserDto userDto, String username) {
+    public ResponseEntity<?> tryCreateNewUser(UserRequest userBody, String username) {
         Optional<User> user = userRepository.findByUserName(username);
         if (user.isPresent()) {
             return new ResponseEntity<>(new Message("ERROR", "User already exists"), HttpStatus.CONFLICT);
         }
-        User newUser = userMapper.toUser(userDto);
+        User newUser = userMapper.toUserEntity(userBody);
         newUser.setUserName(username);
-        userRepository.save(newUser);
-        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+        User created = userRepository.save(newUser);
+        UserResponse out = userMapper.toUserResponse(created);
+        return new ResponseEntity<>(out, HttpStatus.CREATED);
     }
 
     @Transactional
-    public ResponseEntity<UserDto> tryEditUser(UserDto userDto, String username) {
-        User user = findUserByGivenJWT(username);
-        User updatedUser = userMapper.updateUser(userDto, user);
-        userRepository.save(updatedUser);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    public ResponseEntity<UserResponse> tryEditUser(UserRequest userBody, String username) {
+        User user = findUserByGivenUserName(username);
+        User updatedUser = userMapper.updateUser(userBody, user);
+        User created = userRepository.save(updatedUser);
+        UserResponse out = userMapper.toUserResponse(created);
+
+        return new ResponseEntity<>(out, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<UserDto> tryDeleteUser(String username) {
+    public ResponseEntity<UserResponse> tryDeleteUser(String username) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'tryDeleteUser'");
     }
