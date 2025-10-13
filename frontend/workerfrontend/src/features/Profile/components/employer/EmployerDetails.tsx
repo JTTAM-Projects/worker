@@ -4,16 +4,18 @@ import { useState } from "react";
 import { useGetEmployerProfile, useUpdateEmployer, useCreateEmployerProfile } from "../../hooks/EmployerHooks"
 import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/userHooks";
 import type { EmployerType } from "../../types";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function EmployerDetails(){
-    const { user } = useAuth0(); //TODO use props
-    const { data: employerDetails } = useGetEmployerProfile();
+    const { user } = useAuth0(); //TODO use props    
     const { data: userDetails } = useGetUserDetails();
-    const { mutate: updateEmployer } = useUpdateEmployer();
-    const { mutate: createEmployer } = useCreateEmployerProfile();
-    const { mutate: updateUser } = useUpdateUser();
-    const { mutate: createUser } = useCreateUser();
+    const { data: employerDetails } = useGetEmployerProfile();    
+    const { mutateAsync: updateEmployer } = useUpdateEmployer();
+    const { mutateAsync: createEmployer } = useCreateEmployerProfile();
+    const { mutateAsync: updateUser } = useUpdateUser();
+    const { mutateAsync: createUser } = useCreateUser();
     const [isEditing, setIsEditing] = useState(false);
+    const queryClient = useQueryClient();
 
     const [formData, setFormData] = useState({
         userId: user?.sub || "",
@@ -35,59 +37,56 @@ export default function EmployerDetails(){
         email: user?.email || "", 
     })
     
-    const handleSaveClick = async () => {
-        try {
-            if(employerDetails){
-                await updateEmployer({
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    employerType: formData.employerType,
-                    streetAddress: userDetails?.address || "",
-                    postalCode: formData.postalCode || "",
-                    city: formData.city,
-                    country: formData.country,
-                    bio: formData.bio,
-                    companyName: formData.companyName,
-                    businessId: formData.businessId,
-                    websiteLink: formData.websiteLink,
-                    profileImageUrl: formData.profileImageUrl
-                });
-                await updateUser({
-                    userName: formData.userId,
-                    mail: formData.email,
-                    phoneNumber: formData.phoneNumber,
-                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`,
-                    businessId: formData.personalBusinessId
-                });
-            } else {
-                await createUser({
-                    userName: formData.userId,
-                    mail: formData.email,
-                    businessId: formData.personalBusinessId,
-                    phoneNumber: formData.phoneNumber,
-                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`
-                })
-                await createEmployer({
-                    userId: formData.userId,                    
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    employerType: formData.employerType,
-                    streetAddress: userDetails?.address || "",
-                    postalCode: formData.postalCode || "",
-                    city: formData.city,
-                    country: formData.country,
-                    bio: formData.bio,
-                    companyName: formData.companyName,
-                    businessId: formData.businessId,
-                    websiteLink: formData.websiteLink,
-                    profileImageUrl: formData.profileImageUrl,
-                })
-            }
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Failed to update profile:', error);
+const handleSaveClick = async () => {
+    try {
+        const userPayload = {
+            userName: formData.userId,
+            mail: formData.email,
+            businessId: formData.personalBusinessId,
+            phoneNumber: formData.phoneNumber,
+            address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`
+        };
+
+        const employerPayload = {
+            userId: formData.userId,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            employerType: formData.employerType,
+            streetAddress: formData.streetAddress || "",
+            postalCode: formData.postalCode || "",
+            city: formData.city,
+            country: formData.country,
+            bio: formData.bio,
+            companyName: formData.companyName,
+            businessId: formData.businessId,
+            websiteLink: formData.websiteLink,
+            profileImageUrl: formData.profileImageUrl,
+        };
+
+        if (employerDetails) {
+            await Promise.all([
+                updateEmployer(employerPayload),
+                updateUser(userPayload)
+            ]);
+        } else if (userDetails) {
+            await updateUser(userPayload);
+            await createEmployer(employerPayload);
+        } else {
+            await createUser(userPayload);
+            await createEmployer(employerPayload);
         }
-    };
+
+        await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['userDetails'] }),
+            queryClient.invalidateQueries({ queryKey: ['employerDetails'] })
+        ]);
+
+        setIsEditing(false);
+    } catch (error) {
+        console.error('Failed to update profile:', error);
+        // TODO: Add error handling UI feedback
+    }
+};
 
     const handleEditClick = () => {
         setIsEditing(true);

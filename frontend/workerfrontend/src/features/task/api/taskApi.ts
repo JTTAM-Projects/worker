@@ -44,20 +44,33 @@ export async function fetchTasks(
   if (!response.ok) {
     throw new Error(`Failed to fetch tasks: ${response.statusText}`);
   }
-
   return response.json();
 }
 
 // Fetch user's own tasks (requires authentication)
 export async function fetchUserTasks(
-  getAccessToken: () => Promise<string>
-): Promise<Task[]> {
+  getAccessToken: () => Promise<string>, params: FetchTasksParams = {}
+): Promise<PaginatedResponse<Task>> {
   const token = await getAccessToken();
+  const { page = 0, size = 10, category, status } = params;
+
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+
+  if (category) {
+    queryParams.append("category", category);
+  }
+
+  if (status) {
+    queryParams.append("status", status);
+  }
 
   const response = await fetch(`${API_BASE_URL}/task/user-tasks`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
     },
   });
 

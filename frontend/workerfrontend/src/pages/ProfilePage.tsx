@@ -1,21 +1,29 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import UserProfileCard from "../features/Profile/components/shared/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
 import { useUserTasks } from "../features/task/hooks/useUserTasks";
 import EmployerDetails from "../features/Profile/components/employer/EmployerDetails"; //TODO: Implement backendapi calls
 import TaskerDetails from "../features/Profile/components/tasker/TaskerDetails";
+import type { Category } from "../features/task/types";
 
 
 export default function ProfilePage() {
   const { user } = useAuth0();
-  const { data: userTasksData, isLoading, error } = useUserTasks();
+  const [category, setCategory] = useState<Category | "all">("all");
+  const { data: userTasksData, isLoading, error } = useUserTasks({
+    page: 0,
+    size: 3,
+    status: "ACTIVE",
+    category: category === "all" ? undefined : category,
+  });
   const [ activeTab, setActiveTab ] = useState('employer'); 
   
   // Get user tasks from backend, filters only ACTIVE tasks
-  const activeUserTasks = (userTasksData || []).filter(
+/*   const activeUserTasks = (userTasksData || []).filter(
     (task) => task.status === "ACTIVE"
-  );
+  ); */
+  const filteredTasks = useMemo(() => userTasksData?.content || [], [userTasksData]);
   console.log("Test " + userTasksData);
 
   if (isLoading) {
@@ -76,7 +84,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {!isLoading && !error && <TaskList tasks={activeUserTasks} />}
+          {!isLoading && !error && <TaskList tasks={filteredTasks} />}
         </section>
       </main>
     </section>

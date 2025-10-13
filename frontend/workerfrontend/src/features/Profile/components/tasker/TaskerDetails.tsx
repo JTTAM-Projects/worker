@@ -3,6 +3,7 @@ import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/use
 import ProfileSkillsSection from "../UserSkillsSection"
 import { useCreateTasker, useGetTaskerDetails,useUpdateTaskerDetails } from '../../hooks/taskerHooks'
 import { useAuth0 } from '@auth0/auth0-react';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -13,11 +14,12 @@ export default function TaskerDetails () {
     const { user } = useAuth0();
     const { data: userDetails } = useGetUserDetails();
     const { data: taskerDetails } = useGetTaskerDetails();
-    const { mutate: createTasker } = useCreateTasker();
-    const { mutate: createUser } = useCreateUser();
-    const { mutate: updateTasker } = useUpdateTaskerDetails();
-    const { mutate: updateUser } = useUpdateUser();
+    const { mutateAsync: createTasker } = useCreateTasker();
+    const { mutateAsync: createUser } = useCreateUser();
+    const { mutateAsync: updateTasker } = useUpdateTaskerDetails();
+    const { mutateAsync: updateUser } = useUpdateUser();
     const [ isEditing, setIsEditing ] = useState(false);
+    const queryClient = useQueryClient();
 
     const [formData, setFormData] = useState({
         userId: user?.sub || "",
@@ -37,8 +39,16 @@ export default function TaskerDetails () {
 
     const handleSaveClick = async () => {
         try {
-            if(taskerDetails){
-                await updateTasker({
+
+            const userPayload = {
+                userName: formData.userId,
+                mail: formData.email,
+                businessId: formData.businessId,
+                phoneNumber: formData.phoneNumber,
+                address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`
+            };
+
+            const taskerPayload = {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
                     streetAddress: userDetails?.address || "",
@@ -48,35 +58,28 @@ export default function TaskerDetails () {
                     bio: formData.bio,
                     websiteLink: formData.websiteLink,
                     profileImageUrl: formData.profileImageUrl
-                });
-                await updateUser({
-                    userName: formData.userId,
-                    mail: formData.email,
-                    phoneNumber: formData.phoneNumber,
-                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`,
-                    businessId: formData.businessId
-                });
+            };
+
+            if (taskerDetails) {
+                await Promise.all([
+                    updateUser(userPayload),
+                    updateTasker(taskerPayload)
+                ]);
+            } else if (userDetails) {
+                await updateUser(userPayload);
+                await createTasker(taskerPayload);
             } else {
-                await createUser({
-                    userName: formData.userId,
-                    mail: formData.email,
-                    businessId: formData.businessId,
-                    phoneNumber: formData.phoneNumber,
-                    address: `${formData.streetAddress} ${formData.postalCode}, ${formData.city.toUpperCase()} ${formData.country}`
-                })
-                await createTasker({                  
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    streetAddress: userDetails?.address || "",
-                    postalCode: formData.postalCode || "",
-                    city: formData.city,
-                    country: formData.country,
-                    bio: formData.bio,
-                    websiteLink: formData.websiteLink,
-                    profileImageUrl: formData.profileImageUrl,
-                })
+                await createUser(userPayload);
+                await createTasker(taskerPayload);
             }
+
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['taskerDetails'] }),
+                queryClient.invalidateQueries({ queryKey: ['userDetails'] })
+            ]);
+
             setIsEditing(false);
+            
         } catch (error) {
             console.error('Failed to update profile:', error);
         }
