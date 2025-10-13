@@ -3,11 +3,7 @@ import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/use
 import ProfileSkillsSection from "../UserSkillsSection"
 import { useCreateTasker, useGetTaskerDetails,useUpdateTaskerDetails } from '../../hooks/taskerHooks'
 import { useAuth0 } from '@auth0/auth0-react';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
-
-
-
-//TODO use props for user
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function TaskerDetails () {
 

@@ -1,13 +1,11 @@
-import { useAuth0 } from "@auth0/auth0-react"; //TODO remove
+import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";
-
 import { useGetEmployerProfile, useUpdateEmployer, useCreateEmployerProfile } from "../../hooks/EmployerHooks"
 import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/userHooks";
-import type { EmployerType } from "../../types";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function EmployerDetails(){
-    const { user } = useAuth0(); //TODO use props    
+    const { user } = useAuth0();
     const { data: userDetails } = useGetUserDetails();
     const { data: employerDetails } = useGetEmployerProfile();    
     const { mutateAsync: updateEmployer } = useUpdateEmployer();
