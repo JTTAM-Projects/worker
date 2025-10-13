@@ -1,43 +1,66 @@
+import { useState, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import ProfileAboutSection from "../features/Profile/ProfileAboutSection";
-import ProfileSkillsSection from "../features/Profile/UserSkillsSection";
-import UserProfileCard from "../features/Profile/UserProfileCard";
+import UserProfileCard from "../features/Profile/components/shared/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
 import { useUserTasks } from "../features/task/hooks/useUserTasks";
+import EmployerDetails from "../features/Profile/components/employer/EmployerDetails"; //TODO: Implement backendapi calls
+import TaskerDetails from "../features/Profile/components/tasker/TaskerDetails";
+import type { Category } from "../features/task/types";
+
 
 export default function ProfilePage() {
   const { user } = useAuth0();
-  const { data: userTasksData, isLoading, error } = useUserTasks();
-
+  const [category, setCategory] = useState<Category | "all">("all");
+  const { data: userTasksData, isLoading, error } = useUserTasks({
+    page: 0,
+    size: 3,
+    status: "ACTIVE",
+    category: category === "all" ? undefined : category,
+  });
+  const [ activeTab, setActiveTab ] = useState('employer'); 
+  
   // Get user tasks from backend, filters only ACTIVE tasks
-  const activeUserTasks = (userTasksData || []).filter(
+/*   const activeUserTasks = (userTasksData || []).filter(
     (task) => task.status === "ACTIVE"
-  );
+  ); */
+  const filteredTasks = useMemo(() => userTasksData?.content || [], [userTasksData]);
+  console.log("Test " + userTasksData);
+
+  if (isLoading) {
+      return <div>Loading ...</div>;
+  }
 
   return (
     <section className="bg-gray-50 min-h-screen w-full">
       <main className="container mx-auto px-6 py-12 grid gap-10">
-        <UserProfileCard user={user} />
-        <ProfileAboutSection />
-        <ProfileSkillsSection />
-        <h2 className="text-2xl font-bold text-gray-800">Yhteystiedot</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Sähköposti</h3>
-            <p className="mt-1 text-gray-800">
-              {user?.email || "Email not found"}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Puhelinnumero</h3>
-            <p className="mt-1 text-gray-800">123456</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-500">Sijainti</h3>
-            <p className="mt-1 text-gray-800">Helsinki, FI</p>
-          </div>
+        <UserProfileCard user={user}/>
+        <div className="flex mb-6 border-b">
+          <button
+              className={`py-2 px-4 text-sm font-medium ${
+                  activeTab === 'employer'
+                      ? 'text-green-600 border-b-2 border-green-600'
+                      : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('employer')}
+          >
+              Yrittäjä profiili
+          </button>
+          <button
+              className={`py-2 px-4 text-sm font-medium ${
+                  activeTab === 'employee'
+                      ? 'text-green-600 border-b-2 border-green-600'
+                      : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('employee')}
+          >
+              Työntekijä profiili
+          </button>
         </div>
-
+        {activeTab === 'employer' ? (
+          <EmployerDetails />
+        ) : (
+          <TaskerDetails />
+        )}
         <section>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
             Omat työilmoitukset
@@ -61,7 +84,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {!isLoading && !error && <TaskList tasks={activeUserTasks} />}
+          {!isLoading && !error && <TaskList tasks={filteredTasks} />}
         </section>
       </main>
     </section>

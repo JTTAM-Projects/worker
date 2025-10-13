@@ -23,6 +23,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/task/**").permitAll()
+                        .requestMatchers("/api/task/user-tasks").authenticated()
+                        .requestMatchers("GET", "/api/task/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
