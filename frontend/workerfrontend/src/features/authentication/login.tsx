@@ -1,24 +1,33 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import React from "react";
 
 const LoginButton = () => {
   const { loginWithRedirect } = useAuth0();
 
-  return <button 
-            className="
-            bg-green-500 
+  return (
+    <button
+      className="
+            bg-green-700 
             text-white 
-            px-4 
-            py-2 
-            rounded-md 
-            hover:bg-green-600 
-            hover:border-green-400 
+            px-5
+            py-2.5
+            rounded-lg 
+            hover:bg-white
+            hover:text-green-600
+            hover:shadow-xl
+            hover:scale-105
+            border-2
+            border-green-700
+            hover:border-white
             text-sm 
-            font-medium"
-            onClick={() => loginWithRedirect()}
-          >
-          Log In
-          </button>;
+            font-bold
+            transition-all
+            duration-200
+            shadow-md"
+      onClick={() => loginWithRedirect()}
+    >
+      Kirjaudu
+    </button>
+  );
 };
 
 export default LoginButton;
