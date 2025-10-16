@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useCreateTask } from "../hooks/useCreateTask";
 import type { Category } from "../types";
+import type { CreateTaskInput } from "../api/taskApi";
 
 function toLocalIso(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -14,7 +15,7 @@ type Props = { children: ReactNode };
 export default function CreateTask({ children }: Props) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<Category>("OTHER");
+  const [category, setCategory] = useState<Category>("Other");
   const [price, setPrice] = useState<number>(50);
   const [startDate, setStartDate] = useState<string>(toLocalIso(new Date()));
   const [endDate, setEndDate] = useState<string>(
@@ -31,25 +32,32 @@ export default function CreateTask({ children }: Props) {
     const p = Number(price);
     if (Number.isNaN(p) || p < 0) return;
 
-    mutate(
-      {
-        title,
-        category,
-        price: p,
-        startDate,
-        endDate,
-        location,
-        description: description.trim() || undefined,
-        status: "ACTIVE", // testi ei välttämättä pakollinen rivi
-      },
-      {
-        onSuccess: () => {
-          setOpen(false);
-          setTitle("");
-          setDescription("");
+    const payload: CreateTaskInput = {
+      title,
+      price: p,
+      startDate,
+      endDate,
+      description: description.trim() || undefined,
+      categories: [
+        {
+          title: category,
         },
-      }
-    );
+      ],
+      location: {
+        streetAddress: "",
+        postalCode: "",
+        city: location || "Helsinki",
+        country: "Suomi",
+      },
+    };
+
+    mutate(payload, {
+      onSuccess: () => {
+        setOpen(false);
+        setTitle("");
+        setDescription("");
+      },
+    });
   };
 
   const openDialog: React.MouseEventHandler<HTMLDivElement> = (e) => {
@@ -121,10 +129,10 @@ export default function CreateTask({ children }: Props) {
                     value={category}
                     onChange={(e) => setCategory(e.target.value as Category)}
                   >
-                    <option value="CLEANING">CLEANING</option>
-                    <option value="GARDEN">GARDEN</option>
-                    <option value="MOVING">MOVING</option>
-                    <option value="OTHER">OTHER</option>
+                    <option value="Cleaning">Cleaning</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Moving">Moving</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
                 <div>

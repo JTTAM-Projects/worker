@@ -81,15 +81,29 @@ export async function fetchUserTasks(
   return response.json();
 }
 
+export interface TaskCategoryInput {
+  title: Category | string;
+  categoryId?: number;
+}
+
+export interface TaskLocationInput {
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 export interface CreateTaskInput {
-  category: Category;
+  categories: TaskCategoryInput[];
   title: string;
   price: number;
   startDate: string;
   endDate: string;
-  location: string;
+  location: TaskLocationInput;
   description?: string;
-  status?: TaskStatus; // testi ei välttämättä pakollinen rivi
+  status?: TaskStatus;
 }
 
 // Create a new task (requires authentication)

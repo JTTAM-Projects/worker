@@ -1,7 +1,10 @@
 package com.jttam.glig.domain.task;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ import com.jttam.glig.service.Message;
 
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskControllerService {
@@ -65,6 +69,21 @@ public class TaskControllerService {
         Task task = mapper.toTaskEntity(taskRequest);
         task.setUser(user);
         task.setStatus(TaskStatus.ACTIVE);
+
+        if (task.getCategories() != null && !task.getCategories().isEmpty()) {
+            Set<Category> resolvedCategories = task.getCategories().stream()
+                    .map(category -> {
+                        if (category.getCategoryId() != null) {
+                            Optional<Category> byId = categoryRepository.findById(category.getCategoryId());
+                            return byId.orElse(category);
+                        }
+                        Category existing = categoryRepository.findByTitle(category.getTitle());
+                        return existing != null ? existing : category;
+                    })
+                    .collect(Collectors.toCollection(HashSet::new));
+            task.setCategories(resolvedCategories);
+        }
+
         Task saved = taskRepository.save(task);
         TaskResponse out = mapper.toTaskResponse(saved);
         return new ResponseEntity<>(out, HttpStatus.CREATED);
