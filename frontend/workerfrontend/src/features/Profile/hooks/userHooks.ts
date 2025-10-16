@@ -24,7 +24,7 @@ export function useUpdateUser() {
                 }
                 updateUser(getAccessTokenSilently, userData)
         },
-        onSuccess:(data) => {
+        onSuccess:() => {
             queryClient.invalidateQueries({ queryKey: ['userDetails'] });
         },
         onError: (error) => {
@@ -44,9 +44,12 @@ export function useCreateUser() {
             }
             return createUser(getAccessTokenSilently, userData);
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             // Invalidate and refetch user queries
             queryClient.invalidateQueries({ queryKey: ['userDetails'] });
         },
+        onError: (error) => {
+            console.error('Failed to create user', error);
+        }
     });
 }
