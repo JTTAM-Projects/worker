@@ -25,7 +25,7 @@ export async function fetchTasks(
   });
 
   if (category) {
-    queryParams.append("category", category);
+    queryParams.append("categoryTitle", category); // Backend uses categoryTitle, not category
   }
 
   if (status) {
@@ -60,7 +60,7 @@ export async function fetchUserTasks(
   });
 
   if (category) {
-    queryParams.append("category", category);
+    queryParams.append("categoryTitle", category); // Backend uses categoryTitle, not category
   }
 
   if (status) {

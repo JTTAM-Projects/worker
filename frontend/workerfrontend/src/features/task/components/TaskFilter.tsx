@@ -7,10 +7,10 @@ interface TaskFilterProps {
 
 export default function TaskFilter({ category, setCategory }: TaskFilterProps) {
   const filterOptions = [
-    { id: "CLEANING" as const, icon: "cleaning_services", label: "Siivous" },
-    { id: "GARDEN" as const, icon: "local_florist", label: "Puutarhatyöt" },
-    { id: "MOVING" as const, icon: "local_shipping", label: "Muuttoapu" },
-    { id: "OTHER" as const, icon: "help_outline", label: "Muu" },
+    { id: "Cleaning" as const, icon: "cleaning_services", label: "Siivous" },
+    { id: "Garden" as const, icon: "local_florist", label: "Puutarhatyöt" },
+    { id: "Moving" as const, icon: "local_shipping", label: "Muuttoapu" },
+    { id: "Other" as const, icon: "help_outline", label: "Muu" },
     { id: "all" as const, icon: "filter_list", label: "Kaikki" },
   ] as const;
 

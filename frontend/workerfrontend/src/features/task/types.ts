@@ -1,9 +1,25 @@
-// Backend categories - must match backend enum values
-export type Category = "CLEANING" | "GARDEN" | "MOVING" | "OTHER";
+// Backend categories 
+export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
-export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "EXPIRED";
+export type TaskStatus = "Active" | "In Progress" | "Completed" | "Cancelled" | "Expired";
 
-// Matches backend UserDto exactly
+// Matches backend CategoryResponse
+export interface CategoryResponse {
+  title: string;
+}
+
+// Matches backend LocationResponse
+export interface LocationResponse {
+  locationId?: number;
+  streetAddress?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+// Matches backend UserResponse/UserDto
 export interface UserDto {
   userName: string;
   mail: string;
@@ -12,16 +28,16 @@ export interface UserDto {
   address: string;
 }
 
-// Matches backend TaskDto exactly
+// Matches backend TaskListDTO exactly
 export interface Task {
   id: number;
   user: UserDto;
-  category: Category;
+  categories: CategoryResponse[]; // Changed from single category to array of CategoryResponse
   title: string;
   price: number;
   startDate: string; // ISO string from LocalDateTime
   endDate: string; // ISO string from LocalDateTime
-  location: string;
+  location: LocationResponse; // Changed from string to LocationResponse
   status: TaskStatus;
   description: string;
 }
