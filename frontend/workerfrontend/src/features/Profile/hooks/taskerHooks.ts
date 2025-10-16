@@ -24,10 +24,13 @@ export function useCreateTasker(){
             }
             return createTaskerProfile(getAccessTokenSilently, taskerData);
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             // Invalidate and refetch user queries
             queryClient.invalidateQueries({ queryKey: ['taskerDetails'] });
         },
+        onError: (error) => {
+            console.error('Failed to create tasker profile: ', error);
+        }
     });
 }
 
@@ -42,7 +45,7 @@ export function useUpdateTaskerDetails(){
                 }
                 return updateTasker(getAccessTokenSilently, taskerData);
         },
-        onSuccess:(data) => {
+        onSuccess:() => {
             queryClient.invalidateQueries({ queryKey: ['taskerDetails'] });
         },
         onError: (error) => {
