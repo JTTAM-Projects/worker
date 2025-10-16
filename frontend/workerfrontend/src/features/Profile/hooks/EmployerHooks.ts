@@ -24,10 +24,13 @@ export function useCreateEmployerProfile() {
             }
             return createEmployerProfile(getAccessTokenSilently, employerData);
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             // Invalidate and refetch user queries
             queryClient.invalidateQueries({ queryKey: ['employerDetails'] });
         },
+        onError: (error) => {
+            console.error('Failed to create employer profile: ', error);
+        }
     });
 }
 
@@ -42,7 +45,7 @@ export function useUpdateEmployer() {
                 }
                 return updateEmployer(getAccessTokenSilently, employerData);
         },
-        onSuccess:(data) => {
+        onSuccess:() => {
             queryClient.invalidateQueries({ queryKey: ['employerDetails'] });
         },
         onError: (error) => {
