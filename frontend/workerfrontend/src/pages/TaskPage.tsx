@@ -4,6 +4,7 @@ import TaskFilter from "../features/task/components/TaskFilter";
 import TaskList from "../features/task/components/TaskList";
 import type { Category } from "../features/task/types";
 import { useTasks } from "../features/task/hooks/useTasks";
+import { Pagination } from "../ui-library";
 
 export default function TaskPage() {
   const [category, setCategory] = useState<Category | "all">("all");
@@ -14,7 +15,7 @@ export default function TaskPage() {
     page,
     size: 12,
     category: category !== "all" ? category : undefined,
-    status: "ACTIVE",
+    status: "Active",
   });
 
   // Client-side search filtering (backend doesn't support search yet)
@@ -62,25 +63,14 @@ export default function TaskPage() {
       <TaskList tasks={filteredTasks} />
 
       {data && (
-        <div className="flex justify-center items-center gap-4">
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 0}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            Edellinen
-          </button>
-          <span className="text-gray-700">
-            Sivu {page + 1} / {data.totalPages}
-          </span>
-          <button
-            onClick={() => setPage(page + 1)}
-            disabled={page >= data.totalPages - 1}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            Seuraava
-          </button>
-        </div>
+        <Pagination
+          currentPage={page}
+          totalPages={data.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+          onPrevious={() => setPage(page - 1)}
+          onNext={() => setPage(page + 1)}
+          zeroIndexed={true}
+        />
       )}
     </main>
   );
