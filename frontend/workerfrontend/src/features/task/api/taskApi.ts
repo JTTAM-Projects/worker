@@ -129,3 +129,18 @@ export async function createTask(
 
   return response.json();
 }
+
+// Fetch a single task by ID
+export async function fetchTaskById(taskId: number): Promise<Task> {
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch task: ${response.statusText}`);
+  }
+
+  return response.json();
+}
