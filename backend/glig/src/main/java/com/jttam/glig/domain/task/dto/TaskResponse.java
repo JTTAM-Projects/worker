@@ -1,5 +1,6 @@
 package com.jttam.glig.domain.task.dto;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -17,5 +18,7 @@ public record TaskResponse(Long id,
         LocalDateTime endDate,
         LocationResponse location,
         TaskStatus status,
-        String description) {
+        String description,
+        Instant createdAt,
+        Instant updatedAt) {
 }
