@@ -44,7 +44,33 @@ public class ApplicationController {
     @GetMapping("/task/{taskId}/application")
     public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetSingleApplicationsById(taskId, username);
+        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+    }
+
+    @Operation(summary = "Get a single application for a task", description = "Fetches a single application DTO for a given task ID and username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Application data fetched successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Application not found")
+    })
+    @GetMapping("/task/{taskId}/user/{username}/application")
+    public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @PathVariable String username) {
+        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+    }
+
+    @Operation(summary = "Get all applications of a task", description = "Fetches all applications that single task has.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Applications fetched successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @GetMapping("/task/{taskId}/applications")
+    public Page<ApplicationListDTO> getAllTaskApplications(
+            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            ApplicationDataGridFilters filters,
+            @PathVariable Long taskId) {
+
+        String username = null;
+        return service.tryGetAllApplicationsByGivenUsernameAndTaskId(pageable, filters, username, taskId);
     }
 
     @Operation(summary = "Get all applications for the authenticated user", description = "Fetches all applications made by the currently authenticated user.")
@@ -57,7 +83,8 @@ public class ApplicationController {
             @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
             ApplicationDataGridFilters filters, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetAllUserApplications(pageable, filters, username);
+        Long taskId = null;
+        return service.tryGetAllApplicationsByGivenUsernameAndTaskId(pageable, filters, username, taskId);
     }
 
     @Operation(summary = "Create a new application for a task", description = "Creates a new application for a specific task by the authenticated user.")

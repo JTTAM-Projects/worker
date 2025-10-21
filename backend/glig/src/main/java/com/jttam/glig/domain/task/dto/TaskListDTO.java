@@ -15,7 +15,7 @@ public record TaskListDTO(Long id,
         Integer price,
         LocalDateTime startDate,
         LocalDateTime endDate,
-        LocationResponse location,
+        Set<LocationResponse> locations,
         TaskStatus status,
         String description) {
 }

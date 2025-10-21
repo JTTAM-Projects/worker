@@ -1,5 +1,7 @@
 package com.jttam.glig.domain.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -18,8 +20,8 @@ import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
-import com.jttam.glig.service.Specifications;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -39,7 +41,7 @@ public class ApplicationControllerService {
     }
 
     @Transactional
-    public ApplicationResponse tryGetSingleApplicationsById(Long taskId, String username) {
+    public ApplicationResponse tryGetSingleApplicationByUsernameAndTaskId(Long taskId, String username) {
         ApplicationId applyId = new ApplicationId(taskId, username);
         Application apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND",
@@ -49,9 +51,10 @@ public class ApplicationControllerService {
     }
 
     @Transactional
-    public Page<ApplicationListDTO> tryGetAllUserApplications(Pageable pageable, ApplicationDataGridFilters filters,
-            String username) {
-        Specification<Application> spec = Specifications.withApplicationFilters(filters, username);
+    public Page<ApplicationListDTO> tryGetAllApplicationsByGivenUsernameAndTaskId(Pageable pageable,
+            ApplicationDataGridFilters filters,
+            String username, Long taskId) {
+        Specification<Application> spec = withApplicationFilters(filters, username, taskId);
         Page<Application> applies = applyRepository.findAll(spec, pageable);
         Page<ApplicationListDTO> listOfApplyDto = mapper.toApplicationResponseListPage(applies);
         return listOfApplyDto;
@@ -98,5 +101,29 @@ public class ApplicationControllerService {
         }
         applyRepository.deleteById(applyId);
         return new ResponseEntity<>(new Message("SUCCESS", "Apply deleted successfully"), HttpStatus.OK);
+    }
+
+    public static Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
+            String username, Long taskId) {
+        return (root, query, criteriabuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (username != null) {
+                predicates.add(criteriabuilder.equal(root.get("user").get("userName"), username));
+            }
+
+            if (taskId != null) {
+                predicates.add(criteriabuilder.equal(root.get("task").get("id"), taskId));
+            }
+
+            if (filters != null) {
+
+                if (filters.applicationStatus() != null) {
+                    predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
+                }
+            }
+            return criteriabuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
     }
 }

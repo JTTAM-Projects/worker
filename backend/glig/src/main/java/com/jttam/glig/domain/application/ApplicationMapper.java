@@ -20,9 +20,7 @@ public interface ApplicationMapper {
 
     ApplicationResponse toApplicationResponse(Application apply);
 
-    @Mapping(target = "taskTitle", source = "task.title")
-    @Mapping(target = "user", source = "task.user")
-    @Mapping(target = "categories", source = "task.categories")
+    @Mapping(target = "appliedUser", source = "user")
     ApplicationListDTO toApplicationListDTO(Application apply);
 
     @Mapping(target = "createdAt", ignore = true)
