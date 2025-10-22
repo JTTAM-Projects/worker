@@ -12,6 +12,7 @@ import com.jttam.glig.domain.application.ApplicationMapper;
 import com.jttam.glig.domain.category.CategoryMapper;
 import com.jttam.glig.domain.location.LocationMapper;
 import com.jttam.glig.domain.task.dto.TaskResponse;
+import com.jttam.glig.domain.task.dto.ApplicationListTaskDto;
 import com.jttam.glig.domain.task.dto.TaskListDTO;
 import com.jttam.glig.domain.task.dto.TaskRequest;
 import com.jttam.glig.domain.user.UserMapper;
@@ -22,6 +23,8 @@ import com.jttam.glig.domain.user.UserMapper;
 public interface TaskMapper {
 
     TaskResponse toTaskResponse(Task task);
+
+    ApplicationListTaskDto toApplicationListTaskDto(Task task);
 
     TaskListDTO toTaskList(Task task);
 

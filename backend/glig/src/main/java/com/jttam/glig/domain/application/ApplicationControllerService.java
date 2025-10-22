@@ -12,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.jttam.glig.domain.application.dto.ApplicationResponse;
-import com.jttam.glig.domain.application.dto.ApplicationListDTO;
+import com.jttam.glig.domain.application.dto.MyApplicationDTO;
+import com.jttam.glig.domain.application.dto.TaskApplicantDto;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
@@ -51,12 +52,22 @@ public class ApplicationControllerService {
     }
 
     @Transactional
-    public Page<ApplicationListDTO> tryGetAllApplicationsByGivenUsernameAndTaskId(Pageable pageable,
+    public Page<MyApplicationDTO> GetAllUserApplications(Pageable pageable,
             ApplicationDataGridFilters filters,
-            String username, Long taskId) {
+            String username) {
+        Long taskId = null;
         Specification<Application> spec = withApplicationFilters(filters, username, taskId);
         Page<Application> applies = applyRepository.findAll(spec, pageable);
-        Page<ApplicationListDTO> listOfApplyDto = mapper.toApplicationResponseListPage(applies);
+        Page<MyApplicationDTO> listOfApplyDto = mapper.toMyApplicationDtoListPage(applies);
+        return listOfApplyDto;
+    }
+
+    public Page<TaskApplicantDto> tryGetAllApplicationsByGivenTaskId(Pageable pageable,
+            ApplicationDataGridFilters filters, Long taskId) {
+        String username = null;
+        Specification<Application> spec = withApplicationFilters(filters, username, taskId);
+        Page<Application> applies = applyRepository.findAll(spec, pageable);
+        Page<TaskApplicantDto> listOfApplyDto = mapper.toTaskApplicantListPage(applies);
         return listOfApplyDto;
     }
 
@@ -126,4 +137,5 @@ public class ApplicationControllerService {
         };
 
     }
+
 }
