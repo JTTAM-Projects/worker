@@ -15,7 +15,7 @@ public record TaskRequest(
         @NotNull(message = "Price is required") Integer price,
         @NotNull(message = "Start date is required") LocalDateTime startDate,
         @NotNull(message = "End date is required") LocalDateTime endDate,
-        @NotNull(message = "Location is required") LocationRequest location,
+        @NotNull(message = "Location is required") Set<LocationRequest> locations,
         String description) {
 
 }

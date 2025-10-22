@@ -1,5 +1,7 @@
 package com.jttam.glig.domain.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.jttam.glig.domain.application.dto.ApplicationResponse;
-import com.jttam.glig.domain.application.dto.ApplicationListDTO;
+import com.jttam.glig.domain.application.dto.MyApplicationDTO;
+import com.jttam.glig.domain.application.dto.TaskApplicantDto;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
@@ -18,8 +21,8 @@ import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
-import com.jttam.glig.service.Specifications;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -39,7 +42,7 @@ public class ApplicationControllerService {
     }
 
     @Transactional
-    public ApplicationResponse tryGetSingleApplicationsById(Long taskId, String username) {
+    public ApplicationResponse tryGetSingleApplicationByUsernameAndTaskId(Long taskId, String username) {
         ApplicationId applyId = new ApplicationId(taskId, username);
         Application apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND",
@@ -49,11 +52,22 @@ public class ApplicationControllerService {
     }
 
     @Transactional
-    public Page<ApplicationListDTO> tryGetAllUserApplications(Pageable pageable, ApplicationDataGridFilters filters,
+    public Page<MyApplicationDTO> GetAllUserApplications(Pageable pageable,
+            ApplicationDataGridFilters filters,
             String username) {
-        Specification<Application> spec = Specifications.withApplicationFilters(filters, username);
+        Long taskId = null;
+        Specification<Application> spec = withApplicationFilters(filters, username, taskId);
         Page<Application> applies = applyRepository.findAll(spec, pageable);
-        Page<ApplicationListDTO> listOfApplyDto = mapper.toApplicationResponseListPage(applies);
+        Page<MyApplicationDTO> listOfApplyDto = mapper.toMyApplicationDtoListPage(applies);
+        return listOfApplyDto;
+    }
+
+    public Page<TaskApplicantDto> tryGetAllApplicationsByGivenTaskId(Pageable pageable,
+            ApplicationDataGridFilters filters, Long taskId) {
+        String username = null;
+        Specification<Application> spec = withApplicationFilters(filters, username, taskId);
+        Page<Application> applies = applyRepository.findAll(spec, pageable);
+        Page<TaskApplicantDto> listOfApplyDto = mapper.toTaskApplicantListPage(applies);
         return listOfApplyDto;
     }
 
@@ -99,4 +113,29 @@ public class ApplicationControllerService {
         applyRepository.deleteById(applyId);
         return new ResponseEntity<>(new Message("SUCCESS", "Apply deleted successfully"), HttpStatus.OK);
     }
+
+    public static Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
+            String username, Long taskId) {
+        return (root, query, criteriabuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (username != null) {
+                predicates.add(criteriabuilder.equal(root.get("user").get("userName"), username));
+            }
+
+            if (taskId != null) {
+                predicates.add(criteriabuilder.equal(root.get("task").get("id"), taskId));
+            }
+
+            if (filters != null) {
+
+                if (filters.applicationStatus() != null) {
+                    predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
+                }
+            }
+            return criteriabuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+    }
+
 }
