@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import TaskPage from "./pages/TaskPage";
+import TaskDetailPage from "./pages/TaskDetailPage";
 import CreateTaskPage from "./pages/CreateTaskPage";
 import MyTasksPage from "./pages/MyTasksPage";
 import ActiveApplicationsPage from "./pages/ActiveApplicationsPage";
@@ -16,6 +17,7 @@ export default function App() {
         <Route index element={<LandingPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="tasks" element={<TaskPage />} />
+        <Route path="tasks/:taskId" element={<TaskDetailPage />} />
         <Route path="create-task" element={<CreateTaskPage />} />
         <Route path="my-tasks" element={<MyTasksPage />} />
         <Route
