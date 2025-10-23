@@ -11,7 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.jttam.glig.domain.application.dto.ApplicationResponse;
-import com.jttam.glig.domain.application.dto.ApplicationListDTO;
+import com.jttam.glig.domain.application.dto.MyApplicationDTO;
+import com.jttam.glig.domain.application.dto.TaskApplicantDto;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
@@ -35,7 +36,7 @@ public class ApplicationController {
         this.methods = methods;
     }
 
-    @Operation(summary = "Get a single application for a task", description = "Fetches a single application DTO for a given task ID, for the authenticated user.")
+    @Operation(summary = "Get a single application for a task (own)", description = "Fetches a single application DTO for a given task ID, using username in given jwt.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Application data fetched successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -44,7 +45,32 @@ public class ApplicationController {
     @GetMapping("/task/{taskId}/application")
     public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetSingleApplicationsById(taskId, username);
+        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+    }
+
+    @Operation(summary = "Get a single application for a task (not own)", description = "Fetches a single application DTO for a given task ID and username, example when fetching application from the list that isnt users own.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Application data fetched successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Application not found")
+    })
+    @GetMapping("/task/{taskId}/user/{username}/application")
+    public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @PathVariable String username) {
+        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+    }
+
+    @Operation(summary = "Get all applications of a task", description = "Fetches all applications that single task has.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Applications fetched successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @GetMapping("/task/{taskId}/applications")
+    public Page<TaskApplicantDto> getAllTaskApplications(
+            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            ApplicationDataGridFilters filters,
+            @PathVariable Long taskId) {
+
+        return service.tryGetAllApplicationsByGivenTaskId(pageable, filters, taskId);
     }
 
     @Operation(summary = "Get all applications for the authenticated user", description = "Fetches all applications made by the currently authenticated user.")
@@ -53,11 +79,11 @@ public class ApplicationController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/user-applications")
-    public Page<ApplicationListDTO> getAllUserApplicationsAndReturnPage(
+    public Page<MyApplicationDTO> getAllUserApplicationsAndReturnPage(
             @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
             ApplicationDataGridFilters filters, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetAllUserApplications(pageable, filters, username);
+        return service.GetAllUserApplications(pageable, filters, username);
     }
 
     @Operation(summary = "Create a new application for a task", description = "Creates a new application for a specific task by the authenticated user.")
