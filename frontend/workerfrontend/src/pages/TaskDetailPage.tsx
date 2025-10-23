@@ -1,11 +1,27 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useTaskById } from "../features/task/hooks/useTaskById";
+import { useUserApplication } from "../features/task/hooks/useUserApplication";
 import TaskDetails from "../features/task/components/TaskDetails";
+import ApplicationsList from "../features/task/components/ApplicationsList";
+import ApplicationForm from "../features/task/components/ApplicationForm";
 
 export default function TaskDetailPage() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const { data: task, isLoading, isError, error } = useTaskById(Number(taskId));
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { data: task, isLoading, isError } = useTaskById(Number(taskId));
+  const { data: hasApplied, isLoading: checkingApplication } =
+    useUserApplication(Number(taskId));
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleApplicationSuccess = () => {
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 10000);
+    setShowApplicationForm(false);
+  };
 
   const getCategoryIcon = (categoryTitle: string) => {
     switch (categoryTitle?.toUpperCase()) {
@@ -34,6 +50,14 @@ export default function TaskDetailPage() {
     }
   };
 
+  const handleApplyClick = () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    } else {
+      setShowApplicationForm(!showApplicationForm);
+    }
+  };
+
   if (isLoading) {
     return (
       <main className="container mx-auto px-6 py-12">
@@ -46,7 +70,7 @@ export default function TaskDetailPage() {
     return (
       <main className="container mx-auto px-6 py-12">
         <div className="text-center text-red-600">
-          Virhe ladattaessa tehtävää: {error?.message || "Tehtävää ei löytynyt"}
+          Virhe ladattaessa tehtävää: {"Tehtävää ei löytynyt"}
         </div>
         <div className="text-center mt-4">
           <button
@@ -84,12 +108,55 @@ export default function TaskDetailPage() {
           />
 
           <div className="flex justify-end mt-6">
-            <button className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
-              <span className="material-icons">check_circle</span>
-              Hae työhön
-            </button>
+            {isAuthenticated && hasApplied ? (
+              <div className="w-full md:w-[320px] px-6 py-3 bg-gray-200 text-gray-600 font-semibold rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
+                <span className="material-icons">check</span>
+                Olet jo hakenut tähän työhön
+              </div>
+            ) : (
+              <button
+                onClick={handleApplyClick}
+                disabled={checkingApplication}
+                className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="material-icons">
+                  {showApplicationForm ? "close" : "check_circle"}
+                </span>
+                {checkingApplication
+                  ? "Tarkistetaan..."
+                  : showApplicationForm
+                  ? "Sulje lomake"
+                  : "Hae työhön"}
+              </button>
+            )}
           </div>
+
+          {showSuccess && (
+            <div className="mt-6 bg-green-50 border border-green-200 text-green-800 px-4 py-4 rounded-lg flex items-center gap-3">
+              <span className="material-icons text-green-600 text-2xl">
+                check_circle
+              </span>
+              <div>
+                <p className="font-semibold">
+                  Hakemus lähetetty onnistuneesti!
+                </p>
+              </div>
+            </div>
+          )}
+
+          {showApplicationForm && isAuthenticated && (
+            <ApplicationForm
+              taskId={Number(taskId)}
+              taskPrice={task.price}
+              onSuccess={handleApplicationSuccess}
+              onCancel={() => setShowApplicationForm(false)}
+            />
+          )}
         </div>
+      </div>
+
+      <div className="mt-8">
+        <ApplicationsList taskId={task.id} />
       </div>
     </main>
   );
