@@ -9,7 +9,8 @@ export function useGetTaskerDetails(){
     return useQuery({
         queryKey: ['taskerDetails'],
         queryFn: () => getTaskerProfile(getAccessTokenSilently),
-        enabled: isAuthenticated
+        enabled: isAuthenticated,
+        staleTime: 5 * 60 * 1000,
     });
 }
 
