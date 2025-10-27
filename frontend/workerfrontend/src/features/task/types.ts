@@ -3,6 +3,8 @@ export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Fo
 
 export type TaskStatus = "Active" | "In Progress" | "Completed" | "Cancelled" | "Expired";
 
+export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+
 // Matches backend CategoryResponse
 export interface CategoryResponse {
   title: string;
@@ -40,6 +42,14 @@ export interface Task {
   location: LocationResponse; // Changed from string to LocationResponse
   status: TaskStatus;
   description: string;
+}
+
+// Matches backend TaskApplicantDto
+export interface TaskApplicant {
+  appliedUser: UserDto;
+  priceSuggestion: number;
+  createdAt: string; // ISO string from Instant
+  applicationStatus: ApplicationStatus;
 }
 
 // Paginated response from backend

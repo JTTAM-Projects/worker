@@ -1,12 +1,14 @@
 import type { Task, LocationResponse } from "../types";
 import { usePagination } from "../hooks/usePagination";
 import { Pagination } from "../../../ui-library";
+import { useNavigate } from "react-router-dom";
 
 interface TaskListProps {
   tasks: Task[];
 }
 
 export default function TaskList({ tasks }: TaskListProps) {
+  const navigate = useNavigate();
   const {
     currentPage,
     totalPages,
@@ -65,7 +67,8 @@ export default function TaskList({ tasks }: TaskListProps) {
           return (
             <div
               key={t.id}
-              className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 p-6 hover:shadow-xl hover:border-green-400 transition-all duration-300 cursor-pointer"
+              className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 p-6 hover:shadow-xl hover:border-green-400 hover:scale-105 transition-all duration-300 cursor-pointer"
+              onClick={() => navigate(`/tasks/${t.id}`)}
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 {/* Left Section: Title, Description, and Category */}
