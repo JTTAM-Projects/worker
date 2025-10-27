@@ -10,12 +10,12 @@ import type { Category } from "../features/task/types";
 
 export default function ProfilePage() {
   const { user } = useAuth0();
-  const [category, setCategory] = useState<Category | "all">("all");
+  const [category] = useState<Category | "all">("all");
   const { data: userTasksData, isLoading, error } = useUserTasks({
     page: 0,
     size: 3,
     status: "ACTIVE",
-    category: category === "all" ? undefined : category,
+    categories: category === "all" ? undefined : [category],
   });
   const [ activeTab, setActiveTab ] = useState('employer'); 
   

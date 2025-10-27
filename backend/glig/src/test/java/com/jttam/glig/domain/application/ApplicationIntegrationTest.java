@@ -56,25 +56,27 @@ public class ApplicationIntegrationTest {
     @Test
     void GetApplyByGivenCorrectTaskIdAndCorrectUserName() throws Exception {
 
-        Long grassTaskId = taskRepository.findByTitle("Leikkaa nurmikko").get(0).getId();
+        // Find the inProgressTask (a manually created task that has an application from User2)
+        Long inProgressTaskId = taskRepository.findByTitle("Siivoa autotalli").get(0).getId();
 
-        mockMvc.perform(get("/api/task/" + grassTaskId + "/application")
+        mockMvc.perform(get("/api/task/" + inProgressTaskId + "/application")
                 .with(jwt().jwt(user2Jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.task.title").value("Leikkaa nurmikko"));
+                .andExpect(jsonPath("$.task.title").value("Siivoa autotalli"));
     }
 
     @Test
     void GetPageOfApplicationsByGivenCorrectUserNameAndFilteringParameters() throws Exception {
 
+        // User2 has 1 CANCELLED application on the inProgressTask
         mockMvc.perform(get("/api/user-applications?applicationStatus=CANCELLED")
                 .with(jwt().jwt(user2Jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("totalElements").value(2));
+                .andExpect(jsonPath("totalElements").value(1));
     }
 
 }

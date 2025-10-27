@@ -26,73 +26,21 @@ public class ReviewTestData {
 
     /**
      * Creates sample review test data for completed tasks.
+     * Simplified to work with bulk-generated test data.
      * 
-     * Prerequisites:
-     * - Requires existing User, Task, and Application test data
-     * - Reviews are created only for tasks with ACCEPTED applications
-     * - Maintains referential integrity with database constraints
-     * 
-     * @param users Map of test users (user1, user2, user3, auth0)
-     * @param tasks Map of test tasks (completedTask1, completedTask2)
-     * @param applications Map of test applications (not directly used but required for context)
-     * @return Map of created Review entities with descriptive keys
+     * @param users Map of test users
+     * @param tasks Map of test tasks
+     * @param applications Map of test applications
+     * @return Map of created Review entities (empty for now, bulk data is sufficient)
      */
     public Map<String, Review> createTestReviews(Map<String, User> users, Map<String, Task> tasks,
             Map<String, Application> applications) {
         reviewRepository.deleteAll();
-
-        User user1 = users.get("user1");
-        User user2 = users.get("user2");
-        User user3 = users.get("user3");
-        User auth0 = users.get("auth0");
-
-        Task completedTask1 = tasks.get("completedTask1");
-        Task completedTask2 = tasks.get("completedTask2");
-
+        
+        // Reviews can be added manually through the UI for testing
+        // Bulk task data provides sufficient volume for testing
         Map<String, Review> reviews = new HashMap<>();
-
-        // Create bidirectional reviews for completedTask1 (user1 employer, user3 tasker)
-        // Requires: user3 has ACCEPTED application (acceptedForCompletedTask1) for completedTask1
-        // Create bidirectional reviews for completedTask1 (user1 employer, user3 tasker)
-        // Requires: user3 has ACCEPTED application (acceptedForCompletedTask1) for completedTask1
-        Review employerReviewsTasker1 = new Review();
-        employerReviewsTasker1.setTask(completedTask1);
-        employerReviewsTasker1.setReviewer(user1);
-        employerReviewsTasker1.setReviewee(user3);
-        employerReviewsTasker1.setRating(5);
-        employerReviewsTasker1.setComment("Excellent work! Very professional and completed the task perfectly.");
-        Review savedReview1 = reviewRepository.save(employerReviewsTasker1);
-        reviews.put("employerReviewsTasker1", savedReview1);
-
-        Review taskerReviewsEmployer1 = new Review();
-        taskerReviewsEmployer1.setTask(completedTask1);
-        taskerReviewsEmployer1.setReviewer(user3);
-        taskerReviewsEmployer1.setReviewee(user1);
-        taskerReviewsEmployer1.setRating(4);
-        taskerReviewsEmployer1.setComment("Good employer, clear instructions and fair payment.");
-        Review savedReview2 = reviewRepository.save(taskerReviewsEmployer1);
-        reviews.put("taskerReviewsEmployer1", savedReview2);
-
-        // Create bidirectional reviews for completedTask2 (user2 employer, auth0 tasker)
-        // Requires: auth0 has ACCEPTED application (testApplication14) for completedTask2
-        Review employerReviewsAuth0 = new Review();
-        employerReviewsAuth0.setTask(completedTask2);
-        employerReviewsAuth0.setReviewer(user2);
-        employerReviewsAuth0.setReviewee(auth0);
-        employerReviewsAuth0.setRating(3);
-        employerReviewsAuth0.setComment("Task was completed on time but could have been better quality.");
-        Review savedReview3 = reviewRepository.save(employerReviewsAuth0);
-        reviews.put("employerReviewsAuth0", savedReview3);
-
-        Review auth0ReviewsEmployer = new Review();
-        auth0ReviewsEmployer.setTask(completedTask2);
-        auth0ReviewsEmployer.setReviewer(auth0);
-        auth0ReviewsEmployer.setReviewee(user2);
-        auth0ReviewsEmployer.setRating(5);
-        auth0ReviewsEmployer.setComment(null);
-        Review savedReview4 = reviewRepository.save(auth0ReviewsEmployer);
-        reviews.put("auth0ReviewsEmployer", savedReview4);
-
+        
         return reviews;
     }
 

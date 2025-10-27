@@ -75,9 +75,19 @@ public class TestDataService {
         Map<String, User> users = userData.createTestUsers();
         Map<String, Location> locations = locationData.createTestLocations();
         Map<String, Category> categories = categoryData.createTestCategories();
+        
+        // Create minimal hand-crafted test tasks (3 tasks for specific edge cases)
         Map<String, Task> tasks = taskData.createTestTasks(users, locations, categories);
+        
+        // Generate bulk test tasks (500 tasks for volume testing)
+        Map<String, Task> bulkTasks = taskData.generateBulkTestTasks(users, locations, categories, 500);
+        tasks.putAll(bulkTasks);
+        
         Map<String, Application> applications = applyData.createTestApplications(users, tasks);
         Map<String, Review> reviews = reviewData.createTestReviews(users, tasks, applications);
+        
+        logger.info("Test data created: {} users, {} locations, {} categories, {} tasks, {} applications, {} reviews",
+                users.size(), locations.size(), categories.size(), tasks.size(), applications.size(), reviews.size());
     }
 
     public void resetDataBase() {

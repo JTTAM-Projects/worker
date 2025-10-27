@@ -1,4 +1,4 @@
-import type { Task, PaginatedResponse, Category, TaskStatus, TaskApplicant } from "../types";
+import type { Task, PaginatedResponse, Category, TaskStatus, TaskApplicant, TaskFilters } from "../types";
 
 // This is a file for interacting with the backend task API.
 // It uses the Fetch API to make HTTP requests.
@@ -6,43 +6,108 @@ import type { Task, PaginatedResponse, Category, TaskStatus, TaskApplicant } fro
 
 const API_BASE_URL = "http://localhost:8080/api";
 
-export interface FetchTasksParams {
+export interface FetchTasksParams extends TaskFilters {
   page?: number;
   size?: number;
-  category?: Category;
-  status?: TaskStatus;
+}
+
+/**
+ * Convert frontend sortBy to Spring Pageable sort parameter
+ */
+function getSortParam(sortBy?: string): string | undefined {
+  switch (sortBy) {
+    case 'newest':
+      return 'startDate,desc'; // Sort by start date descending (newest first)
+    case 'oldest':
+      return 'startDate,asc'; // Sort by start date ascending (oldest first)
+    case 'priceAsc':
+      return 'price,asc'; // Sort by price ascending (cheapest first)
+    case 'priceDesc':
+      return 'price,desc'; // Sort by price descending (most expensive first)
+    case 'nearest':
+      // For nearest, we'd need to calculate distance on backend
+      // For now, just use default sorting
+      return undefined;
+    default:
+      return undefined;
+  }
 }
 
 // Fetch tasks with optional pagination and filtering
 export async function fetchTasks(
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
-  const { page = 0, size = 10, category, status } = params;
+  const { 
+    page = 0, 
+    size = 10, 
+    searchText,
+    categories,
+    minPrice,
+    maxPrice,
+    latitude,
+    longitude,
+    radiusKm,
+    status,
+    sortBy
+  } = params;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
   });
 
-  if (category) {
-    queryParams.append("categoryTitle", category); // Backend uses categoryTitle, not category
+  // Add text search
+  if (searchText && searchText.trim()) {
+    queryParams.append("searchText", searchText.trim());
   }
 
+  // Add multiple categories
+  if (categories && categories.length > 0) {
+    categories.forEach(cat => queryParams.append("categories", cat));
+  }
+
+  // Add price range
+  if (minPrice !== undefined && minPrice !== null) {
+    queryParams.append("minPrice", minPrice.toString());
+  }
+  if (maxPrice !== undefined && maxPrice !== null) {
+    queryParams.append("maxPrice", maxPrice.toString());
+  }
+
+  // Add location proximity
+  if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
+    queryParams.append("latitude", latitude.toString());
+    queryParams.append("longitude", longitude.toString());
+    queryParams.append("radiusKm", radiusKm.toString());
+  }
+
+  // Add status
   if (status) {
     queryParams.append("status", status);
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  // Add sorting
+  const sortParam = getSortParam(sortBy);
+  if (sortParam) {
+    queryParams.append("sort", sortParam);
+  }
+
+  const url = `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`;
+  console.log('Fetching tasks from URL:', url);
+  console.log('Fetching tasks with params:', Object.fromEntries(queryParams.entries()));
+
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log('Response status:', response.status, response.statusText);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch tasks: ${response.statusText}`);
+    const errorText = await response.text();
+    console.error('Failed to fetch tasks:', response.status, errorText);
+    throw new Error(`Failed to fetch tasks: ${response.status}`);
   }
   return response.json();
 }
@@ -52,22 +117,62 @@ export async function fetchUserTasks(
   getAccessToken: () => Promise<string>, params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
   const token = await getAccessToken();
-  const { page = 0, size = 10, category, status } = params;
+  const { 
+    page = 0, 
+    size = 10, 
+    searchText,
+    categories,
+    minPrice,
+    maxPrice,
+    latitude,
+    longitude,
+    radiusKm,
+    status,
+    sortBy
+  } = params;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
   });
 
-  if (category) {
-    queryParams.append("categoryTitle", category); // Backend uses categoryTitle, not category
+  // Add text search
+  if (searchText && searchText.trim()) {
+    queryParams.append("searchText", searchText.trim());
   }
 
+  // Add multiple categories
+  if (categories && categories.length > 0) {
+    categories.forEach(cat => queryParams.append("categories", cat));
+  }
+
+  // Add price range
+  if (minPrice !== undefined && minPrice !== null) {
+    queryParams.append("minPrice", minPrice.toString());
+  }
+  if (maxPrice !== undefined && maxPrice !== null) {
+    queryParams.append("maxPrice", maxPrice.toString());
+  }
+
+  // Add location proximity
+  if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
+    queryParams.append("latitude", latitude.toString());
+    queryParams.append("longitude", longitude.toString());
+    queryParams.append("radiusKm", radiusKm.toString());
+  }
+
+  // Add status
   if (status) {
     queryParams.append("status", status);
   }
 
-  const response = await fetch(`${API_BASE_URL}/task/user-tasks`, {
+  // Add sorting
+  const sortParam = getSortParam(sortBy);
+  if (sortParam) {
+    queryParams.append("sort", sortParam);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/task/user-tasks?${queryParams.toString()}`, {
     headers: {
       "Content-Type": "application/json",
       'Authorization': `Bearer ${token}`,

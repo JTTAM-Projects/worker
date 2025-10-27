@@ -24,6 +24,7 @@ import com.jttam.glig.exception.custom.ForbiddenException;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import java.util.stream.Collectors;
@@ -126,18 +127,82 @@ public class TaskControllerService {
 
             if (filters != null) {
 
-                if (filters.categoryTitle() != null && !filters.categoryTitle().isBlank()) {
-                    Category category = categoryRepository.findByTitle(filters.categoryTitle());
+                // Text search across title and description
+                if (filters.searchText() != null && !filters.searchText().isBlank()) {
+                    String searchPattern = "%" + filters.searchText().toLowerCase() + "%";
+                    Predicate titleMatch = criteriabuilder.like(
+                            criteriabuilder.lower(root.get("title")), 
+                            searchPattern
+                    );
+                    Predicate descriptionMatch = criteriabuilder.like(
+                            criteriabuilder.lower(root.get("description")), 
+                            searchPattern
+                    );
+                    predicates.add(criteriabuilder.or(titleMatch, descriptionMatch));
+                }
 
-                    if (category != null) {
-                        predicates.add(criteriabuilder.isMember(category, root.get("categories")));
-                    }
+                // Multiple category filtering (OR logic)
+                if (filters.categories() != null && !filters.categories().isEmpty()) {
+                    List<Category> categories = filters.categories().stream()
+                            .map(categoryRepository::findByTitle)
+                            .filter(category -> category != null)
+                            .collect(Collectors.toList());
 
-                    else {
+                    if (!categories.isEmpty()) {
+                        List<Predicate> categoryPredicates = categories.stream()
+                                .map(category -> criteriabuilder.isMember(category, root.get("categories")))
+                                .collect(Collectors.toList());
+                        predicates.add(criteriabuilder.or(categoryPredicates.toArray(new Predicate[0])));
+                    } else {
+                        // If categories specified but none found, return no results
                         predicates.add(criteriabuilder.disjunction());
                     }
                 }
 
+                // Price range filtering
+                if (filters.minPrice() != null) {
+                    predicates.add(criteriabuilder.greaterThanOrEqualTo(root.get("price"), filters.minPrice()));
+                }
+                if (filters.maxPrice() != null) {
+                    predicates.add(criteriabuilder.lessThanOrEqualTo(root.get("price"), filters.maxPrice()));
+                }
+
+                // Location proximity filtering
+                if (filters.latitude() != null && filters.longitude() != null && filters.radiusKm() != null) {
+                    // Using simplified bounding box approach (works with H2)
+                    // Approximate: 1 degree latitude ≈ 111 km
+                    // 1 degree longitude ≈ 111 km * cos(latitude)
+                    
+                    double lat = filters.latitude();
+                    double lon = filters.longitude();
+                    double radiusKm = filters.radiusKm();
+                    
+                    // Calculate approximate bounding box
+                    double latDelta = radiusKm / 111.0; // degrees latitude per km
+                    double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(lat))); // degrees longitude per km
+                    
+                    double minLat = lat - latDelta;
+                    double maxLat = lat + latDelta;
+                    double minLon = lon - lonDelta;
+                    double maxLon = lon + lonDelta;
+                    
+                    // Join the locations relationship and create bounding box filter
+                    Join<Object, Object> locationJoin = root.join("locations");
+                    Predicate latInRange = criteriabuilder.between(
+                        locationJoin.get("latitude"), 
+                        minLat, 
+                        maxLat
+                    );
+                    Predicate lonInRange = criteriabuilder.between(
+                        locationJoin.get("longitude"), 
+                        minLon, 
+                        maxLon
+                    );
+                    
+                    predicates.add(criteriabuilder.and(latInRange, lonInRange));
+                }
+
+                // Task status filtering
                 if (filters.status() != null) {
                     predicates.add(criteriabuilder.equal(root.get("status"), filters.status()));
                 }
