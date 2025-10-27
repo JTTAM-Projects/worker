@@ -60,11 +60,12 @@ public class TestDataIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Database reseted succesfully"));
 
+        // After reset, auth0 user should have 10 applications from bulk test data
         mockMvc.perform(get("/api/user-applications")
                 .with(jwt().jwt(jwt))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("totalElements").value(16));
+                .andExpect(jsonPath("totalElements").value(10));
     }
 
     @Test
