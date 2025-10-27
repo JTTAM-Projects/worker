@@ -1,21 +1,30 @@
 import { useMemo, useState } from "react";
 import EmployerPromoCard from "../features/employer/components/EmployerPromoCard";
-import TaskFilter from "../features/task/components/TaskFilter";
+import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import TaskList from "../features/task/components/TaskList";
 import TaskerPromoCard from "../features/task/components/TaskerPromoCard";
-import type { Category } from "../features/task/types";
+import type { TaskFilters } from "../features/task/types";
 import { useTasks } from "../features/task/hooks/useTasks";
 import { Link } from "react-router-dom";
 import CreateTask from "../features/task/components/CreateTask";
 
 export default function LandingPage() {
-  const [category, setCategory] = useState<Category | "all">("all");
+  const [filters, setFilters] = useState<TaskFilters>({
+    status: "ACTIVE",
+    sortBy: "newest",
+  });
+
+  const handleResetFilters = () => {
+    setFilters({
+      status: "ACTIVE",
+      sortBy: "newest",
+    });
+  };
 
   const { data, isLoading, error } = useTasks({
     page: 0,
     size: 12,
-    status: "ACTIVE",
-    categories: category === "all" ? undefined : [category],
+    ...filters,
   });
 
   const filteredTasks = useMemo(() => data?.content || [], [data]);
@@ -58,7 +67,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <TaskFilter category={category} setCategory={setCategory} />
+      <section>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Selaa tehtäviä
+        </h2>
+        <TaskFilterPanel 
+          filters={filters} 
+          onFiltersChange={setFilters}
+          onReset={handleResetFilters}
+        />
+      </section>
 
       {isLoading && (
         <div className="text-center py-8">
