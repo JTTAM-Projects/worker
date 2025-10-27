@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
@@ -6,13 +6,79 @@ import type { TaskFilters, ViewMode } from "../features/task/types";
 import { useTasks } from "../features/task/hooks/useTasks";
 import { Pagination } from "../ui-library";
 
-export default function TaskPage() {
-  const [page, setPage] = useState(0);
-  const [filters, setFilters] = useState<TaskFilters>({
-    status: "ACTIVE", // Only show active tasks by default
+const FILTER_STORAGE_KEY = "taskPageFilters";
+const PAGE_STORAGE_KEY = "taskPageNumber";
+
+/**
+ * Load filters from sessionStorage
+ */
+function loadFiltersFromStorage(): TaskFilters {
+  try {
+    const stored = sessionStorage.getItem(FILTER_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Failed to load filters from storage:", error);
+  }
+  // Default filters
+  return {
+    status: "ACTIVE",
     sortBy: "newest",
-  });
+  };
+}
+
+/**
+ * Save filters to sessionStorage
+ */
+function saveFiltersToStorage(filters: TaskFilters): void {
+  try {
+    sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  } catch (error) {
+    console.error("Failed to save filters to storage:", error);
+  }
+}
+
+/**
+ * Load page number from sessionStorage
+ */
+function loadPageFromStorage(): number {
+  try {
+    const stored = sessionStorage.getItem(PAGE_STORAGE_KEY);
+    if (stored) {
+      return parseInt(stored, 10);
+    }
+  } catch (error) {
+    console.error("Failed to load page from storage:", error);
+  }
+  return 0;
+}
+
+/**
+ * Save page number to sessionStorage
+ */
+function savePageToStorage(page: number): void {
+  try {
+    sessionStorage.setItem(PAGE_STORAGE_KEY, page.toString());
+  } catch (error) {
+    console.error("Failed to save page to storage:", error);
+  }
+}
+
+export default function TaskPage() {
+  const [page, setPage] = useState(loadPageFromStorage);
+  const [filters, setFilters] = useState<TaskFilters>(loadFiltersFromStorage);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+
+  // Save filters to sessionStorage whenever they change
+  useEffect(() => {
+    saveFiltersToStorage(filters);
+  }, [filters]);
+
+  // Save page to sessionStorage whenever it changes
+  useEffect(() => {
+    savePageToStorage(page);
+  }, [page]);
 
   const { data, isLoading, isError, error } = useTasks({
     page,
@@ -54,6 +120,9 @@ export default function TaskPage() {
     };
     setFilters(resetFilters);
     setPage(0);
+    // Clear storage when explicitly resetting
+    sessionStorage.removeItem(FILTER_STORAGE_KEY);
+    sessionStorage.removeItem(PAGE_STORAGE_KEY);
   };
 
   if (isLoading) {
