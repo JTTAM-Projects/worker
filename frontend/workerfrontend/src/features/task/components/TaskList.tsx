@@ -1,6 +1,4 @@
 import type { Task, LocationResponse } from "../types";
-import { usePagination } from "../hooks/usePagination";
-import { Pagination } from "../../../ui-library";
 import { useNavigate } from "react-router-dom";
 
 interface TaskListProps {
@@ -9,17 +7,6 @@ interface TaskListProps {
 
 export default function TaskList({ tasks }: TaskListProps) {
   const navigate = useNavigate();
-  const {
-    currentPage,
-    totalPages,
-    paginatedItems: paginatedTasks,
-    startIndex,
-    endIndex,
-    goToPage,
-    goToPrevious,
-    goToNext,
-    getPageNumbers,
-  } = usePagination({ items: tasks, itemsPerPage: 20 });
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -54,13 +41,16 @@ export default function TaskList({ tasks }: TaskListProps) {
     <section className="bg-white rounded-lg shadow-lg p-6 md:p-8">
       {/* Task Count */}
       <div className="mb-4 text-gray-600 max-w-4xl mx-auto">
-        Näytetään {startIndex + 1}-{Math.min(endIndex, tasks.length)} /{" "}
-        {tasks.length} tehtävää
+        {tasks.length > 0 ? (
+          <span>Näytetään {tasks.length} tehtävää</span>
+        ) : (
+          <span>Ei tehtäviä näytettävänä</span>
+        )}
       </div>
 
       {/* Single Column List */}
       <div className="space-y-4 mb-6 max-w-4xl mx-auto">
-        {paginatedTasks.map((t) => {
+        {tasks.map((t) => {
           const firstCategory = t.categories?.[0]?.title || "OTHER";
           const locationStr = getLocationString(t.location);
 
@@ -109,19 +99,6 @@ export default function TaskList({ tasks }: TaskListProps) {
           );
         })}
       </div>
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={goToPage}
-          onPrevious={goToPrevious}
-          onNext={goToNext}
-          showPageNumbers={true}
-          pageNumbers={getPageNumbers()}
-        />
-      )}
     </section>
   );
 }

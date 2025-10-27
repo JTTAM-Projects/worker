@@ -56,7 +56,7 @@ public class TaskIntegrationTest {
         
         // With bulk test data, we expect many Garden tasks (should be at least 10)
         mockMvc.perform(get("/api/task/all-tasks")
-                .param("categoryTitle", categoryToFilterBy)
+                .param("categories", categoryToFilterBy)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(10)) // Default page size
@@ -69,7 +69,7 @@ public class TaskIntegrationTest {
         String nonExistentCategory = "Non Existent Category";
 
         mockMvc.perform(get("/api/task/all-tasks")
-                .param("categoryTitle", nonExistentCategory)
+                .param("categories", nonExistentCategory)
                 .with(jwt().jwt(user1Jwt))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -97,7 +97,7 @@ public class TaskIntegrationTest {
         
         // With bulk test data, User1 has some Garden tasks (should be at least 1)
         mockMvc.perform(get("/api/task/user-tasks")
-                .param("categoryTitle", categoryToFilterBy)
+                .param("categories", categoryToFilterBy)
                 .with(jwt().jwt(user1Jwt))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
