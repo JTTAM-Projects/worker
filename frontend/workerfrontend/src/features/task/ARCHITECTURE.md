@@ -1,27 +1,37 @@
-# TaskFilterPanel Architecture Diagram
+# Task Feature Module Architecture
+
+## Overview
+
+The Task feature module provides comprehensive task browsing, filtering, and management capabilities with advanced filtering, pagination, and state persistence.
 
 ## Component Hierarchy
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         TaskPage.tsx                            │
-│  - Manages global filter state                                 │
-│  - Uses useTasks() with TanStack Query                         │
-│  - Handles pagination                                            │
-└────────────────────────┬────────────────────────────────────────┘
+│                     Pages (Route Level)                         │
+├─────────────────────────────────────────────────────────────────┤
+│  TaskPage.tsx          - Main task browsing with filters        │
+│  LandingPage.tsx       - Homepage with task preview             │
+│  TaskDetailPage.tsx    - Single task view                       │
+│  OwnTaskDetailPage.tsx - Task owner's detail view               │
+│  MyTasksPage.tsx       - User's own tasks                       │
+└────────────────────────┬───────────────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    TaskFilterPanel.tsx                          │
-│  - Orchestrates hooks and components                            │
-│  - Handles master search logic                                  │
-│  - Coordinates filter submission                                │
+│                 Core Components Layer                           │
+├─────────────────────────────────────────────────────────────────┤
+│  TaskFilterPanel       - Advanced filtering interface           │
+│  ResultsControlBar     - Active filters display + sort/view     │
+│  SearchBar             - Quick text search                       │
+│  TaskList              - Two-column card layout                  │
+│  Pagination            - Page navigation controls                │
 └─────┬────────┬────────┬────────────────┬───────────────────────┘
       │        │        │                │
       │        │        │                │
       ▼        ▼        ▼                ▼
 ┌──────────┐  ┌──────────────┐  ┌──────────────────┐
-│  Custom  │  │ Presentational│  │  API/Browser     │
+│  Custom  │  │ Presentational│  │  State & API     │
 │  Hooks   │  │  Components   │  │  Integration     │
 └──────────┘  └──────────────┘  └──────────────────┘
 ```
@@ -29,43 +39,93 @@
 ## Detailed Architecture
 
 ```
-TaskFilterPanel (Main Component)
-├── Hooks (Business Logic)
-│   ├── useFilterState
-│   │   ├── State management (8 state values)
-│   │   ├── State setters (memoized)
-│   │   ├── buildFilters() - Create API payload
-│   │   ├── syncWithFilters() - Handle external updates
-│   │   └── reset() - Clear all state
+Task Feature Module
+├── Pages (Route Components)
+│   ├── TaskPage.tsx
+│   │   ├── Filter state management (with sessionStorage persistence)
+│   │   ├── Pagination state
+│   │   ├── View mode (list/map)
+│   │   └── Coordinates: TaskFilterPanel, ResultsControlBar, TaskList, Pagination
 │   │
-│   ├── useGeocoding
-│   │   ├── geocode() - Nominatim API call
-│   │   ├── isLoading state
-│   │   └── error state
+│   ├── LandingPage.tsx
+│   │   ├── Simplified filter state
+│   │   ├── Limited results (12 tasks)
+│   │   └── Coordinates: TaskFilterPanel, TaskList
 │   │
-│   └── useGeolocation
-│       ├── getCurrentLocation() - Browser API
-│       ├── isLoading state
-│       └── error state
+│   ├── TaskDetailPage.tsx
+│   │   ├── Single task view
+│   │   ├── Application submission
+│   │   └── Uses: TaskDetails, ApplicationForm
+│   │
+│   ├── OwnTaskDetailPage.tsx
+│   │   ├── Task owner's view
+│   │   ├── Application management
+│   │   └── Uses: TaskDetails, ApplicationsList
+│   │
+│   └── MyTasksPage.tsx
+│       ├── User's created tasks
+│       └── Uses: TaskList
 │
-└── Components (Presentation)
-    ├── CategoryFilter
-    │   ├── Grid layout (2-5 columns responsive)
-    │   ├── Checkbox + Icon + Label
-    │   └── Toggle handler
-    │
-    ├── PriceRangeInput
-    │   ├── Dual number inputs
-    │   ├── Dual-handle slider
-    │   ├── Tick marks (€0-€500)
-    │   └── Synchronized state
-    │
-    └── LocationSearchInput
-        ├── Text input for city/address
-        ├── Current location button
-        ├── Radius slider (1-100 km)
-        ├── Error display
-        └── Coordinates display
+├── Core Components
+│   ├── TaskFilterPanel.tsx (Main Orchestrator)
+│   │   ├── Manages filter form state
+│   │   ├── Coordinates child components
+│   │   ├── Master search pattern
+│   │   └── Children: CategoryFilter, PriceRangeInput, LocationSearchInput
+│   │
+│   ├── ResultsControlBar.tsx
+│   │   ├── Active filter chips (removable)
+│   │   ├── Sort dropdown (newest, oldest, priceAsc, priceDesc, nearest)
+│   │   ├── View mode toggle (list/map)
+│   │   └── Results count display
+│   │
+│   ├── SearchBar.tsx
+│   │   ├── Quick text search input
+│   │   └── Instant filter update on change
+│   │
+│   ├── TaskList.tsx (Redesigned)
+│   │   ├── Two-column card layout
+│   │   ├── Square image area (160px) with category icon
+│   │   ├── Three content zones:
+│   │   │   - Title + Price
+│   │   │   - Location + Date
+│   │   │   - Poster avatar + username
+│   │   └── Color-coded category backgrounds
+│   │
+│   └── Pagination.tsx
+│       ├── First/Previous/Next/Last navigation
+│       ├── Page number display
+│       └── Total pages info
+│
+├── Filter Components (Presentational)
+│   ├── CategoryFilter.tsx
+│   │   ├── Grid layout (2-5 columns responsive)
+│   │   ├── Checkbox + Icon + Label for each category
+│   │   ├── 10 categories: Cleaning, Garden, Moving, Other, Yard,
+│   │   │   Forest work, Household, Repair, Painting, Snow removal
+│   │   └── Toggle handler
+│   │
+│   ├── PriceRangeInput.tsx (Enhanced with validation)
+│   │   ├── Dual number inputs (text fields)
+│   │   ├── Dual-handle slider (0-500 range)
+│   │   ├── Tick marks (€0-€500)
+│   │   ├── Input validation and clamping
+│   │   └── Synchronized input/slider state
+│   │
+│   └── LocationSearchInput.tsx
+│       ├── Text input for city/address search
+│       ├── Current location button (geolocation API)
+│       ├── Radius slider (1-100 km)
+│       ├── Error display
+│       └── Coordinates display when set
+│
+└── Other Components
+    ├── TaskDetails.tsx - Detailed task information
+    ├── ApplicationForm.tsx - Apply to task form
+    ├── ApplicationsList.tsx - List of task applications
+    ├── CreateTask.tsx - Task creation modal/form
+    ├── TaskerPromoCard.tsx - Marketing card for taskers
+    └── TaskFilter.tsx - (Legacy) Simple category filter
 ```
 
 ## Data Flow
@@ -127,40 +187,115 @@ onFiltersChange() with coordinates
 Display "Sijainti asetettu"
 ```
 
-## Hook Responsibilities
+## Custom Hooks
 
-### useFilterState
+### State Management Hooks
+
+#### useFilterState
 ```typescript
 Input:  TaskFilters (from parent)
 Output: {
-  state: FilterState,        // Current form values
-  setters: Function[],       // Update individual fields
+  state: FilterState,        // Current form values (8 fields)
+  setters: Function[],       // Update individual fields (memoized)
   toggleCategory: Function,  // Toggle category selection
   buildFilters: Function,    // Transform to API format
   syncWithFilters: Function, // Handle external updates
   reset: Function            // Clear everything
 }
 ```
+**Responsibilities:**
+- Manages 8 filter state values (searchText, categories, prices, location, radius)
+- Provides memoized setters to prevent unnecessary re-renders
+- Validates and clamps price values (0-500 range)
+- Synchronizes internal state with external filter changes
+- Builds TaskFilters object for API consumption
 
-### useGeocoding
+#### usePagination
 ```typescript
-Input:  location string (e.g., "Helsinki")
+Input:  { totalPages: number, initialPage?: number }
 Output: {
-  geocode: (location) => Promise<{lat, lon}>,
-  isLoading: boolean,
-  error: string | null
+  currentPage: number,
+  goToPage: (page: number) => void,
+  goToNextPage: () => void,
+  goToPreviousPage: () => void,
+  goToFirstPage: () => void,
+  goToLastPage: () => void,
+  canGoNext: boolean,
+  canGoPrevious: boolean
 }
 ```
 
-### useGeolocation
+### API Integration Hooks (TanStack Query)
+
+#### useTasks
+```typescript
+Input:  FetchTasksParams (page, size, filters)
+Output: {
+  data: PaginatedResponse<Task>,
+  isLoading: boolean,
+  isError: boolean,
+  error: Error | null
+}
+```
+**Features:**
+- Uses TanStack Query for caching and automatic refetching
+- Converts frontend sortBy to Spring Pageable sort parameter
+- 5-minute stale time for cached results
+- Automatic retry on failure
+
+#### useUserTasks
+Same as useTasks but fetches only authenticated user's tasks
+
+#### useTaskById
+```typescript
+Input:  taskId: string
+Output: {
+  data: Task,
+  isLoading: boolean,
+  isError: boolean,
+  error: Error | null
+}
+```
+
+#### useTaskApplications
+Fetches all applications for a specific task
+
+#### useUserApplication
+Checks if user has already applied to a specific task
+
+#### useCreateTask
+```typescript
+Output: {
+  mutate: (taskData: TaskCreateRequest) => void,
+  isLoading: boolean,
+  isError: boolean,
+  isSuccess: boolean
+}
+```
+
+### Browser API Integration Hooks
+
+#### useGeocoding
 ```typescript
 Input:  none
 Output: {
-  getCurrentLocation: () => Promise<{lat, lon}>,
+  geocode: (location: string) => Promise<{lat: number, lon: number}>,
   isLoading: boolean,
   error: string | null
 }
 ```
+**Integration:** Nominatim OpenStreetMap API for address → coordinates
+
+#### useGeolocation
+```typescript
+Input:  none
+Output: {
+  getCurrentLocation: () => Promise<{lat: number, lon: number}>,
+  isLoading: boolean,
+  error: string | null
+}
+```
+**Integration:** Browser Geolocation API (requires user permission)
 
 ## Component Props
 
@@ -292,20 +427,70 @@ TaskFilterPanel
 ```
 src/features/task/
 ├── components/
-│   ├── TaskFilterPanel.tsx          (Main orchestrator - 164 lines)
-│   ├── CategoryFilter.tsx           (Presentational - 58 lines)
-│   ├── PriceRangeInput.tsx         (Presentational - 131 lines)
-│   └── LocationSearchInput.tsx     (Presentational - 80 lines)
+│   ├── TaskFilterPanel.tsx          (Filter orchestrator - 187 lines)
+│   ├── CategoryFilter.tsx           (Category checkboxes - 58 lines)
+│   ├── PriceRangeInput.tsx         (Price slider with validation - 131 lines)
+│   ├── LocationSearchInput.tsx     (Location search - 80 lines)
+│   ├── ResultsControlBar.tsx       (Active filters + controls - ~150 lines)
+│   ├── SearchBar.tsx               (Quick search input - ~50 lines)
+│   ├── TaskList.tsx                (Two-column card layout - 170 lines)
+│   ├── Pagination.tsx              (Page navigation - ~100 lines)
+│   ├── TaskDetails.tsx             (Task detail view - ~200 lines)
+│   ├── ApplicationForm.tsx         (Apply to task - ~150 lines)
+│   ├── ApplicationsList.tsx        (Applications list - ~100 lines)
+│   ├── CreateTask.tsx              (Task creation - ~250 lines)
+│   ├── TaskerPromoCard.tsx         (Promo card - ~80 lines)
+│   └── TaskFilter.tsx              (Legacy simple filter - 58 lines)
+│
 ├── hooks/
-│   ├── useFilterState.ts           (State logic - 169 lines)
-│   ├── useGeocoding.ts             (API integration - 68 lines)
-│   ├── useGeolocation.ts           (Browser API - 56 lines)
+│   ├── useFilterState.ts           (Filter state logic - 173 lines)
+│   ├── useGeocoding.ts             (Nominatim API - 68 lines)
+│   ├── useGeolocation.ts           (Browser geolocation - 56 lines)
+│   ├── useTasks.ts                 (Fetch tasks with filters - ~80 lines)
+│   ├── useUserTasks.ts             (Fetch user's tasks - ~60 lines)
+│   ├── useTaskById.ts              (Fetch single task - ~50 lines)
+│   ├── useTaskApplications.ts      (Fetch task applications - ~60 lines)
+│   ├── useUserApplication.ts       (Check user application - ~50 lines)
+│   ├── useCreateTask.ts            (Create task mutation - ~70 lines)
+│   ├── usePagination.ts            (Pagination logic - ~80 lines)
 │   └── index.ts                     (Hook exports)
-└── REFACTORING_NOTES.md            (Documentation)
+│
+├── api/
+│   └── taskApi.ts                   (API integration - 356 lines)
+│       ├── fetchTasks()            - GET /api/tasks with filters
+│       ├── fetchUserTasks()        - GET /api/tasks/user
+│       ├── fetchTaskById()         - GET /api/tasks/:id
+│       ├── createTask()            - POST /api/tasks
+│       ├── getSortParam()          - Convert sortBy to Spring format
+│       └── Type definitions
+│
+├── types.ts                         (TypeScript interfaces - ~100 lines)
+│   ├── Category type (10 categories)
+│   ├── TaskStatus type (5 statuses)
+│   ├── ApplicationStatus type (4 statuses)
+│   ├── SortOption type (5 options)
+│   ├── ViewMode type (list/map)
+│   ├── TaskFilters interface
+│   ├── Task interface
+│   ├── TaskApplicant interface
+│   └── PaginatedResponse<T> interface
+│
+├── pages/ (in src/pages/)
+│   ├── TaskPage.tsx                 (Main browsing - 218 lines)
+│   ├── LandingPage.tsx              (Homepage - ~100 lines)
+│   ├── TaskDetailPage.tsx           (Task detail - ~150 lines)
+│   ├── OwnTaskDetailPage.tsx        (Owner view - ~200 lines)
+│   └── MyTasksPage.tsx              (User tasks - ~120 lines)
+│
+└── ARCHITECTURE.md                  (This file)
 ```
 
-Total: **726 lines** distributed across **7 focused files**
-Previously: **435 lines** in **1 monolithic file**
+**Total Lines of Code:** ~3,500+ lines across 30+ files
+**Key Metrics:**
+- 15 Components (5 core, 10 supporting)
+- 11 Custom Hooks (4 state, 6 API, 1 browser)
+- 5 Page-level components
+- Full TypeScript coverage
 
 ## Benefits Summary
 
