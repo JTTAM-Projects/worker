@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTaskById } from "../features/task/hooks/useTaskById";
 import { useUserApplication } from "../features/task/hooks/useUserApplication";
+import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import TaskDetails from "../features/task/components/TaskDetails";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import ApplicationForm from "../features/task/components/ApplicationForm";
@@ -21,33 +22,6 @@ export default function TaskDetailPage() {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 10000);
     setShowApplicationForm(false);
-  };
-
-  const getCategoryIcon = (categoryTitle: string) => {
-    switch (categoryTitle?.toUpperCase()) {
-      case "GARDEN":
-        return "yard";
-      case "CLEANING":
-        return "cleaning_services";
-      case "MOVING":
-        return "local_shipping";
-      case "OTHER":
-        return "handyman";
-      case "YARD":
-        return "grass";
-      case "FOREST WORK":
-        return "forest";
-      case "HOUSEHOLD":
-        return "home";
-      case "REPAIR":
-        return "build";
-      case "PAINTING":
-        return "format_paint";
-      case "SNOW REMOVAL":
-        return "ac_unit";
-      default:
-        return "work";
-    }
   };
 
   const handleApplyClick = () => {
