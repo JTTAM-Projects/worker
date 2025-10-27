@@ -15,7 +15,7 @@ export default function ProfilePage() {
     page: 0,
     size: 3,
     status: "ACTIVE",
-    category: category === "all" ? undefined : category,
+    categories: category === "all" ? undefined : [category],
   });
   const [ activeTab, setActiveTab ] = useState('employer'); 
   

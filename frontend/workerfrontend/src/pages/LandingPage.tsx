@@ -15,7 +15,7 @@ export default function LandingPage() {
     page: 0,
     size: 12,
     status: "ACTIVE",
-    category: category === "all" ? undefined : category,
+    categories: category === "all" ? undefined : [category],
   });
 
   const filteredTasks = useMemo(() => data?.content || [], [data]);
