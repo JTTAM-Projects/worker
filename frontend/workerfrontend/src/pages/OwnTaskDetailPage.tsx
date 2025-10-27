@@ -5,6 +5,7 @@ import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
 
+// Page for viewing and managing own task details
 export default function OwnTaskDetailPage() {
   const navigate = useNavigate();
   const { taskId } = useParams<{ taskId: string }>();
