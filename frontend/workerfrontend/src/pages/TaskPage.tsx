@@ -15,7 +15,7 @@ export default function TaskPage() {
     page,
     size: 12,
     category: category !== "all" ? category : undefined,
-    status: "Active",
+    status: "ACTIVE",
   });
 
   // Client-side search filtering (backend doesn't support search yet)

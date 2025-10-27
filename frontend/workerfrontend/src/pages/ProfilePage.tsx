@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const { data: userTasksData, isLoading, error } = useUserTasks({
     page: 0,
     size: 3,
-    status: "Active",
+    status: "ACTIVE",
     category: category === "all" ? undefined : category,
   });
   const [ activeTab, setActiveTab ] = useState('employer'); 
