@@ -73,20 +73,44 @@ export function useFilterState(initialFilters: TaskFilters): UseFilterStateRetur
   }, []);
 
   const setMinPrice = useCallback((value: string) => {
-    const numValue = value ? parseInt(value) : 0;
+    // Allow empty string for clearing
+    if (value === '') {
+      setState(prev => ({
+        ...prev,
+        minPrice: '',
+        minPriceSlider: 0
+      }));
+      return;
+    }
+    
+    const numValue = parseInt(value);
+    // Clamp between 0 and 500
+    const clampedValue = Math.max(0, Math.min(500, numValue));
     setState(prev => ({
       ...prev,
-      minPrice: value,
-      minPriceSlider: numValue
+      minPrice: value, // Keep original input for UX
+      minPriceSlider: clampedValue // But clamp slider position
     }));
   }, []);
 
   const setMaxPrice = useCallback((value: string) => {
-    const numValue = value ? parseInt(value) : 200;
+    // Allow empty string for clearing
+    if (value === '') {
+      setState(prev => ({
+        ...prev,
+        maxPrice: '',
+        maxPriceSlider: 500
+      }));
+      return;
+    }
+    
+    const numValue = parseInt(value);
+    // Clamp between 0 and 500
+    const clampedValue = Math.max(0, Math.min(500, numValue));
     setState(prev => ({
       ...prev,
-      maxPrice: value,
-      maxPriceSlider: numValue
+      maxPrice: value, // Keep original input for UX
+      maxPriceSlider: clampedValue // But clamp slider position
     }));
   }, []);
 

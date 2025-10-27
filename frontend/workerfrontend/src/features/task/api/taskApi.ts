@@ -11,6 +11,28 @@ export interface FetchTasksParams extends TaskFilters {
   size?: number;
 }
 
+/**
+ * Convert frontend sortBy to Spring Pageable sort parameter
+ */
+function getSortParam(sortBy?: string): string | undefined {
+  switch (sortBy) {
+    case 'newest':
+      return 'startDate,desc'; // Sort by start date descending (newest first)
+    case 'oldest':
+      return 'startDate,asc'; // Sort by start date ascending (oldest first)
+    case 'priceAsc':
+      return 'price,asc'; // Sort by price ascending (cheapest first)
+    case 'priceDesc':
+      return 'price,desc'; // Sort by price descending (most expensive first)
+    case 'nearest':
+      // For nearest, we'd need to calculate distance on backend
+      // For now, just use default sorting
+      return undefined;
+    default:
+      return undefined;
+  }
+}
+
 // Fetch tasks with optional pagination and filtering
 export async function fetchTasks(
   params: FetchTasksParams = {}
@@ -25,7 +47,8 @@ export async function fetchTasks(
     latitude,
     longitude,
     radiusKm,
-    status 
+    status,
+    sortBy
   } = params;
 
   const queryParams = new URLSearchParams({
@@ -61,6 +84,12 @@ export async function fetchTasks(
   // Add status
   if (status) {
     queryParams.append("status", status);
+  }
+
+  // Add sorting
+  const sortParam = getSortParam(sortBy);
+  if (sortParam) {
+    queryParams.append("sort", sortParam);
   }
 
   const url = `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`;
@@ -98,7 +127,8 @@ export async function fetchUserTasks(
     latitude,
     longitude,
     radiusKm,
-    status 
+    status,
+    sortBy
   } = params;
 
   const queryParams = new URLSearchParams({
@@ -134,6 +164,12 @@ export async function fetchUserTasks(
   // Add status
   if (status) {
     queryParams.append("status", status);
+  }
+
+  // Add sorting
+  const sortParam = getSortParam(sortBy);
+  if (sortParam) {
+    queryParams.append("sort", sortParam);
   }
 
   const response = await fetch(`${API_BASE_URL}/task/user-tasks?${queryParams.toString()}`, {

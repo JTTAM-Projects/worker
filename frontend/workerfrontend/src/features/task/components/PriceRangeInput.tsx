@@ -21,6 +21,10 @@ export const PriceRangeInput = memo(function PriceRangeInput({
   onMinSliderChange,
   onMaxSliderChange,
 }: PriceRangeInputProps) {
+  // Clamp slider values to valid range for visual display
+  const clampedMin = Math.max(0, Math.min(500, minPriceSlider));
+  const clampedMax = Math.max(0, Math.min(500, maxPriceSlider));
+  
   return (
     <div className="mb-4 border-b border-gray-200 pb-4">
       <h3 className="text-sm font-medium text-gray-700 mb-3">
@@ -38,7 +42,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
               onClick={(e) => e.stopPropagation()}
               placeholder="Min €"
               min="0"
-              max={maxPrice || 200}
+              max="500"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
@@ -50,7 +54,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
               onChange={(e) => onMaxPriceChange(e.target.value)}
               onClick={(e) => e.stopPropagation()}
               placeholder="Max €"
-              min={minPrice || 0}
+              min="0"
               max="500"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
@@ -67,8 +71,8 @@ export const PriceRangeInput = memo(function PriceRangeInput({
             <div 
               className="absolute h-2 bg-green-500 rounded-full"
               style={{
-                left: `${(minPriceSlider / 500) * 100}%`,
-                right: `${100 - (maxPriceSlider / 500) * 100}%`
+                left: `${(clampedMin / 500) * 100}%`,
+                right: `${100 - (clampedMax / 500) * 100}%`
               }}
             ></div>
             
@@ -78,7 +82,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
               min="0"
               max="500"
               step="5"
-              value={minPriceSlider}
+              value={clampedMin}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
                 if (value <= maxPriceSlider) {
@@ -86,7 +90,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
                 }
               }}
               className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
-              style={{ zIndex: minPriceSlider > 500 - maxPriceSlider ? 5 : 3 }}
+              style={{ zIndex: clampedMin > 500 - clampedMax ? 5 : 3 }}
             />
             
             {/* Max slider */}
@@ -95,7 +99,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
               min="0"
               max="500"
               step="5"
-              value={maxPriceSlider}
+              value={clampedMax}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
                 if (value >= minPriceSlider) {
@@ -103,7 +107,7 @@ export const PriceRangeInput = memo(function PriceRangeInput({
                 }
               }}
               className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
-              style={{ zIndex: maxPriceSlider <= 500 - minPriceSlider ? 5 : 3 }}
+              style={{ zIndex: clampedMax <= 500 - clampedMin ? 5 : 3 }}
             />
           </div>
           
