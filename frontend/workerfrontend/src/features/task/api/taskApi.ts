@@ -1,4 +1,11 @@
-import type { Task, PaginatedResponse, Category, TaskStatus, TaskApplicant, TaskFilters } from "../types";
+import type {
+  Task,
+  PaginatedResponse,
+  Category,
+  TaskStatus,
+  TaskApplicant,
+  TaskFilters,
+} from "../types";
 
 // This is a file for interacting with the backend task API.
 // It uses the Fetch API to make HTTP requests.
@@ -92,29 +99,26 @@ export async function fetchTasks(
     queryParams.append("sort", sortParam);
   }
 
-  const url = `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`;
-  console.log('Fetching tasks from URL:', url);
-  console.log('Fetching tasks with params:', Object.fromEntries(queryParams.entries()));
-
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  console.log('Response status:', response.status, response.statusText);
+  const response = await fetch(
+    `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('Failed to fetch tasks:', response.status, errorText);
-    throw new Error(`Failed to fetch tasks: ${response.status}`);
+    throw new Error(`Failed to fetch tasks: ${response.status} ${errorText}`);
   }
   return response.json();
 }
 
 // Fetch user's own tasks (requires authentication)
 export async function fetchUserTasks(
-  getAccessToken: () => Promise<string>, params: FetchTasksParams = {}
+  getAccessToken: () => Promise<string>,
+  params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
   const token = await getAccessToken();
   const { 
@@ -175,12 +179,13 @@ export async function fetchUserTasks(
   const response = await fetch(`${API_BASE_URL}/task/user-tasks?${queryParams.toString()}`, {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch user tasks: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch user tasks: ${response.status} ${errorText}`);
   }
 
   return response.json();
@@ -217,6 +222,7 @@ export async function createTask(
   payload: CreateTaskInput
 ): Promise<Task> {
   const token = await getAccessTokenSilently();
+  const { location, ...rest } = payload;
 
   const response = await fetch(`${API_BASE_URL}/task`, {
     method: "POST",
@@ -224,7 +230,10 @@ export async function createTask(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...rest,
+      locations: location ? [location] : [],
+    }),
   });
 
   if (!response.ok) {
@@ -232,10 +241,16 @@ export async function createTask(
     throw new Error(`Failed to create task: ${response.status} ${text}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  const [primaryLocation] = Array.isArray(data.locations)
+    ? data.locations
+    : [];
+  return {
+    ...data,
+    location: primaryLocation,
+  };
 }
 
-// Fetch a single task by ID
 export async function fetchTaskById(taskId: number): Promise<Task> {
   const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
     headers: {
@@ -244,10 +259,17 @@ export async function fetchTaskById(taskId: number): Promise<Task> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch task: ${response.statusText}`);
+    throw new Error(`Failed to fetch task ${taskId}: ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  const [primaryLocation] = Array.isArray(data.locations)
+    ? data.locations
+    : [];
+  return {
+    ...data,
+    location: primaryLocation,
+  };
 }
 
 // Fetch all applications for a task
@@ -292,24 +314,18 @@ export async function submitTaskApplication(
 ): Promise<TaskApplicant> {
   const token = await getAccessToken();
 
-  console.log("Submitting to URL:", `${API_BASE_URL}/task/${taskId}/application`);
-  console.log("Payload:", payload);
-
-  const response = await fetch(
-    `${API_BASE_URL}/task/${taskId}/application`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     let errorMessage = `Virhe: ${response.status}`;
-    
+
     try {
       const errorData = await response.json();
       if (errorData.message) {
@@ -321,12 +337,11 @@ export async function submitTaskApplication(
         errorMessage = text;
       }
     }
-    
-    // Translate common errors to Finnish
+
     if (response.status === 409) {
       errorMessage = "Olet jo hakenut tähän tehtävään";
     }
-    
+
     throw new Error(errorMessage);
   }
 
@@ -340,16 +355,48 @@ export async function checkUserApplication(
 ): Promise<boolean> {
   const token = await getAccessToken();
 
-  const response = await fetch(
-    `${API_BASE_URL}/task/${taskId}/application`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   // 200 = has application, 404 = no application
   return response.ok;
+}
+
+export async function updateTask(
+  getAccessTokenSilently: () => Promise<string>,
+  taskId: number,
+  payload: CreateTaskInput
+): Promise<Task> {
+  const token = await getAccessTokenSilently();
+  const { location, ...rest } = payload;
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      ...rest,
+      locations: location ? [location] : [],
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(`Failed to update task: ${response.status} ${text}`);
+  }
+
+  const data = await response.json();
+  const [primaryLocation] = Array.isArray(data.locations)
+    ? data.locations
+    : [];
+  return {
+    ...data,
+    location: primaryLocation,
+  };
 }

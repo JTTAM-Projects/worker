@@ -3,7 +3,7 @@ package com.jttam.glig.domain.task;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 import com.jttam.glig.domain.task.dto.TaskResponse;
 import com.jttam.glig.domain.category.Category;
 import com.jttam.glig.domain.category.CategoryRepository;
+import com.jttam.glig.domain.category.dto.CategoryRequest;
+import com.jttam.glig.domain.location.Location;
+import com.jttam.glig.domain.location.LocationRepository;
+import com.jttam.glig.domain.location.dto.LocationRequest;
 import com.jttam.glig.domain.task.dto.TaskListDTO;
 import com.jttam.glig.domain.task.dto.TaskRequest;
 import com.jttam.glig.domain.user.User;
@@ -35,14 +39,75 @@ public class TaskControllerService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
     private final TaskMapper mapper;
 
     public TaskControllerService(TaskRepository taskRepository, UserRepository userRepository,
-            CategoryRepository categoryRepository, TaskMapper mapper) {
+            CategoryRepository categoryRepository, LocationRepository locationRepository, TaskMapper mapper) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.locationRepository = locationRepository;
         this.mapper = mapper;
+    }
+
+    private Set<Category> resolveCategories(Set<CategoryRequest> categoryRequests) {
+        if (categoryRequests == null || categoryRequests.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        return categoryRequests.stream()
+                .map(this::resolveCategory)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Category resolveCategory(CategoryRequest categoryRequest) {
+        if (categoryRequest == null) {
+            return null;
+        }
+
+        String title = categoryRequest.title();
+        if (title == null || title.isBlank()) {
+            return null;
+        }
+
+        String normalizedTitle = title.trim();
+        Category existing = categoryRepository.findByTitle(normalizedTitle);
+        if (existing != null) {
+            return existing;
+        }
+
+        Category category = new Category();
+        category.setTitle(normalizedTitle);
+        return categoryRepository.save(category);
+    }
+
+    private Set<Location> resolveLocations(Set<LocationRequest> locationRequests) {
+        if (locationRequests == null || locationRequests.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        return locationRequests.stream()
+                .map(this::resolveLocation)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    private Location resolveLocation(LocationRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        Location location = new Location();
+        location.setStreetAddress(request.streetAddress());
+        location.setPostalCode(request.postalCode());
+        location.setCity(request.city());
+        location.setCountry(request.country());
+        location.setLatitude(request.latitude());
+        location.setLongitude(request.longitude());
+
+        return locationRepository.save(location);
     }
 
     @Transactional
@@ -71,19 +136,8 @@ public class TaskControllerService {
         task.setUser(user);
         task.setStatus(TaskStatus.ACTIVE);
 
-        if (task.getCategories() != null && !task.getCategories().isEmpty()) {
-            Set<Category> resolvedCategories = task.getCategories().stream()
-                    .map(category -> {
-                        if (category.getCategoryId() != null) {
-                            Optional<Category> byId = categoryRepository.findById(category.getCategoryId());
-                            return byId.orElse(category);
-                        }
-                        Category existing = categoryRepository.findByTitle(category.getTitle());
-                        return existing != null ? existing : category;
-                    })
-                    .collect(Collectors.toCollection(HashSet::new));
-            task.setCategories(resolvedCategories);
-        }
+        task.setCategories(resolveCategories(taskRequest.categories()));
+        task.setLocations(resolveLocations(taskRequest.locations()));
 
         Task saved = taskRepository.save(task);
         TaskResponse out = mapper.toTaskResponse(saved);
@@ -94,6 +148,10 @@ public class TaskControllerService {
     public ResponseEntity<TaskResponse> tryEditTask(Long taskId, TaskRequest taskRequest, String username) {
         Task task = findTaskByGivenUserNameAndTaskId(username, taskId);
         Task updatedTask = mapper.updateTask(taskRequest, task);
+
+        updatedTask.setCategories(resolveCategories(taskRequest.categories()));
+        updatedTask.setLocations(resolveLocations(taskRequest.locations()));
+
         Task saved = taskRepository.save(updatedTask);
         TaskResponse out = mapper.toTaskResponse(saved);
         return new ResponseEntity<>(out, HttpStatus.OK);
