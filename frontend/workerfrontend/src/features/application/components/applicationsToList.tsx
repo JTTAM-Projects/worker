@@ -3,9 +3,27 @@ import { formatDate, formatTime } from "../../../utils/generalFunctions";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
 interface ApplicationListProps {
-  applications: ApplicationWithDetails[]
+  applications: ApplicationWithDetails[];
+  totalPages: number;
+  totalElements: number;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  isFirst: boolean;
+  isLast: boolean;
 }
-export default function ApplicationToList ({ applications }: ApplicationListProps) {
+export default function ApplicationToList ({ 
+  applications,
+  totalPages, 
+  totalElements, 
+  currentPage, 
+  pageSize, 
+  onPageChange, 
+  onPageSizeChange,
+  isFirst,
+  isLast
+}: ApplicationListProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -27,9 +45,9 @@ export default function ApplicationToList ({ applications }: ApplicationListProp
           key={`application-${row.id}`}
           className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-300 p-4 hover:shadow-lg transition-all duration-300 cursor-pointer"
         >
-          <div className="flex items-center gap-3 max-w-200">
+          <div className="flex items-center gap-4">
             {/* Left side - Image placeholder */}
-            <div className="w-20 h-20 bg-green-600 rounded-lg flex-shrink-0 flex items-center justify-center">
+            <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 flex items-center justify-center">
               <span className="text-white text-2xl font-bold">
                 {a.taskTitle.charAt(0).toUpperCase()}
               </span>
@@ -103,7 +121,25 @@ export default function ApplicationToList ({ applications }: ApplicationListProp
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
+    pageCount: totalPages,
   });
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++){
+      pages.push(i);
+    }
+    
+    return pages;
+  }
   
   return (
     <div className="space-y-4">
@@ -116,6 +152,79 @@ export default function ApplicationToList ({ applications }: ApplicationListProp
           ))}
         </div>
       ))}
+      {/* Pagination Controls */}
+{/*       {totalPages > 1 && ( */}
+        <div className="flex items-center justify-between mt-6">
+          {/* Left side - Info */}
+          <div className="text-sm text-gray-700">
+            Näytetään {Math.min((currentPage * pageSize) + 1, totalElements)} - {Math.min((currentPage + 1) * pageSize, totalElements)} / {totalElements} tulosta
+          </div>
+
+          {/* Page numbers */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => onPageChange(0)}
+              disabled={isFirst}
+              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Ensimmäinen
+            </button>
+
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={isFirst}
+              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Edellinen
+            </button>
+
+            {getPageNumbers().map(pageNum => (
+              <button
+                key={pageNum}
+                onClick={() => onPageChange(pageNum)}
+                className={`px-3 py-2 text-sm font-medium border rounded-md ${
+                  pageNum === currentPage
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {pageNum + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={isLast}
+              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Seuraava
+            </button>
+
+            <button
+              onClick={() => onPageChange(totalPages - 1)}
+              disabled={isLast}
+              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Viimeinen
+            </button>
+          </div>
+
+          {/* Right side - Page size selector */}
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-gray-700">Rivejä per sivu:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+        </div>
+{/*       )} */}
     </div>
   );
 }

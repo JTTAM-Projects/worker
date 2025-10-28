@@ -1,4 +1,4 @@
-import type { ApplicationStatus, ApplicationWithDetails } from "../types";
+import type { Application, ApplicationStatus, ApplicationWithDetails, PaginatedResponse } from "../types";
 
 const API_BASE_URL = 'http://localhost:8080/api'
 
@@ -38,7 +38,7 @@ export async function fetchApplication(
 export async function fetchAllApplications(
   getAccessToken: () => Promise<string>,
    params: FetchApplicationParams
-  ): Promise<ApplicationWithDetails[]> {
+  ): Promise<PaginatedResponse<Application>> {
   const { page = 0, size = 10, applicationStatus } = params;
   const token = await getAccessToken();
 
@@ -64,5 +64,5 @@ export async function fetchAllApplications(
   }
   const data = await response.json();
   console.log('API response: ', data)
-  return data.content || [];
+  return data;
 }
