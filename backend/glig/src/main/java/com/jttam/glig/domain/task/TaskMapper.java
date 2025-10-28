@@ -34,6 +34,8 @@ public interface TaskMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "categories", ignore = true)
+    @Mapping(target = "locations", ignore = true)
     Task toTaskEntity(TaskRequest taskRequest);
 
     @Mapping(target = "applies", ignore = true)
@@ -42,6 +44,8 @@ public interface TaskMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "categories", ignore = true)
+    @Mapping(target = "locations", ignore = true)
     Task updateTask(TaskRequest taskRequestBody, @MappingTarget Task task);
 
     List<TaskListDTO> toTaskResponseList(List<Task> tasks);

@@ -4,6 +4,7 @@ import ProfilePage from "./pages/ProfilePage";
 import TaskPage from "./pages/TaskPage";
 import TaskDetailPage from "./pages/TaskDetailPage";
 import CreateTaskPage from "./pages/CreateTaskPage";
+import EditTaskPage from "./pages/EditTaskPage";
 import MyTasksPage from "./pages/MyTasksPage";
 import ActiveApplicationsPage from "./pages/ActiveApplicationsPage";
 import AcceptedApplicationsPage from "./pages/AcceptedApplicationsPage";
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="tasks" element={<TaskPage />} />
         <Route path="tasks/:taskId" element={<TaskDetailPage />} />
         <Route path="create-task" element={<CreateTaskPage />} />
+        <Route path="edit-task/:taskId" element={<EditTaskPage />} />
         <Route path="my-tasks" element={<MyTasksPage />} />
         <Route path="my-tasks/:taskId" element={<OwnTaskDetailPage />} />
         <Route
