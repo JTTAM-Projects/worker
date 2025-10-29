@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useGetEmployerProfile, useUpdateEmployer, useCreateEmployerProfile } from "../../hooks/EmployerHooks"
 import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/userHooks";
 import { FormField } from "../shared/FormField";
-import type { EmployerType } from "../../types";
 
 export default function EmployerDetails(){
     const { user } = useAuth0(); //TODO use props

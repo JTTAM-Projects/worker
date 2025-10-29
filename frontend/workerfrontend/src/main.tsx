@@ -16,6 +16,16 @@ const queryClient = new QueryClient({
   },
 });
 
+type Auth0AppState = {
+  returnTo?: string;
+};
+
+const onRedirectCallback = (appState?: Auth0AppState) => {
+  const targetUrl = appState?.returnTo ?? window.location.pathname;
+  window.history.replaceState({}, document.title, targetUrl);
+  window.dispatchEvent(new PopStateEvent("popstate"));
+};
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
@@ -27,6 +37,7 @@ createRoot(document.getElementById("root")!).render(
             redirect_uri: window.location.origin,
             audience: "https://glig.com",
           }}
+          onRedirectCallback={onRedirectCallback}
         >
           <App />
         </Auth0Provider>

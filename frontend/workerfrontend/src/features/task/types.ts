@@ -1,7 +1,26 @@
 // Backend categories 
 export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
-export type TaskStatus = "Active" | "In Progress" | "Completed" | "Cancelled" | "Expired";
+export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "EXPIRED";
+
+export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+
+export type SortOption = "newest" | "oldest" | "priceAsc" | "priceDesc" | "nearest";
+
+export type ViewMode = "list" | "map";
+
+// Task filter parameters matching backend TaskDataGridFilters
+export interface TaskFilters {
+  searchText?: string;
+  categories?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
+  status?: TaskStatus;
+  sortBy?: SortOption;
+}
 
 // Matches backend CategoryResponse
 export interface CategoryResponse {
@@ -40,6 +59,14 @@ export interface Task {
   location: LocationResponse; // Changed from string to LocationResponse
   status: TaskStatus;
   description: string;
+}
+
+// Matches backend TaskApplicantDto
+export interface TaskApplicant {
+  appliedUser: UserDto;
+  priceSuggestion: number;
+  createdAt: string; // ISO string from Instant
+  applicationStatus: ApplicationStatus;
 }
 
 // Paginated response from backend

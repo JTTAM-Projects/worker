@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useCreateTask } from "../hooks/useCreateTask";
 import type { Category } from "../types";
 import type { CreateTaskInput } from "../api/taskApi";
@@ -24,6 +25,7 @@ export default function CreateTask({ children }: Props) {
   const [location, setLocation] = useState("Helsinki");
   const [description, setDescription] = useState("");
 
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   const { mutate, isPending, isError, error } = useCreateTask();
 
   const onSubmit = (e: React.FormEvent) => {
@@ -62,13 +64,29 @@ export default function CreateTask({ children }: Props) {
 
   const openDialog: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
-    if (!isPending) setOpen(true);
+    if (!isPending) {
+      if (!isAuthenticated) {
+        void loginWithRedirect({
+          appState: { returnTo: window.location.pathname },
+        });
+        return;
+      }
+      setOpen(true);
+    }
   };
 
   const openDialogKey: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      if (!isPending) setOpen(true);
+      if (!isPending) {
+        if (!isAuthenticated) {
+          void loginWithRedirect({
+            appState: { returnTo: window.location.pathname },
+          });
+          return;
+        }
+        setOpen(true);
+      }
     }
   };
 
