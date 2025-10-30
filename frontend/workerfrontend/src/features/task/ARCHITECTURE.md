@@ -131,6 +131,7 @@ Task Feature Module
 ## Data Flow
 
 ### 1. User Interaction Flow
+
 ```
 User types in filter
         ↓
@@ -152,6 +153,7 @@ UI updates with new results
 ```
 
 ### 2. Location Search Flow
+
 ```
 User types city name
         ↓
@@ -173,6 +175,7 @@ Coordinates included in search
 ```
 
 ### 3. Current Location Flow
+
 ```
 User clicks location icon
         ↓
@@ -192,6 +195,7 @@ Display "Sijainti asetettu"
 ### State Management Hooks
 
 #### useFilterState
+
 ```typescript
 Input:  TaskFilters (from parent)
 Output: {
@@ -203,31 +207,19 @@ Output: {
   reset: Function            // Clear everything
 }
 ```
+
 **Responsibilities:**
+
 - Manages 8 filter state values (searchText, categories, prices, location, radius)
 - Provides memoized setters to prevent unnecessary re-renders
 - Validates and clamps price values (0-500 range)
 - Synchronizes internal state with external filter changes
 - Builds TaskFilters object for API consumption
 
-#### usePagination
-```typescript
-Input:  { totalPages: number, initialPage?: number }
-Output: {
-  currentPage: number,
-  goToPage: (page: number) => void,
-  goToNextPage: () => void,
-  goToPreviousPage: () => void,
-  goToFirstPage: () => void,
-  goToLastPage: () => void,
-  canGoNext: boolean,
-  canGoPrevious: boolean
-}
-```
-
 ### API Integration Hooks (TanStack Query)
 
 #### useTasks
+
 ```typescript
 Input:  FetchTasksParams (page, size, filters)
 Output: {
@@ -237,16 +229,20 @@ Output: {
   error: Error | null
 }
 ```
+
 **Features:**
+
 - Uses TanStack Query for caching and automatic refetching
 - Converts frontend sortBy to Spring Pageable sort parameter
 - 5-minute stale time for cached results
 - Automatic retry on failure
 
 #### useUserTasks
+
 Same as useTasks but fetches only authenticated user's tasks
 
 #### useTaskById
+
 ```typescript
 Input:  taskId: string
 Output: {
@@ -258,12 +254,15 @@ Output: {
 ```
 
 #### useTaskApplications
+
 Fetches all applications for a specific task
 
 #### useUserApplication
+
 Checks if user has already applied to a specific task
 
 #### useCreateTask
+
 ```typescript
 Output: {
   mutate: (taskData: TaskCreateRequest) => void,
@@ -276,6 +275,7 @@ Output: {
 ### Browser API Integration Hooks
 
 #### useGeocoding
+
 ```typescript
 Input:  none
 Output: {
@@ -284,9 +284,11 @@ Output: {
   error: string | null
 }
 ```
+
 **Integration:** Nominatim OpenStreetMap API for address → coordinates
 
 #### useGeolocation
+
 ```typescript
 Input:  none
 Output: {
@@ -295,11 +297,13 @@ Output: {
   error: string | null
 }
 ```
+
 **Integration:** Browser Geolocation API (requires user permission)
 
 ## Component Props
 
 ### CategoryFilter
+
 ```typescript
 Props: {
   selectedCategories: string[],
@@ -308,6 +312,7 @@ Props: {
 ```
 
 ### PriceRangeInput
+
 ```typescript
 Props: {
   minPrice: string,
@@ -322,6 +327,7 @@ Props: {
 ```
 
 ### LocationSearchInput
+
 ```typescript
 Props: {
   locationSearch: string,
@@ -341,6 +347,7 @@ Props: {
 ## State Ownership
 
 ### Local State (TaskFilterPanel + useFilterState)
+
 - searchText
 - selectedCategories
 - minPrice / maxPrice
@@ -349,11 +356,13 @@ Props: {
 - radiusKm
 
 ### Parent State (TaskPage)
+
 - filters (complete TaskFilters object)
 - page (pagination)
 - viewMode (list/map)
 
 ### TanStack Query Cache
+
 - tasks data
 - loading states
 - error states
@@ -370,6 +379,7 @@ Props: {
 ## Testing Strategy
 
 ### Unit Tests (Hooks)
+
 ```
 useFilterState
   ✓ initializes with default values
@@ -392,6 +402,7 @@ useGeolocation
 ```
 
 ### Component Tests (Presentational)
+
 ```
 CategoryFilter
   ✓ renders all categories
@@ -413,6 +424,7 @@ LocationSearchInput
 ```
 
 ### Integration Tests (Main Component)
+
 ```
 TaskFilterPanel
   ✓ submits all filters on search
@@ -452,7 +464,6 @@ src/features/task/
 │   ├── useTaskApplications.ts      (Fetch task applications - ~60 lines)
 │   ├── useUserApplication.ts       (Check user application - ~50 lines)
 │   ├── useCreateTask.ts            (Create task mutation - ~70 lines)
-│   ├── usePagination.ts            (Pagination logic - ~80 lines)
 │   └── index.ts                     (Hook exports)
 │
 ├── api/
@@ -487,6 +498,7 @@ src/features/task/
 
 **Total Lines of Code:** ~3,500+ lines across 30+ files
 **Key Metrics:**
+
 - 15 Components (5 core, 10 supporting)
 - 11 Custom Hooks (4 state, 6 API, 1 browser)
 - 5 Page-level components
@@ -494,14 +506,14 @@ src/features/task/
 
 ## Benefits Summary
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| Files | 1 | 7 |
-| Lines per file | 435 | ~100 avg |
-| Hook reusability | 0% | 100% |
-| Component reusability | 0% | 100% |
-| Test isolation | Hard | Easy |
-| State management | Scattered | Centralized |
-| API calls | Inline | Abstracted |
-| Performance | Limited memoization | Fully optimized |
-| Type safety | Partial | Complete |
+| Aspect                | Before              | After           |
+| --------------------- | ------------------- | --------------- |
+| Files                 | 1                   | 7               |
+| Lines per file        | 435                 | ~100 avg        |
+| Hook reusability      | 0%                  | 100%            |
+| Component reusability | 0%                  | 100%            |
+| Test isolation        | Hard                | Easy            |
+| State management      | Scattered           | Centralized     |
+| API calls             | Inline              | Abstracted      |
+| Performance           | Limited memoization | Fully optimized |
+| Type safety           | Partial             | Complete        |

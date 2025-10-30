@@ -67,6 +67,9 @@ export interface TaskApplicant {
   priceSuggestion: number;
   createdAt: string; // ISO string from Instant
   applicationStatus: ApplicationStatus;
+  // Optional fields - backend may or may not provide these depending on implementation
+  timeSuggestion: string; // ISO 8601 datetime string suggested by applicant
+  description?: string; // free text message from applicant
 }
 
 // Paginated response from backend

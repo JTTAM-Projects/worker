@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { useTaskApplications } from "../hooks/useTaskApplications";
+import { useAuth0 } from "@auth0/auth0-react";
+import { fetchApplicationDetails } from "../api/taskApi";
 
 interface ApplicationsListProps {
   taskId: number;
   pageSize?: number; // Optional, default = 4
+  onSelect?: (application: any) => void;
 }
 
 export default function ApplicationsList({
   taskId,
   pageSize = 4,
+  onSelect,
 }: ApplicationsListProps) {
+  const { getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
   const { data, isLoading, isError } = useTaskApplications(
     taskId,
@@ -54,7 +59,10 @@ export default function ApplicationsList({
     );
   }
 
-  const applications = data?.content || [];
+  //Filter out cancelled applications
+  const applications = (data?.content || []).filter(
+    (app) => app.applicationStatus !== "CANCELLED"
+  );
 
   if (applications.length === 0) {
     return (
@@ -70,6 +78,20 @@ export default function ApplicationsList({
     );
   }
 
+  async function handleSelect(app: any) {
+    try {
+      const token = await getAccessTokenSilently();
+      const details = await fetchApplicationDetails(
+        taskId,
+        app.appliedUser.userName,
+        token
+      );
+      onSelect?.({ ...app, ...details });
+    } catch (e) {
+      onSelect?.(app);
+    }
+  }
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -81,7 +103,13 @@ export default function ApplicationsList({
         {applications.map((app, index) => (
           <div
             key={index}
-            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+            onClick={() => handleSelect(app)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") handleSelect(app);
+            }}
+            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1">
@@ -96,7 +124,7 @@ export default function ApplicationsList({
                     <span className="material-icons text-yellow-500 text-base">
                       star
                     </span>
-                    <span className="text-gray-600">3.7 (5 arvostelua)</span>
+                    <span className="text-gray-600">Ei arvosteluja</span>
                   </div>
                 </div>
               </div>
@@ -112,6 +140,25 @@ export default function ApplicationsList({
                     </span>
                     <span>{formatDate(app.createdAt)}</span>
                   </div>
+                  <div className="mt-1">
+                    {app.applicationStatus === "PENDING" ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-300">
+                        Aktiivinen
+                      </span>
+                    ) : app.applicationStatus === "ACCEPTED" ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-300">
+                        Hyväksytty
+                      </span>
+                    ) : app.applicationStatus === "REJECTED" ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 border border-red-300">
+                        Hylätty
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300">
+                        {app.applicationStatus}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="text-green-600 text-lg font-bold">
@@ -123,6 +170,7 @@ export default function ApplicationsList({
         ))}
       </div>
 
+      {/* Application detail modal is handled by parent via onSelect */}
       {data && data.totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between">
           <button

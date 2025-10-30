@@ -2,9 +2,6 @@
  * Custom hooks for task feature
  */
 
-// Pagination
-export { usePagination } from "./usePagination";
-
 // Filter management
 export { useFilterState } from './useFilterState';
 export type { FilterState, UseFilterStateReturn } from './useFilterState';
@@ -23,3 +20,4 @@ export { useCreateTask } from './useCreateTask';
 export { useUserTasks } from './useUserTasks';
 export { useTaskApplications } from './useTaskApplications';
 export { useUserApplication } from './useUserApplication';
+export { useUpdateApplicationStatus } from './useUpdateApplicationStatus';
