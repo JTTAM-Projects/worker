@@ -189,13 +189,11 @@ public class TaskControllerService {
                 if (filters.searchText() != null && !filters.searchText().isBlank()) {
                     String searchPattern = "%" + filters.searchText().toLowerCase() + "%";
                     Predicate titleMatch = criteriabuilder.like(
-                            criteriabuilder.lower(root.get("title")), 
-                            searchPattern
-                    );
+                            criteriabuilder.lower(root.get("title")),
+                            searchPattern);
                     Predicate descriptionMatch = criteriabuilder.like(
-                            criteriabuilder.lower(root.get("description")), 
-                            searchPattern
-                    );
+                            criteriabuilder.lower(root.get("description")),
+                            searchPattern);
                     predicates.add(criteriabuilder.or(titleMatch, descriptionMatch));
                 }
 
@@ -230,33 +228,31 @@ public class TaskControllerService {
                     // Using simplified bounding box approach (works with H2)
                     // Approximate: 1 degree latitude ≈ 111 km
                     // 1 degree longitude ≈ 111 km * cos(latitude)
-                    
+
                     double lat = filters.latitude();
                     double lon = filters.longitude();
                     double radiusKm = filters.radiusKm();
-                    
+
                     // Calculate approximate bounding box
                     double latDelta = radiusKm / 111.0; // degrees latitude per km
                     double lonDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(lat))); // degrees longitude per km
-                    
+
                     double minLat = lat - latDelta;
                     double maxLat = lat + latDelta;
                     double minLon = lon - lonDelta;
                     double maxLon = lon + lonDelta;
-                    
+
                     // Join the locations relationship and create bounding box filter
                     Join<Object, Object> locationJoin = root.join("locations");
                     Predicate latInRange = criteriabuilder.between(
-                        locationJoin.get("latitude"), 
-                        minLat, 
-                        maxLat
-                    );
+                            locationJoin.get("latitude"),
+                            minLat,
+                            maxLat);
                     Predicate lonInRange = criteriabuilder.between(
-                        locationJoin.get("longitude"), 
-                        minLon, 
-                        maxLon
-                    );
-                    
+                            locationJoin.get("longitude"),
+                            minLon,
+                            maxLon);
+
                     predicates.add(criteriabuilder.and(latInRange, lonInRange));
                 }
 

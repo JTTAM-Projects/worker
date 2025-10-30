@@ -1,5 +1,5 @@
 package com.jttam.glig.domain.category.dto;
 
-public record CategoryResponse(String title) {
+public record CategoryResponse(Long categoryId, String title) {
 
 }

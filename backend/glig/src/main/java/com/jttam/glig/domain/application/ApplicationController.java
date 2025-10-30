@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.jttam.glig.domain.application.dto.ApplicationResponse;
 import com.jttam.glig.domain.application.dto.MyApplicationDTO;
 import com.jttam.glig.domain.application.dto.TaskApplicantDto;
+import com.jttam.glig.domain.application.dto.UpdateApplicationStatusRequest;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
@@ -45,7 +46,7 @@ public class ApplicationController {
     @GetMapping("/task/{taskId}/application")
     public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
-        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+        return service.tryGetSingleApplicationResponseByUsernameAndTaskId(taskId, username);
     }
 
     @Operation(summary = "Get a single application for a task (not own)", description = "Fetches a single application DTO for a given task ID and username, example when fetching application from the list that isnt users own.")
@@ -56,7 +57,7 @@ public class ApplicationController {
     })
     @GetMapping("/task/{taskId}/user/{username}/application")
     public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @PathVariable String username) {
-        return service.tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+        return service.tryGetSingleApplicationResponseByUsernameAndTaskId(taskId, username);
     }
 
     @Operation(summary = "Get all applications of a task", description = "Fetches all applications that single task has.")
@@ -119,6 +120,27 @@ public class ApplicationController {
         methods.hasBindingResultErrors(bindingResult);
         String username = jwt.getSubject();
         return service.tryEditApplication(taskId, applicationRequest, username);
+    }
+
+    @Operation(summary = "Update an application's status", description = "Allows a task owner to accept or reject an application. The user must be the owner of the task to which the application belongs.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Application status updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid status provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, user is not the owner of the task"),
+            @ApiResponse(responseCode = "404", description = "Application not found")
+    })
+    @PatchMapping("/tasks/{taskId}/applications/{applicantUsername}/status")
+    public ResponseEntity<ApplicationResponse> updateApplicationStatus(
+            @PathVariable Long taskId,
+            @PathVariable String applicantUsername,
+            @Valid @RequestBody UpdateApplicationStatusRequest statusRequest,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        methods.hasBindingResultErrors(bindingResult);
+        String taskOwnerUsername = jwt.getSubject();
+        return service.tryUpdateApplicationStatus(taskId, applicantUsername, statusRequest, taskOwnerUsername);
     }
 
     @Operation(summary = "Delete an application", description = "Allows an authenticated user to delete their own application for a task.")

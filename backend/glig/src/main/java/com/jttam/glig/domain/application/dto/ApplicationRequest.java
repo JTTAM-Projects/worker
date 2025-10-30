@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
 
 public record ApplicationRequest(
-                int priceSuggestion,
-                @NotNull(message = "Time Suggestion cannot be null") LocalDateTime timeSuggestion,
-                String description) {
+        int priceSuggestion,
+        @NotNull(message = "Time Suggestion cannot be null") LocalDateTime timeSuggestion,
+        String description) {
 
 }
