@@ -19,6 +19,8 @@ import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -60,10 +62,24 @@ public class ApplicationController {
         return service.tryGetSingleApplicationResponseByUsernameAndTaskId(taskId, username);
     }
 
-    @Operation(summary = "Get all applications of a task", description = "Fetches all applications that single task has.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Applications fetched successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @Operation(summary = "Get all applications for a specific task with advanced filtering", description = "Retrieves a paginated list of applications for a given task ID. "
+            +
+            "The results can be filtered by application status, price range, categories, and a free-text search. " +
+            "Standard pagination and sorting parameters are also supported.")
+    @Parameters({
+            @Parameter(name = "taskId", description = "The ID of the task whose applications are to be retrieved.", required = true, example = "1"),
+            @Parameter(name = "page", description = "Page number of the result set (0-indexed).", example = "0"),
+            @Parameter(name = "size", description = "Number of items per page.", example = "10"),
+            @Parameter(name = "sort", description = "Sorting criteria in the format: property,(asc|desc). " +
+                    "Default is ascending. Multiple sort criteria are supported.", example = "priceSuggestion,desc"),
+            @Parameter(name = "applicationStatus", description = "Filter applications by their status.", example = "PENDING"),
+            @Parameter(name = "searchText", description = "Free-text search across the task's title and the application's description. "
+                    +
+                    "The search is case-insensitive and matches partial text.", example = "urgent"),
+            @Parameter(name = "categories", description = "Filter by one or more category titles. " +
+                    "Provide multiple times for OR logic (e.g., &categories=Cleaning&categories=IT).", example = "Garden"),
+            @Parameter(name = "applicationMinPrice", description = "Filter for applications with a price suggestion greater than or equal to this value.", example = "50"),
+            @Parameter(name = "applicationMaxPrice", description = "Filter for applications with a price suggestion less than or equal to this value.", example = "200")
     })
     @GetMapping("/task/{taskId}/applications")
     public Page<TaskApplicantDto> getAllTaskApplications(
@@ -74,7 +90,23 @@ public class ApplicationController {
         return service.tryGetAllApplicationsByGivenTaskId(pageable, filters, taskId);
     }
 
-    @Operation(summary = "Get all applications for the authenticated user", description = "Fetches all applications made by the currently authenticated user.")
+    @Operation(summary = "Get all applications for the authenticated user with filtering", description = "Retrieves a paginated list of all applications made by the currently authenticated user. "
+            +
+            "The results can be filtered by status, price, categories, and a free-text search.")
+    @Parameters({
+            @Parameter(name = "page", description = "Page number of the result set (0-indexed).", example = "0"),
+            @Parameter(name = "size", description = "Number of items per page.", example = "10"),
+            @Parameter(name = "sort", description = "Sorting criteria in the format: property,(asc|desc). " +
+                    "Default is ascending. Multiple sort criteria are supported.", example = "createdAt,desc"),
+            @Parameter(name = "applicationStatus", description = "Filter applications by their status.", example = "PENDING"),
+            @Parameter(name = "searchText", description = "Free-text search across the task's title and the application's description. "
+                    +
+                    "The search is case-insensitive and matches partial text.", example = "repair"),
+            @Parameter(name = "categories", description = "Filter by one or more category titles. " +
+                    "Provide multiple times for OR logic (e.g., &categories=Cleaning&categories=IT).", example = "Garden"),
+            @Parameter(name = "applicationMinPrice", description = "Filter for applications with a price suggestion greater than or equal to this value.", example = "20"),
+            @Parameter(name = "applicationMaxPrice", description = "Filter for applications with a price suggestion less than or equal to this value.", example = "100")
+    })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Applications fetched successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
