@@ -1,4 +1,11 @@
 package com.jttam.glig.domain.application;
 
-public record ApplicationDataGridFilters(String user, ApplicationStatus applicationStatus) {
+import java.util.Set;
+
+public record ApplicationDataGridFilters(
+        String searchText,
+        ApplicationStatus applicationStatus,
+        Set<String> categories,
+        Integer applicationMinPrice,
+        Integer applicationMaxPrice) {
 }

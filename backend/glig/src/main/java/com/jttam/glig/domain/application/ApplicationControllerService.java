@@ -53,6 +53,7 @@ public class ApplicationControllerService {
         return apply;
     }
 
+    @Transactional
     public ApplicationResponse tryGetSingleApplicationResponseByUsernameAndTaskId(Long taskId, String username) {
         Application application = tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
         ApplicationResponse applyDto = mapper.toApplicationResponse(application);
@@ -70,6 +71,7 @@ public class ApplicationControllerService {
         return listOfApplyDto;
     }
 
+    @Transactional
     public Page<TaskApplicantDto> tryGetAllApplicationsByGivenTaskId(Pageable pageable,
             ApplicationDataGridFilters filters, Long taskId) {
         String username = null;
@@ -120,7 +122,7 @@ public class ApplicationControllerService {
         return new ResponseEntity<>(new Message("SUCCESS", "Apply deleted successfully"), HttpStatus.OK);
     }
 
-    public static Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
+    public Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
             String username, Long taskId) {
         return (root, query, criteriabuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -138,6 +140,37 @@ public class ApplicationControllerService {
                 if (filters.applicationStatus() != null) {
                     predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
                 }
+
+                if (filters.applicationMinPrice() != null) {
+                    predicates
+                            .add(criteriabuilder.greaterThanOrEqualTo(root.get("priceSuggestion"),
+                                    filters.applicationMinPrice()));
+                }
+
+                if (filters.applicationMaxPrice() != null) {
+                    predicates.add(criteriabuilder.lessThanOrEqualTo(root.get("priceSuggestion"),
+                            filters.applicationMaxPrice()));
+                }
+
+                if (filters.categories() != null && !filters.categories().isEmpty()) {
+                    Predicate categoryPredicate = root.join("task").join("categories").get("title")
+                            .in(filters.categories());
+                    predicates.add(categoryPredicate);
+                }
+
+                if (filters.applicationStatus() != null) {
+                    predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
+                }
+
+                if (filters.searchText() != null && !filters.searchText().isBlank()) {
+                    String searchPattern = "%" + filters.searchText().toLowerCase() + "%";
+                    Predicate titleMatch = criteriabuilder.like(criteriabuilder.lower(root.get("task").get("title")),
+                            searchPattern);
+                    Predicate descriptionMatch = criteriabuilder.like(criteriabuilder.lower(root.get("description")),
+                            searchPattern);
+                    predicates.add(criteriabuilder.or(titleMatch, descriptionMatch));
+                }
+
             }
             return criteriabuilder.and(predicates.toArray(new Predicate[0]));
         };
