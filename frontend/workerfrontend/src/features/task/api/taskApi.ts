@@ -251,6 +251,7 @@ export async function createTask(
   };
 }
 
+// Fetch task details by ID
 export async function fetchTaskById(taskId: number): Promise<Task> {
   const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
     headers: {
@@ -366,6 +367,7 @@ export async function checkUserApplication(
   return response.ok;
 }
 
+// Update an existing task (requires authentication)
 export async function updateTask(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number,
@@ -399,4 +401,44 @@ export async function updateTask(
     ...data,
     location: primaryLocation,
   };
+}
+
+// Fetch application details for a specific user and task (requires authentication)
+export async function fetchApplicationDetails(taskId: number, username: string, accessToken: string) {
+  const res = await fetch(`${API_BASE_URL}/task/${taskId}/user/${encodeURIComponent(username)}/application`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "");
+    throw new Error(`Hakemuksen tiedot eivät löytyneet (${res.status}): ${errorText}`);
+  }
+  return await res.json();
+}
+
+// Update application status (accept/reject) - requires authentication
+export async function updateApplicationStatus(
+  getAccessToken: () => Promise<string>,
+  taskId: number,
+  applicantUsername: string,
+  status: 'ACCEPTED' | 'REJECTED'
+): Promise<void> {
+  const token = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/applications/${encodeURIComponent(applicantUsername)}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('API Error:', response.status, errorText);
+    throw new Error(`Failed to update application status: ${response.status} ${errorText}`);
+  }
 }

@@ -5,6 +5,8 @@ import { useTaskById } from "../features/task/hooks/useTaskById";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
+import { useUpdateApplicationStatus } from "../features/task/hooks";
+import ApplicationModal from "../features/task/components/ApplicationDetailsModal";
 
 // Page for viewing and managing own task details
 export default function OwnTaskDetailPage() {
@@ -12,11 +14,43 @@ export default function OwnTaskDetailPage() {
   const { taskId } = useParams<{ taskId: string }>();
   const numericTaskId = taskId ? Number(taskId) : NaN;
   const { data: task, isLoading, isError } = useTaskById(numericTaskId);
+  const updateApplicationStatus = useUpdateApplicationStatus();
+  const handleUpdateStatus = (status: "ACCEPTED" | "REJECTED") => {
+    if (selectedApplication && task) {
+      updateApplicationStatus.mutate({
+        taskId: task.id,
+        applicantUsername: selectedApplication.user.userName,
+        status,
+      });
+    }
+  };
   const [activeTab, setActiveTab] = useState("information");
-  const { isAuthenticated, loginWithRedirect, isLoading: authLoading } =
-    useAuth0();
+  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const loginAttemptedRef = useRef(false);
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading: authLoading,
+  } = useAuth0();
 
+  // Close modal and show success message when application status is updated successfully
+  useEffect(() => {
+    if (updateApplicationStatus.isSuccess) {
+      setSelectedApplication(null);
+      const lastStatus = updateApplicationStatus.variables?.status;
+      if (lastStatus === "REJECTED") {
+        setSuccessMessage("Hakemus hylätty onnistuneesti!");
+      } else if (lastStatus === "ACCEPTED") {
+        setSuccessMessage("Hakemus hyväksytty onnistuneesti!");
+      } else {
+        setSuccessMessage("Hakemuksen tila päivitetty.");
+      }
+      setTimeout(() => setSuccessMessage(""), 3000);
+    }
+  }, [updateApplicationStatus.isSuccess]);
+
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated && !loginAttemptedRef.current) {
       loginAttemptedRef.current = true;
@@ -88,6 +122,12 @@ export default function OwnTaskDetailPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
+      {successMessage && (
+        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+          {successMessage}
+        </div>
+      )}
+
       <button
         onClick={() => navigate("/my-tasks")}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
@@ -157,7 +197,19 @@ export default function OwnTaskDetailPage() {
                 </div>
               </>
             ) : (
-              <ApplicationsList taskId={task.id} />
+              <>
+                <ApplicationsList
+                  taskId={task.id}
+                  onSelect={setSelectedApplication}
+                />
+                {selectedApplication && (
+                  <ApplicationModal
+                    application={selectedApplication}
+                    onClose={() => setSelectedApplication(null)}
+                    onUpdateStatus={(status) => handleUpdateStatus(status)}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
