@@ -3,6 +3,7 @@ package com.jttam.glig.domain.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +15,14 @@ import org.springframework.stereotype.Service;
 import com.jttam.glig.domain.application.dto.ApplicationResponse;
 import com.jttam.glig.domain.application.dto.MyApplicationDTO;
 import com.jttam.glig.domain.application.dto.TaskApplicantDto;
+import com.jttam.glig.domain.application.dto.UpdateApplicationStatusRequest;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
+import com.jttam.glig.domain.task.TaskStatus;
 import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserRepository;
+import com.jttam.glig.exception.custom.ForbiddenException;
 import com.jttam.glig.exception.custom.NotFoundException;
 import com.jttam.glig.service.Message;
 
@@ -41,13 +45,18 @@ public class ApplicationControllerService {
         this.mapper = mapper;
     }
 
-    @Transactional
-    public ApplicationResponse tryGetSingleApplicationByUsernameAndTaskId(Long taskId, String username) {
+    public Application tryGetSingleApplicationByUsernameAndTaskId(Long taskId, String username) {
         ApplicationId applyId = new ApplicationId(taskId, username);
         Application apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND",
                         "Cannot find apply with given details " + applyId.toString()));
-        ApplicationResponse applyDto = mapper.toApplicationResponse(apply);
+        return apply;
+    }
+
+    @Transactional
+    public ApplicationResponse tryGetSingleApplicationResponseByUsernameAndTaskId(Long taskId, String username) {
+        Application application = tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+        ApplicationResponse applyDto = mapper.toApplicationResponse(application);
         return applyDto;
     }
 
@@ -62,6 +71,7 @@ public class ApplicationControllerService {
         return listOfApplyDto;
     }
 
+    @Transactional
     public Page<TaskApplicantDto> tryGetAllApplicationsByGivenTaskId(Pageable pageable,
             ApplicationDataGridFilters filters, Long taskId) {
         String username = null;
@@ -95,9 +105,7 @@ public class ApplicationControllerService {
     @Transactional
     public ResponseEntity<ApplicationResponse> tryEditApplication(Long taskId, ApplicationRequest request,
             String username) {
-        ApplicationId applyId = new ApplicationId(taskId, username);
-        Application apply = applyRepository.findById(applyId)
-                .orElseThrow(() -> new NotFoundException("APPLY_NOT_FOUND", "Cannot find apply with given details"));
+        Application apply = tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
         Application updatedApply = mapper.updateApplication(request, apply);
         Application saved = applyRepository.save(updatedApply);
         ApplicationResponse response = mapper.toApplicationResponse(saved);
@@ -114,7 +122,7 @@ public class ApplicationControllerService {
         return new ResponseEntity<>(new Message("SUCCESS", "Apply deleted successfully"), HttpStatus.OK);
     }
 
-    public static Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
+    public Specification<Application> withApplicationFilters(ApplicationDataGridFilters filters,
             String username, Long taskId) {
         return (root, query, criteriabuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -132,9 +140,81 @@ public class ApplicationControllerService {
                 if (filters.applicationStatus() != null) {
                     predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
                 }
+
+                if (filters.applicationMinPrice() != null) {
+                    predicates
+                            .add(criteriabuilder.greaterThanOrEqualTo(root.get("priceSuggestion"),
+                                    filters.applicationMinPrice()));
+                }
+
+                if (filters.applicationMaxPrice() != null) {
+                    predicates.add(criteriabuilder.lessThanOrEqualTo(root.get("priceSuggestion"),
+                            filters.applicationMaxPrice()));
+                }
+
+                if (filters.categories() != null && !filters.categories().isEmpty()) {
+                    Predicate categoryPredicate = root.join("task").join("categories").get("title")
+                            .in(filters.categories());
+                    predicates.add(categoryPredicate);
+                }
+
+                if (filters.applicationStatus() != null) {
+                    predicates.add(criteriabuilder.equal(root.get("applicationStatus"), filters.applicationStatus()));
+                }
+
+                if (filters.searchText() != null && !filters.searchText().isBlank()) {
+                    String searchPattern = "%" + filters.searchText().toLowerCase() + "%";
+                    Predicate titleMatch = criteriabuilder.like(criteriabuilder.lower(root.get("task").get("title")),
+                            searchPattern);
+                    Predicate descriptionMatch = criteriabuilder.like(criteriabuilder.lower(root.get("description")),
+                            searchPattern);
+                    predicates.add(criteriabuilder.or(titleMatch, descriptionMatch));
+                }
+
             }
             return criteriabuilder.and(predicates.toArray(new Predicate[0]));
         };
+
+    }
+
+    public ResponseEntity<ApplicationResponse> tryUpdateApplicationStatus(Long taskId, String applicantUsername,
+            UpdateApplicationStatusRequest statusRequest, String taskOwnerUsername) {
+
+        Application application = tryGetSingleApplicationByUsernameAndTaskId(taskId, applicantUsername);
+        Task task = application.getTask();
+        Application updatedApplication = new Application();
+
+        if (application.getApplicationStatus() != ApplicationStatus.PENDING) {
+            throw new IllegalStateException("Application has already been processed.");
+        }
+
+        if (!task.getUser().getUserName().equals(taskOwnerUsername)) {
+            throw new ForbiddenException("FORBIDDEN", "User is not owner of the task");
+        }
+
+        if (statusRequest.status() == ApplicationStatus.ACCEPTED) {
+            Set<Application> applications = applyRepository.findAllApplicationsByUserNameAndTaskId(taskId,
+                    applicantUsername);
+            applications.stream().forEach(a -> a.setApplicationStatus(ApplicationStatus.REJECTED));
+            applyRepository.saveAll(applications);
+
+            task.setStatus(TaskStatus.IN_PROGRESS);
+            taskRepository.save(task);
+
+            application.setApplicationStatus(statusRequest.status());
+            updatedApplication = applyRepository.save(application);
+
+        } else if (statusRequest.status() == ApplicationStatus.REJECTED) {
+            application.setApplicationStatus(statusRequest.status());
+            updatedApplication = applyRepository.save(application);
+
+        } else {
+            throw new IllegalStateException(
+                    "Application can only be updated to REJECTED or ACCEPTED using this endpoint");
+        }
+
+        ApplicationResponse response = mapper.toApplicationResponse(updatedApplication);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 

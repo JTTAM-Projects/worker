@@ -2,6 +2,7 @@ package com.jttam.glig.domain.application;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Applic
 
     @Query("SELECT a FROM Application a WHERE a.task.id = :taskId AND a.applicationStatus = 'ACCEPTED'")
     Optional<Application> findAcceptedApplicationForTask(@Param("taskId") Long taskId);
+
+    @Query("SELECT a FROM Application a WHERE a.task.id = :taskId AND a.user.userName != :applicantUsername")
+    Set<Application> findAllApplicationsByUserNameAndTaskId(@Param("taskId") Long taskId,
+            @Param("applicantUsername") String applicantUserName);
 }
