@@ -87,10 +87,10 @@ function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: 
 
 const ApplicationFilterPanelMemoized = memo(ApplicationFilterPanelComponent, (prevProps, nextProps) => {
   return(
-    prevProps.filters.searchText === nextProps.filters.searchText &&
-    prevProps.filters.minPrice === nextProps.filters.minPrice &&
-    prevProps.filters.maxPrice === nextProps.filters.maxPrice &&
-    JSON.stringify(prevProps.filters.categories) === JSON.stringify(nextProps.filters.categories) &&
+    prevProps.filters?.searchText === nextProps.filters?.searchText &&
+    prevProps.filters?.minPrice === nextProps.filters?.minPrice &&
+    prevProps.filters?.maxPrice === nextProps.filters?.maxPrice &&
+    JSON.stringify(prevProps.filters?.categories) === JSON.stringify(nextProps.filters?.categories) &&
     prevProps.onFiltersChange === nextProps.onFiltersChange &&
     prevProps.onReset === nextProps.onReset
   );

@@ -44,6 +44,7 @@ export async function fetchAllApplications(
     size = 10, 
     applicationStatus,
     searchText,
+    categories,
     minPrice,
     maxPrice,
   } = params;
@@ -57,13 +58,16 @@ export async function fetchAllApplications(
   if (searchText && searchText.trim()){
     queryParams.append("searchText", searchText.trim());
   }
+  if (categories && categories.length > 0) {
+    categories.forEach(cat => queryParams.append("categories", cat));
+  }
 
   if (minPrice !== undefined && minPrice !== null) {
-    queryParams.append("minPrice", minPrice.toString());
+    queryParams.append("applicationMinPrice", minPrice.toString());
   }
 
   if (maxPrice !== undefined && maxPrice !== null) {
-    queryParams.append("maxPrice", maxPrice.toString());
+    queryParams.append("applicationMaxPrice", maxPrice.toString());
   }
   
   if (applicationStatus) {

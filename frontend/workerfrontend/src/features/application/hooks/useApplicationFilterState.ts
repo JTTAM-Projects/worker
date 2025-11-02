@@ -7,7 +7,7 @@ export interface ApplicationFilterState{
   minPrice: string,
   maxPrice: string,
   minPriceSlider: number,
-  maxPriceSlider: number,
+  maxPriceSlider: number
 }
 
 export interface UseApplicationFilterStateReturn{
@@ -24,24 +24,19 @@ export interface UseApplicationFilterStateReturn{
   buildFilters: (filters: ApplicationFilters) => ApplicationFilters;
 }
 
-const DEFAULT_STATE: ApplicationFilterState = {
-  searchText: '',
-  selectedCategories: [],
-  minPrice: '',
-  maxPrice: '',
-  minPriceSlider: 0,
-  maxPriceSlider: 200
-};
+function toState(src?: Partial<ApplicationFilters>): ApplicationFilterState {
+  return {
+    searchText: src?.searchText ?? "",
+    selectedCategories: src?.categories ?? [],
+    minPrice: src?.minPrice != null ? String(src.minPrice) : "",
+    maxPrice: src?.maxPrice != null ? String(src.maxPrice) : "",
+    minPriceSlider: src?.minPrice ?? 0,
+    maxPriceSlider: src?.maxPrice ?? 500
+  };
+}
 
-export function useApplicationFilterState(initialFilters: ApplicationFilters): UseApplicationFilterStateReturn {
-  const [state, setState] = useState<ApplicationFilterState>(() => ({
-    searchText: initialFilters.searchText || '',
-    selectedCategories: initialFilters.categories || [],
-    minPrice: initialFilters.minPrice?.toString() || '',
-    maxPrice: initialFilters.maxPrice?.toString() || '',
-    minPriceSlider: initialFilters.minPrice || 0,
-    maxPriceSlider: initialFilters.maxPrice || 200
-  }));
+export function useApplicationFilterState(initialFilters?: Partial<ApplicationFilters>): UseApplicationFilterStateReturn {
+  const [state, setState] = useState<ApplicationFilterState>(() => toState(initialFilters));
 
   const setSearchText = useCallback((value: string) => {
     setState(prev => ({ ...prev, searchText: value}));
@@ -118,31 +113,30 @@ export function useApplicationFilterState(initialFilters: ApplicationFilters): U
     }));
   }, []);
 
-  const syncWithFilters = useCallback((filters: ApplicationFilters) => {
-    const isReset = !filters.searchText && !filters.categories?.length &&
-                      !filters.minPrice && !filters.maxPrice;
-    
-    setState(prev => ({
-      searchText: isReset ? '' : prev.searchText,
-      selectedCategories: filters.categories || [],
-      minPrice: filters.minPrice?.toString() || '',
-      maxPrice: filters.maxPrice?.toString() || '',
-      minPriceSlider: filters.minPrice || 0,
-      maxPriceSlider: filters.maxPrice || 200
-    }));
+  const syncWithFilters = useCallback((v?: Partial<ApplicationFilters>) => {
+    setState(toState(v));
   }, []);
 
   const reset = useCallback(() => {
-    setState(DEFAULT_STATE);
+    setState({
+      searchText: "",
+      selectedCategories: [],
+      minPrice: "",
+      maxPrice: "",
+      minPriceSlider: 0,
+      maxPriceSlider: 500,
+    });
   }, []);
 
-  const buildFilters = useCallback((currentFilters: ApplicationFilters): ApplicationFilters => {
+  const buildFilters = useCallback((currentFilters?: Partial<ApplicationFilters>): ApplicationFilters => {
+    const base = currentFilters ?? {};
     return {
-      ...currentFilters,
+      ...base,
       searchText: state.searchText.trim() || undefined,
       categories: state.selectedCategories.length > 0 ? state.selectedCategories : undefined,
       minPrice: state.minPrice ? parseInt(state.minPrice) : undefined,
       maxPrice: state.maxPrice ? parseInt(state.maxPrice) : undefined,
+      applicationStatus: currentFilters?.applicationStatus
     };
   }, [state]);
 

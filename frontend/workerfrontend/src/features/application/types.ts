@@ -11,6 +11,7 @@ export interface ApplicationFilters {
   categories?: string[];
   minPrice?: number;
   maxPrice?: number;
+  applicationStatus?:  ApplicationStatus
 }
 
 export interface Application {
