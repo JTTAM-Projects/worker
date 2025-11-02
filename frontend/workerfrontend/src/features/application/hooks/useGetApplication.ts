@@ -13,7 +13,7 @@ export function useGetApplication(taskId: number) {
   })
 }
 
-export function useGetAllUserApplications(params: FetchApplicationParams){
+export function useGetUserApplications(params: FetchApplicationParams){
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   return useQuery({

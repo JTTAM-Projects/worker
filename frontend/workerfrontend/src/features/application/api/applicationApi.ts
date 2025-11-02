@@ -1,8 +1,8 @@
-import type { Application, ApplicationStatus, ApplicationWithDetails, PaginatedResponse } from "../types";
+import type { Application, ApplicationFilters, ApplicationStatus, ApplicationWithDetails, PaginatedResponse } from "../types";
 
 const API_BASE_URL = 'http://localhost:8080/api'
 
-export interface FetchApplicationParams {
+export interface FetchApplicationParams extends ApplicationFilters {
   page: number;
   size: number;
   applicationStatus: ApplicationStatus;
@@ -37,9 +37,16 @@ export async function fetchApplication(
 
 export async function fetchAllApplications(
   getAccessToken: () => Promise<string>,
-   params: FetchApplicationParams
-  ): Promise<PaginatedResponse<Application>> {
-  const { page = 0, size = 10, applicationStatus } = params;
+  params: Partial<FetchApplicationParams> = {}
+): Promise<PaginatedResponse<Application>> {
+  const { 
+    page = 0, 
+    size = 10, 
+    applicationStatus,
+    searchText,
+    minPrice,
+    maxPrice,
+  } = params;
   const token = await getAccessToken();
 
   const queryParams = new URLSearchParams({
@@ -47,6 +54,18 @@ export async function fetchAllApplications(
     size: size.toString()
   })
 
+  if (searchText && searchText.trim()){
+    queryParams.append("searchText", searchText.trim());
+  }
+
+  if (minPrice !== undefined && minPrice !== null) {
+    queryParams.append("minPrice", minPrice.toString());
+  }
+
+  if (maxPrice !== undefined && maxPrice !== null) {
+    queryParams.append("maxPrice", maxPrice.toString());
+  }
+  
   if (applicationStatus) {
     queryParams.append("applicationStatus", applicationStatus);
   }

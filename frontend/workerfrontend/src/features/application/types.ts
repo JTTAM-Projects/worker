@@ -6,6 +6,13 @@ export type ApplicationStatus =
   | 'REJECTED' 
   | 'WITHDRAWN';
 
+export interface ApplicationFilters {
+  searchText?: string;
+  categories?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+}
+
 export interface Application {
   priceSuggestion: number,
   timeSuggestion: string,
@@ -59,11 +66,6 @@ export interface PaginatedResponse<T> {
   numberOfElements: number;
   empty: boolean;
 }
-/* export interface UserApplications {
-  application: Application,
-  user: UserDto,
-  
-} 
-  export type ApplicationList = ApplicationWithDetails[];  
-*/
+
+
 

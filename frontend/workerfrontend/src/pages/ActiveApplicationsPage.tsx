@@ -1,4 +1,4 @@
-import { useGetAllUserApplications } from "../features/application/hooks/useGetApplication";
+import { useGetUserApplications } from "../features/application/hooks/useGetApplication";
 import { useState } from 'react'
 import ApplicationToList from "../features/application/components/applicationsToList";
 
@@ -12,11 +12,13 @@ export default function ActiveApplicationsPage() {
     priceRange: [0, 1000]
   });
 
-  const { data: paginatedResponse } = useGetAllUserApplications({
+  const { data: paginatedResponse } = useGetUserApplications({
     page: currentPage,
     size: pageSize,
     applicationStatus: 'PENDING'
   });
+
+
 
 /*   //debugging
   console.log('Raw userApplications:', userApplications);
@@ -38,7 +40,7 @@ export default function ActiveApplicationsPage() {
       <div className="container mx-auto px-6 py-8">
         <div className="flex justify-center gap-8">
           {/* Filters */}
-          <div className="w-100 p-6">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-semibold mb-6">Suodattimet</h2>
             
             {/* Location Filter */}
@@ -79,7 +81,7 @@ export default function ActiveApplicationsPage() {
                   max="1000"
                   value={filters.priceRange[1]}
                   onChange={(e) => setFilters({...filters, priceRange: [0, parseInt(e.target.value)]})}
-                  className="flex-1"
+                  className="flex w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-green-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
                 />
                 <span className="text-sm text-gray-600">{filters.priceRange[1]}€</span>
               </div>
