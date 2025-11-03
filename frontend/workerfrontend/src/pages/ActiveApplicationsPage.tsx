@@ -4,67 +4,121 @@ import ApplicationToList from "../features/application/components/applicationsTo
 import { ApplicationFilterPanel } from "../features/application/components/ApplicationFilterPanel";
 import type { ApplicationFilters, ApplicationStatus } from "../features/application/types";
 
+type TabKey = 'active' | 'accepted' | 'jobOffers';
 
 export default function ActiveApplicationsPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "PENDING",
-});
-  const [status, setStatus] = useState<ApplicationStatus>();
-  const [tab, setTab] = useState<ApplicationStatus>("PENDING")
+  });
+  const [tab, setTab] = useState<TabKey>('active')
 
-  const handleResetFilters = () => {
-    const resetFilters: ApplicationFilters = {
-      applicationStatus: status
+  useEffect(() => {
+    const statusByTab: Record<Exclude<TabKey, 'jobOffers'>, ApplicationStatus> = {
+      active: 'PENDING',
+      accepted: 'ACCEPTED',
+    };
+    if (tab !== 'jobOffers'){
+      setFilters(prev => ({ ...prev, applicationStatus: statusByTab[tab] }));
+      setCurrentPage(0);
+    } else {
+      setFilters(prev => ({
+        ...prev,
+        applicationStatus: undefined,
+      }));
+      setCurrentPage(0)
     }
-    setFilters(resetFilters);
-    setCurrentPage(0);
-  }
-
+  }, [tab]);
+  
   const { data: paginatedResponse } = useGetUserApplications({
     page: currentPage,
     size: pageSize,
     ...filters,
-    applicationStatus: filters.applicationStatus ?? tab,
+    applicationStatus: filters.applicationStatus ?? (tab === 'accepted' ? 'ACCEPTED' : 'PENDING'),
   });
+  
+  const handleResetFilters = () => {
+    setFilters(prev => ({
+      ...prev,
+      applicationStatus: tab === 'accepted' ? 'ACCEPTED' : 'PENDING',
+      searchText: undefined,
+      categories: undefined,
+      minPrice: undefined,
+      maxPrice: undefined
+    }))
+  }
 
-/*   //debugging
-  console.log('Raw userApplications:', userApplications);
-  console.log('userApplications type:', typeof userApplications);
-  console.log('userApplications keys:', userApplications ? Object.keys(userApplications) : 'no keys');
-  console.log('First application structure:', paginatedResponse?.[0]); */
-  useEffect(() => {
-    setStatus(tab)
-  }, [tab]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
   return (
     <div className="min-h-screen align-center bg-gray-50">
+      <div className="flex mt-5 justify-center">
+        <button
+            className={`py-2 px-4 text-sm font-medium ${
+                tab === 'active'
+                    ? 'text-green-600 border-b-2 border-green-600'
+                    : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setTab('active')}
+        >
+        Aktiiviset
+        </button>
+        <button
+            className={`py-2 px-4 text-sm font-medium ${
+                tab === 'accepted'
+                    ? 'text-green-600 border-b-2 border-green-600'
+                    : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setTab('accepted')}
+        >
+        Menneet
+        </button>
+        <button
+            className={`py-2 px-4 text-sm font-medium ${
+                tab === 'jobOffers'
+                    ? 'text-green-600 border-b-2 border-green-600'
+                    : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setTab('jobOffers')}
+        >
+        Työtarjoukset
+        </button>
+      </div>
       <div className="container mx-auto px-6 py-8">
-        <ApplicationFilterPanel
-          filters={filters}
-          onFiltersChange={(newFilters) => {
-            setFilters(newFilters);
-            setCurrentPage(0);
-          }}
-          onReset={handleResetFilters}
-        />
-        <div className="flex-1">
-            <ApplicationToList 
-              applications={paginatedResponse?.content || []}
-              totalPages={paginatedResponse?.totalPages || 0}
-              totalElements={paginatedResponse?.totalElements || 0}
-              currentPage={paginatedResponse?.number || 0}
-              pageSize={paginatedResponse?.pageable?.pageSize || pageSize}
-              onPageChange={handlePageChange}
-              isFirst={paginatedResponse?.first || true}
-              isLast={paginatedResponse?.last || true}
+        {tab !== 'jobOffers' ? (
+          <>
+            <ApplicationFilterPanel
+              filters={filters}
+              onFiltersChange={(newFilters) => {
+                setFilters(prev => ({
+                  ...prev,
+                  ...newFilters,
+                  applicationStatus: tab === 'accepted' ? 'ACCEPTED' : 'PENDING',
+                }));
+                setCurrentPage(0);
+              }}
+              onReset={handleResetFilters}
             />
+
+            <div className="flex-1">
+              <ApplicationToList
+                applications={paginatedResponse?.content || []}
+                totalPages={paginatedResponse?.totalPages || 0}
+                totalElements={paginatedResponse?.totalElements || 0}
+                currentPage={paginatedResponse?.number || 0}
+                pageSize={paginatedResponse?.pageable?.pageSize || pageSize}
+                onPageChange={handlePageChange}
+                isFirst={paginatedResponse?.first || true}
+                isLast={paginatedResponse?.last || true}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="max-w-4xl mx-auto mt-8 bg-white border border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-500">
+            Työtarjoukset eivät ole vielä saatavilla.
           </div>
+        )}
       </div>
     </div>
   );

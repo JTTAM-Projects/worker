@@ -1,6 +1,7 @@
 import type { ApplicationWithDetails } from "../types"
 import { formatDate, formatTime } from "../../../utils/generalFunctions";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useNavigate } from "react-router-dom";
 
 interface ApplicationListProps {
   applications: ApplicationWithDetails[];
@@ -25,6 +26,7 @@ export default function ApplicationToList ({
   isLast
 }: ApplicationListProps) {
 
+  const navigate = useNavigate();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING': return 'bg-yellow-500 text-white';
@@ -105,6 +107,7 @@ export default function ApplicationToList ({
         <div
           key={`application-${row.id}`}
           className="bg-white rounded-lg border border-gray-200 hover:shadow-lg hover:border-green-400 transition-all duration-200 cursor-pointer overflow-hidden"
+          onClick={() => navigate(`/tasks/${a.task.id}`)}
         >
            <div className="flex items-start justify-between gap-6">
              {/* LEFT: icon + status + categories (close together) */}
@@ -206,24 +209,8 @@ export default function ApplicationToList ({
             ))}
           </div>
         ))}
-        {/* Pagination Controls */}
-  {/*       {totalPages > 1 && ( */}
           <div className="flex items-center justify-center mt-6">
-            {/* Left side - Info */}
-{/*             <div className="text-sm text-gray-700">
-              Näytetään {Math.min((currentPage * pageSize) + 1, totalElements)} - {Math.min((currentPage + 1) * pageSize, totalElements)} / {totalElements} tulosta
-            </div> */}
-
-            {/* Page numbers */}
             <div className="flex items-center space-x-2">
-{/*               <button
-                onClick={() => onPageChange(0)}
-                disabled={isFirst}
-                className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Ensimmäinen
-              </button> */}
-
               <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={isFirst}
@@ -241,11 +228,7 @@ export default function ApplicationToList ({
                 <button
                   key={pageNum}
                   onClick={() => onPageChange(pageNum)}
-                  className={`px-3 py-2 text-sm font-medium border rounded-md ${
-                    pageNum === currentPage
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
-                  }`}
+                  className="px-3 py-2 text-sm font-medium" 
                 >
                   {pageNum + 1} / {totalPages}
                 </button>
@@ -263,17 +246,8 @@ export default function ApplicationToList ({
                 Seuraava
                 <span className="material-icons text-sm ml-1">chevron_right</span>
               </button>
-
-{/*               <button
-                onClick={() => onPageChange(totalPages - 1)}
-                disabled={isLast}
-                className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Viimeinen
-              </button> */}
             </div>
           </div>
-  {/*       )} */}
       </div>
     </section>
   );
