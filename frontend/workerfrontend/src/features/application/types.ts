@@ -68,5 +68,11 @@ export interface PaginatedResponse<T> {
   empty: boolean;
 }
 
-
+export type UpdateApplicationPayload = {
+  priceSuggestion?: number;
+  timeSuggestion?: string;
+  description?: string;
+  allowCounterOffers?: boolean;
+  allowCalls?: boolean;
+};
 
