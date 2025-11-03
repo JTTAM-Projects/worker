@@ -127,7 +127,7 @@ export default function ApplicationToList({
             ? "hover:shadow-lg hover:border-green-400 cursor-pointer"
             : "cursor-default"
         } overflow-hidden`}
-        onClick={isClickable ? () => navigate(`/tasks/${taskId}`) : undefined}
+        onClick={isClickable ? () => navigate(`/applications/task/${taskId}`, { state: { application , taskId: application?.task?.id}}) : undefined}
       >
         <div className="flex items-start justify-between gap-6">
           <div className="flex items-start gap-4 flex-shrink-0 pr-2">

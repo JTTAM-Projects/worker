@@ -11,6 +11,7 @@ import AcceptedApplicationsPage from "./pages/AcceptedApplicationsPage";
 import PastApplicationsPage from "./pages/PastApplicationsPage";
 import RootLayout from "./features/layoutcomponents/RootLayout";
 import OwnTaskDetailPage from "./pages/OwnTaskDetailPage";
+import TaskApplicationDetailsPage from "./pages/TaskApplicationDetailsPage";
 
 export default function App() {
   return (
@@ -33,6 +34,10 @@ export default function App() {
           element={<AcceptedApplicationsPage />}
         />
         <Route path="past-applications" element={<PastApplicationsPage />} />
+        <Route
+          path="applications/task/:taskId"
+          element={<TaskApplicationDetailsPage />}
+        />
       </Route>
     </Routes>
   );
