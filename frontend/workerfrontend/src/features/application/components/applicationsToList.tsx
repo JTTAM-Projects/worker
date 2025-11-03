@@ -1,29 +1,35 @@
-import type { ApplicationWithDetails } from "../types"
+import type { ApplicationWithDetails } from "../types";
 import { formatDate, formatTime } from "../../../utils/generalFunctions";
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useNavigate } from "react-router-dom";
 
+type ApplicationListRow = ApplicationWithDetails & {
+  task?: {
+    id: number;
+    title: string;
+    categories?: Array<{ title: string }>;
+    locations?: Array<{
+      streetAddress?: string;
+      postalCode?: string;
+      city?: string;
+    }>;
+  };
+};
+
 interface ApplicationListProps {
-  applications: ApplicationWithDetails[];
+  applications: ApplicationListRow[];
   totalPages: number;
-  totalElements: number;
   currentPage: number;
-  pageSize: number;
   onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
   isFirst: boolean;
   isLast: boolean;
 }
-export default function ApplicationToList ({ 
+export default function ApplicationToList({
   applications,
-  totalPages, 
-  totalElements, 
-  currentPage, 
-  pageSize, 
-  onPageChange, 
-  onPageSizeChange,
+  totalPages,
+  currentPage,
+  onPageChange,
   isFirst,
-  isLast
+  isLast,
 }: ApplicationListProps) {
 
   const navigate = useNavigate();
@@ -95,93 +101,89 @@ export default function ApplicationToList ({
     }
   };
 
-  const columns = [
-    {
-      accessorKey: 'taskTitle',
-      cell: ({ row }) =>{
-        const a = row.original;
-        const firstCategory = a?.task?.categories?.[0].title || "OTHER";
-        const categoryIcon = getCategoryIcon(firstCategory);
-        const categoryBg = getCategoryColor(firstCategory);
-        return ( 
-        <div
-          key={`application-${row.id}`}
-          className="bg-white rounded-lg border border-gray-200 hover:shadow-lg hover:border-green-400 transition-all duration-200 cursor-pointer overflow-hidden"
-          onClick={() => navigate(`/tasks/${a.task.id}`)}
-        >
-           <div className="flex items-start justify-between gap-6">
-             {/* LEFT: icon + status + categories (close together) */}
-             <div className="flex items-start gap-4 flex-shrink-0 pr-2">
-               <div className={`w-32 h-32 ${categoryBg} rounded-md flex items-center justify-center`}>
-                 <span className="material-icons text-gray-600 text-4xl">{categoryIcon}</span>
-               </div>
-               <div className="pt-4">
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(a.applicationStatus)}`}>
-                  {translateStatus(a.applicationStatus)}
-                 </span>
-                {/* Categories */}
-                {a.task.categories && a.task.categories.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {a.task.categories.map((category: any, catIndex: number) => (
-                      <span 
-                        key={catIndex}
-                        className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded"
-                      >
-                        {category.title}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-             </div>
-            {/* MIDDLE: details */}
-             <div className="flex-1 mt-2 min-w-0">
-              {/* Task title */}
-              <h3 className="text-xl font-bold text-gray-800 mb-1">
-                {a.task.title}
-              </h3>
-              {/* Location info */}
-              <div className="flex items-center text-gray-600 text-sm mb-1">
-                <span className="material-icons text-green-500 text-sm mr-1">location_on</span>
-                <span>
-                  {a.task.locations?.[0]?.streetAddress}, {a.task.locations?.[0]?.city.toUpperCase()} {a.task.locations?.[0]?.postalCode}
-                </span>
-              </div>
-              {/* Date */}
-              <div className="flex items-center text-gray-600 text-sm mb-1">
-                <span className="material-icons text-green-500 text-sm mr-1">event</span>
-                <span>{formatDate(a.timeSuggestion)}</span>
-              </div>
-              <div className="flex items-center text-gray-600 text-sm">
-                <span className="material-icons text-green-500 text-sm mr-1">schedule</span>
-                <span>{formatTime(a.timeSuggestion)}</span>
-              </div>
+  const renderApplicationCard = (application: ApplicationListRow, index: number) => {
+    const categories =
+      application.task?.categories ??
+      application.categories?.map((title) => ({ title })) ??
+      [];
+    const primaryCategory = categories[0]?.title ?? "OTHER";
+    const categoryIcon = getCategoryIcon(primaryCategory);
+    const categoryBg = getCategoryColor(primaryCategory);
+    const taskId = application.task?.id;
+    const isClickable = typeof taskId === "number";
+
+    const location = application.task?.locations?.[0];
+    const locationLabel = location
+      ? [location.streetAddress, location.city?.toUpperCase(), location.postalCode]
+          .filter(Boolean)
+          .join(" ") || "Ei sijaintitietoja"
+      : "Ei sijaintitietoja";
+
+    return (
+      <div
+        key={taskId ?? index}
+        className={`bg-white rounded-lg border border-gray-200 transition-all duration-200 ${
+          isClickable
+            ? "hover:shadow-lg hover:border-green-400 cursor-pointer"
+            : "cursor-default"
+        } overflow-hidden`}
+        onClick={isClickable ? () => navigate(`/tasks/${taskId}`) : undefined}
+      >
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex items-start gap-4 flex-shrink-0 pr-2">
+            <div className={`w-32 h-32 ${categoryBg} rounded-md flex items-center justify-center`}>
+              <span className="material-icons text-gray-600 text-4xl">{categoryIcon}</span>
             </div>
-            {/* Right side - Price */}
-            <div className="text-right pt-9 pr-5 flex-shrink-0">
-              <div className="text-green-600 font-bold text-xl whitespace-nowrap">
-                {a.priceSuggestion} €
-              </div>
-              <div className="text-sm font-bold text-gray-600 whitespace-nowrap">
-                Hintaehdotus
-              </div>
+            <div className="pt-4">
+              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(application.applicationStatus)}`}>
+                {translateStatus(application.applicationStatus)}
+              </span>
+              {categories.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {categories.map((category, catIndex) => (
+                    <span
+                      key={`${category.title}-${catIndex}`}
+                      className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded"
+                    >
+                      {category.title}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex-1 mt-2 min-w-0">
+            <h3 className="text-xl font-bold text-gray-800 mb-1">
+              {application.task?.title ?? application.taskTitle}
+            </h3>
+            <div className="flex items-center text-gray-600 text-sm mb-1">
+              <span className="material-icons text-green-500 text-sm mr-1">location_on</span>
+              <span>{locationLabel}</span>
+            </div>
+            <div className="flex items-center text-gray-600 text-sm mb-1">
+              <span className="material-icons text-green-500 text-sm mr-1">event</span>
+              <span>{formatDate(application.timeSuggestion)}</span>
+            </div>
+            <div className="flex items-center text-gray-600 text-sm">
+              <span className="material-icons text-green-500 text-sm mr-1">schedule</span>
+              <span>{formatTime(application.timeSuggestion)}</span>
+            </div>
+          </div>
+          <div className="text-right pt-9 pr-5 flex-shrink-0">
+            <div className="text-green-600 font-bold text-xl whitespace-nowrap">
+              {application.priceSuggestion} €
+            </div>
+            <div className="text-sm font-bold text-gray-600 whitespace-nowrap">
+              Hintaehdotus
             </div>
           </div>
         </div>
-      )}
-    }
-  ];
-
-  const table = useReactTable({
-    data: applications || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: totalPages,
-  });
+      </div>
+    );
+  };
 
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: number[] = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
     const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
@@ -200,15 +202,9 @@ export default function ApplicationToList ({
   return (
     <section className="bg-white rounded-lg shadow-lg p-6 md:p-8 max-w-4xl mx-auto">
       <div className="space-y-4">
-        {table.getRowModel().rows.map(row => (
-          <div key={row.id}>
-            {row.getVisibleCells().map(cell => (
-              <div key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </div>
-            ))}
-          </div>
-        ))}
+        {applications.map((application, index) =>
+          renderApplicationCard(application, index)
+        )}
           <div className="flex items-center justify-center mt-6">
             <div className="flex items-center space-x-2">
               <button

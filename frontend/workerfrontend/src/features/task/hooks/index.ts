@@ -19,5 +19,5 @@ export { useTaskById } from './useTaskById';
 export { useCreateTask } from './useCreateTask';
 export { useUserTasks } from './useUserTasks';
 export { useTaskApplications } from './useTaskApplications';
-export { useUserApplication } from './useUserApplication';
 export { useUpdateApplicationStatus } from './useUpdateApplicationStatus';
+export { useDeleteTask } from './useDeleteTask';

@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useTaskApplications } from "../hooks/useTaskApplications";
 import { useAuth0 } from "@auth0/auth0-react";
-import { fetchApplicationDetails } from "../api/taskApi";
+import {
+  fetchApplicationDetails,
+  type TaskApplicationDetails,
+} from "../api/taskApi";
+import type { TaskApplicant } from "../types";
 
 interface ApplicationsListProps {
   taskId: number;
   pageSize?: number; // Optional, default = 4
-  onSelect?: (application: any) => void;
+  onSelect?: (application: TaskApplicationDetails) => void;
 }
 
 export default function ApplicationsList({
@@ -78,7 +82,7 @@ export default function ApplicationsList({
     );
   }
 
-  async function handleSelect(app: any) {
+  async function handleSelect(app: TaskApplicant) {
     try {
       const token = await getAccessTokenSilently();
       const details = await fetchApplicationDetails(
@@ -86,9 +90,9 @@ export default function ApplicationsList({
         app.appliedUser.userName,
         token
       );
-      onSelect?.({ ...app, ...details });
-    } catch (e) {
-      onSelect?.(app);
+      onSelect?.({ ...app, ...details, user: details.user ?? app.appliedUser });
+    } catch {
+      onSelect?.({ ...app, user: app.appliedUser });
     }
   }
 
