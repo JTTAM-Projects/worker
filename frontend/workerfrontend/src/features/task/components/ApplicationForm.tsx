@@ -1,66 +1,87 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { submitTaskApplication } from "../api/taskApi";
+
+type ApplicationFormMode = "create" | "edit";
+
+export interface ApplicationFormValues {
+  priceSuggestion: number;
+  timeSuggestion: string;
+  description?: string;
+}
 
 interface ApplicationFormProps {
-  taskId: number;
   taskPrice: number;
-  onSuccess: () => void;
+  mode?: ApplicationFormMode;
+  initialValues?: ApplicationFormValues;
+  submitLabel?: string;
+  onSubmit: (values: ApplicationFormValues) => Promise<void>;
+  onSuccess?: () => void;
   onCancel: () => void;
 }
 
 export default function ApplicationForm({
-  taskId,
   taskPrice,
+  mode = "create",
+  initialValues,
+  submitLabel,
+  onSubmit,
   onSuccess,
   onCancel,
 }: ApplicationFormProps) {
-  const { getAccessTokenSilently } = useAuth0();
-  const queryClient = useQueryClient();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const defaultValues = useMemo(
+    () => ({
+      priceSuggestion: initialValues
+        ? String(initialValues.priceSuggestion)
+        : "",
+      timeSuggestion: initialValues?.timeSuggestion
+        ? toDateTimeLocal(initialValues.timeSuggestion)
+        : "",
+      description: initialValues?.description ?? "",
+    }),
+    [initialValues]
+  );
 
   const form = useForm({
-    defaultValues: {
-      priceSuggestion: "",
-      timeSuggestion: "",
-      description: "",
-    },
+    defaultValues,
     onSubmit: async ({ value }) => {
       try {
-        const applicationData = {
+        setSubmitError(null);
+        const applicationData: ApplicationFormValues = {
           priceSuggestion: Number(value.priceSuggestion),
           timeSuggestion: value.timeSuggestion,
-          description: value.description || undefined,
+          description: value.description?.trim() || undefined,
         };
 
-        await submitTaskApplication(
-          getAccessTokenSilently,
-          taskId,
-          applicationData
-        );
+        await onSubmit(applicationData);
 
-        // Invalidate queries to refresh data
-        queryClient.invalidateQueries({
-          queryKey: ["taskApplications", taskId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["userApplication", taskId],
-        });
+        if (mode === "create") {
+          form.reset(defaultValues);
+        }
 
-        // Call success callback
-        onSuccess();
+        onSuccess?.();
       } catch (error) {
         console.error("Error submitting application:", error);
+        setSubmitError(
+          error instanceof Error
+            ? error.message
+            : "Hakemuksen lähetys epäonnistui"
+        );
         throw error;
       }
     },
   });
 
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
+
   return (
     <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
       <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <span className="material-icons text-green-600">description</span>
-        Lähetä hakemus
+        {mode === "edit" ? "Muokkaa hakemusta" : "Lähetä hakemus"}
       </h3>
 
       <form
@@ -71,6 +92,16 @@ export default function ApplicationForm({
         }}
         className="space-y-4"
       >
+        {submitError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-2">
+            <span className="material-icons text-red-600 text-xl">error</span>
+            <div>
+              <p className="font-medium">Virhe hakemuksen lähetyksessä</p>
+              <p className="text-sm">{submitError}</p>
+            </div>
+          </div>
+        )}
+
         {form.state.submissionAttempts > 0 && form.state.errors.length > 0 && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-2">
             <span className="material-icons text-red-600 text-xl">error</span>
@@ -185,11 +216,11 @@ export default function ApplicationForm({
 
         <div className="flex gap-3 pt-2">
           <button
-            type="submit"
-            disabled={form.state.isSubmitting}
-            className="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
-          >
-            {form.state.isSubmitting ? (
+          type="submit"
+          disabled={form.state.isSubmitting}
+          className="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
+        >
+          {form.state.isSubmitting ? (
               <>
                 <span className="material-icons animate-spin">refresh</span>
                 Lähetetään...
@@ -197,7 +228,7 @@ export default function ApplicationForm({
             ) : (
               <>
                 <span className="material-icons">send</span>
-                Lähetä hakemus
+                {submitLabel ?? (mode === "edit" ? "Tallenna muutokset" : "Lähetä hakemus")}
               </>
             )}
           </button>
@@ -213,4 +244,12 @@ export default function ApplicationForm({
       </form>
     </div>
   );
+}
+
+function toDateTimeLocal(value: string) {
+  if (!value) return "";
+  if (value.length >= 16) {
+    return value.slice(0, 16);
+  }
+  return value;
 }

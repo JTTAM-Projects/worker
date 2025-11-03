@@ -1,7 +1,8 @@
 import { useState } from "react";
+import type { TaskApplicationDetails } from "../api/taskApi";
 
 type Props = {
-  application: any;
+  application: TaskApplicationDetails;
   onClose: () => void;
   onUpdateStatus: (status: "ACCEPTED" | "REJECTED") => void;
   loading?: boolean;

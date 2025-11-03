@@ -5,6 +5,9 @@ import type {
   TaskStatus,
   TaskApplicant,
   TaskFilters,
+  CategoryResponse,
+  LocationResponse,
+  UserDto,
 } from "../types";
 
 // This is a file for interacting with the backend task API.
@@ -12,6 +15,19 @@ import type {
 // GET requests are public and don't require authentication.
 
 const API_BASE_URL = "http://localhost:8080/api";
+
+export type TaskApplicationDetails = TaskApplicant & {
+  user?: UserDto & {
+    profileImageUrl?: string;
+    averageRating?: number;
+  };
+  task?: {
+    id: number;
+    title: string;
+    categories?: CategoryResponse[];
+    locations?: LocationResponse[];
+  };
+};
 
 export interface FetchTasksParams extends TaskFilters {
   page?: number;
@@ -301,72 +317,6 @@ export async function fetchTaskApplications(
   return response.json();
 }
 
-export interface SubmitApplicationInput {
-  priceSuggestion: number;
-  timeSuggestion: string; // ISO 8601 datetime string (required)
-  description?: string;
-}
-
-// Submit an application for a task (requires authentication)
-export async function submitTaskApplication(
-  getAccessToken: () => Promise<string>,
-  taskId: number,
-  payload: SubmitApplicationInput
-): Promise<TaskApplicant> {
-  const token = await getAccessToken();
-
-  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    let errorMessage = `Virhe: ${response.status}`;
-
-    try {
-      const errorData = await response.json();
-      if (errorData.message) {
-        errorMessage = errorData.message;
-      }
-    } catch {
-      const text = await response.text().catch(() => "");
-      if (text) {
-        errorMessage = text;
-      }
-    }
-
-    if (response.status === 409) {
-      errorMessage = "Olet jo hakenut tähän tehtävään";
-    }
-
-    throw new Error(errorMessage);
-  }
-
-  return response.json();
-}
-
-// Check if user has already applied for a task (requires authentication)
-export async function checkUserApplication(
-  getAccessToken: () => Promise<string>,
-  taskId: number
-): Promise<boolean> {
-  const token = await getAccessToken();
-
-  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  // 200 = has application, 404 = no application
-  return response.ok;
-}
-
 // Update an existing task (requires authentication)
 export async function updateTask(
   getAccessTokenSilently: () => Promise<string>,
@@ -403,8 +353,32 @@ export async function updateTask(
   };
 }
 
+// Delete an existing task (requires authentication)
+export async function deleteTask(
+  getAccessTokenSilently: () => Promise<string>,
+  taskId: number
+): Promise<void> {
+  const token = await getAccessTokenSilently();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(`Failed to delete task: ${response.status} ${text}`);
+  }
+}
+
 // Fetch application details for a specific user and task (requires authentication)
-export async function fetchApplicationDetails(taskId: number, username: string, accessToken: string) {
+export async function fetchApplicationDetails(
+  taskId: number,
+  username: string,
+  accessToken: string
+): Promise<TaskApplicationDetails> {
   const res = await fetch(`${API_BASE_URL}/task/${taskId}/user/${encodeURIComponent(username)}/application`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -415,7 +389,8 @@ export async function fetchApplicationDetails(taskId: number, username: string, 
     const errorText = await res.text().catch(() => "");
     throw new Error(`Hakemuksen tiedot eivät löytyneet (${res.status}): ${errorText}`);
   }
-  return await res.json();
+  const data = (await res.json()) as TaskApplicationDetails;
+  return data;
 }
 
 // Update application status (accept/reject) - requires authentication

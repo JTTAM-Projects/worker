@@ -5,8 +5,9 @@ import { useTaskById } from "../features/task/hooks/useTaskById";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
-import { useUpdateApplicationStatus } from "../features/task/hooks";
+import { useUpdateApplicationStatus, useDeleteTask } from "../features/task/hooks";
 import ApplicationModal from "../features/task/components/ApplicationDetailsModal";
+import type { TaskApplicationDetails } from "../features/task/api/taskApi";
 
 // Page for viewing and managing own task details
 export default function OwnTaskDetailPage() {
@@ -15,18 +16,25 @@ export default function OwnTaskDetailPage() {
   const numericTaskId = taskId ? Number(taskId) : NaN;
   const { data: task, isLoading, isError } = useTaskById(numericTaskId);
   const updateApplicationStatus = useUpdateApplicationStatus();
+  const lastStatus = updateApplicationStatus.variables?.status;
+  const deleteTaskMutation = useDeleteTask();
   const handleUpdateStatus = (status: "ACCEPTED" | "REJECTED") => {
     if (selectedApplication && task) {
+      const applicantUsername =
+        selectedApplication.user?.userName ??
+        selectedApplication.appliedUser.userName;
       updateApplicationStatus.mutate({
         taskId: task.id,
-        applicantUsername: selectedApplication.user.userName,
+        applicantUsername,
         status,
       });
     }
   };
   const [activeTab, setActiveTab] = useState("information");
-  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<TaskApplicationDetails | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const loginAttemptedRef = useRef(false);
   const {
     isAuthenticated,
@@ -36,19 +44,20 @@ export default function OwnTaskDetailPage() {
 
   // Close modal and show success message when application status is updated successfully
   useEffect(() => {
-    if (updateApplicationStatus.isSuccess) {
-      setSelectedApplication(null);
-      const lastStatus = updateApplicationStatus.variables?.status;
-      if (lastStatus === "REJECTED") {
-        setSuccessMessage("Hakemus hylätty onnistuneesti!");
-      } else if (lastStatus === "ACCEPTED") {
-        setSuccessMessage("Hakemus hyväksytty onnistuneesti!");
-      } else {
-        setSuccessMessage("Hakemuksen tila päivitetty.");
-      }
-      setTimeout(() => setSuccessMessage(""), 3000);
+    if (!updateApplicationStatus.isSuccess) {
+      return;
     }
-  }, [updateApplicationStatus.isSuccess]);
+    setSelectedApplication(null);
+    if (lastStatus === "REJECTED") {
+      setSuccessMessage("Hakemus hylätty onnistuneesti!");
+    } else if (lastStatus === "ACCEPTED") {
+      setSuccessMessage("Hakemus hyväksytty onnistuneesti!");
+    } else {
+      setSuccessMessage("Hakemuksen tila päivitetty.");
+    }
+    const timeout = window.setTimeout(() => setSuccessMessage(""), 3000);
+    return () => window.clearTimeout(timeout);
+  }, [lastStatus, updateApplicationStatus.isSuccess]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -120,11 +129,41 @@ export default function OwnTaskDetailPage() {
     );
   }
 
+  const handleDeleteTask = async () => {
+    if (!task) {
+      return;
+    }
+    const confirmed = window.confirm(
+      "Haluatko varmasti poistaa tämän työilmoituksen?"
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteTaskMutation.mutateAsync({ taskId: task.id });
+      navigate("/my-tasks");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Työilmoituksen poistaminen epäonnistui.";
+      setErrorMessage(message);
+      setTimeout(() => setErrorMessage(""), 5000);
+    }
+  };
+
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
       {successMessage && (
         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
           {successMessage}
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-700">
+          {errorMessage}
         </div>
       )}
 
@@ -191,8 +230,12 @@ export default function OwnTaskDetailPage() {
                   >
                     Muokkaa
                   </button>
-                  <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                    Poista
+                  <button
+                    onClick={handleDeleteTask}
+                    disabled={deleteTaskMutation.isPending}
+                    className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {deleteTaskMutation.isPending ? "Poistetaan..." : "Poista"}
                   </button>
                 </div>
               </>

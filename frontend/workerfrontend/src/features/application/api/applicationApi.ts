@@ -1,6 +1,18 @@
-import type { Application, ApplicationFilters, ApplicationStatus, ApplicationWithDetails, PaginatedResponse } from "../types";
+import type {
+  Application,
+  ApplicationFilters,
+  ApplicationStatus,
+  ApplicationWithDetails,
+  PaginatedResponse,
+} from "../types";
 
 const API_BASE_URL = 'http://localhost:8080/api'
+
+export interface ApplicationPayload {
+  priceSuggestion: number;
+  timeSuggestion: string;
+  description?: string;
+}
 
 export interface FetchApplicationParams extends ApplicationFilters {
   page: number;
@@ -33,6 +45,90 @@ export async function fetchApplication(
 
   const data = await response.json();
   return data;
+}
+
+export async function createApplication(
+  getAccessToken: () => Promise<string>,
+  taskId: number,
+  payload: ApplicationPayload
+): Promise<ApplicationWithDetails> {
+  const token = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    let errorMessage = `Virhe: ${response.status}`;
+
+    try {
+      const body = await response.json();
+      if (body?.message) {
+        errorMessage = body.message;
+      }
+    } catch {
+      const text = await response.text().catch(() => "");
+      if (text) {
+        errorMessage = text;
+      }
+    }
+
+    if (response.status === 409) {
+      errorMessage = "Olet jo hakenut tähän tehtävään";
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
+export async function updateApplication(
+  getAccessToken: () => Promise<string>,
+  taskId: number,
+  payload: ApplicationPayload
+): Promise<ApplicationWithDetails> {
+  const token = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `Hakemuksen päivitys epäonnistui (${response.status})`);
+  }
+
+  return response.json();
+}
+
+export async function deleteApplication(
+  getAccessToken: () => Promise<string>,
+  taskId: number
+): Promise<void> {
+  const token = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `Hakemuksen poistaminen epäonnistui (${response.status})`);
+  }
 }
 
 export async function fetchAllApplications(

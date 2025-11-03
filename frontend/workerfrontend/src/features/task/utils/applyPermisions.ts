@@ -1,5 +1,11 @@
+import type { Task } from "../types";
 
-export function canApplyToTask(user: any, task: any): boolean {
+type AuthUser = { sub?: string } | null | undefined;
+
+export function canApplyToTask(
+  user: AuthUser,
+  task: Pick<Task, "user"> | null | undefined
+): boolean {
   if (!user || !task) return false;
   // Block application if the user is the task creator
   if (user.sub === task.user.userName) return false;
