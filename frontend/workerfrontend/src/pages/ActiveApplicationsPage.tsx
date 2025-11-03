@@ -8,7 +8,7 @@ type TabKey = 'active' | 'accepted' | 'jobOffers';
 
 export default function ActiveApplicationsPage() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const pageSize = 5;
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "PENDING",
   });
@@ -105,9 +105,7 @@ export default function ActiveApplicationsPage() {
               <ApplicationToList
                 applications={paginatedResponse?.content || []}
                 totalPages={paginatedResponse?.totalPages || 0}
-                totalElements={paginatedResponse?.totalElements || 0}
                 currentPage={paginatedResponse?.number || 0}
-                pageSize={paginatedResponse?.pageable?.pageSize || pageSize}
                 onPageChange={handlePageChange}
                 isFirst={paginatedResponse?.first || true}
                 isLast={paginatedResponse?.last || true}
