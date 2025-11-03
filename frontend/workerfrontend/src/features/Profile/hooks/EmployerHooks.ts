@@ -9,7 +9,8 @@ export function useGetEmployerProfile() {
     return useQuery({
         queryKey: ['employerDetails'],
         queryFn: () => getEmployerProfile(getAccessTokenSilently),
-        enabled: isAuthenticated
+        enabled: isAuthenticated,
+        staleTime: 5 * 60 * 1000,
     });
 }
 

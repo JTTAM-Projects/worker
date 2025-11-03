@@ -9,7 +9,8 @@ export function useGetUserDetails() {
     return useQuery({
         queryKey: ['userDetails', user?.sub],
         queryFn: () => getUser(getAccessTokenSilently, user?.sub),
-        enabled: isAuthenticated
+        enabled: isAuthenticated,
+        staleTime: 5 * 60 * 1000,
     });
 }
 
