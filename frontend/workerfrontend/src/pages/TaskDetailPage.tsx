@@ -4,19 +4,20 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useTaskById } from "../features/task/hooks/useTaskById";
 import { useUserApplication } from "../features/task/hooks/useUserApplication";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
+import TaskApplyButtonActions from "../features/task/components/TaskApplyButtonActions";
 import TaskDetails from "../features/task/components/TaskDetails";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import ApplicationForm from "../features/task/components/ApplicationForm";
 
 export default function TaskDetailPage() {
-  const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { taskId } = useParams<{ taskId: string }>();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { data: task, isLoading, isError } = useTaskById(Number(taskId));
   const { data: hasApplied, isLoading: checkingApplication } =
     useUserApplication(Number(taskId));
-  const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleApplicationSuccess = () => {
     setShowSuccess(true);
@@ -82,27 +83,15 @@ export default function TaskDetailPage() {
           />
 
           <div className="flex justify-end mt-6">
-            {isAuthenticated && hasApplied ? (
-              <div className="w-full md:w-[320px] px-6 py-3 bg-gray-200 text-gray-600 font-semibold rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
-                <span className="material-icons">check</span>
-                Olet jo hakenut tähän työhön
-              </div>
-            ) : (
-              <button
-                onClick={handleApplyClick}
-                disabled={checkingApplication}
-                className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="material-icons">
-                  {showApplicationForm ? "close" : "check_circle"}
-                </span>
-                {checkingApplication
-                  ? "Tarkistetaan..."
-                  : showApplicationForm
-                  ? "Sulje lomake"
-                  : "Hae työhön"}
-              </button>
-            )}
+            <TaskApplyButtonActions
+              isAuthenticated={isAuthenticated}
+              user={user}
+              hasApplied={hasApplied}
+              checkingApplication={checkingApplication}
+              showApplicationForm={showApplicationForm}
+              task={task}
+              onApplyClick={handleApplyClick}
+            />
           </div>
 
           {showSuccess && (
