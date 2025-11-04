@@ -32,7 +32,7 @@ export default function TaskDetailPage() {
 
   //Conditional return based on which page user came to TaskDetailPage: ActiveApplicationsPage / TaskPage
   const cameFromApplications = (location.state as { from?: string } | null)?.from ==="applications";
-  const browseHistory = cameFromApplications ? "/applications" : "/tasks";
+  const browseHistory = cameFromApplications ? "/active-applications" : "/tasks";
   const canGoBack = (window.history?.state?.idx ?? 0) > 0;
   const goBack = () => (canGoBack ? navigate(-1) : navigate(browseHistory))
 
