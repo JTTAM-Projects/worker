@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTaskById } from "../features/task/hooks/useTaskById";
@@ -17,6 +17,7 @@ import { useDeleteApplication } from "../features/application/hooks/useDeleteApp
 export default function TaskDetailPage() {
   const navigate = useNavigate();
   const { taskId } = useParams<{ taskId: string }>();
+  const location = useLocation();
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const numericTaskId = taskId ? Number(taskId) : NaN;
   const [showApplicationForm, setShowApplicationForm] = useState(false);
@@ -28,6 +29,12 @@ export default function TaskDetailPage() {
         message: string;
       }
   >(null);
+
+  //Conditional return based on which page user came to TaskDetailPage: ActiveApplicationsPage / TaskPage
+  const cameFromApplications = (location.state as { from?: string } | null)?.from ==="applications";
+  const browseHistory = cameFromApplications ? "/applications" : "/tasks";
+  const canGoBack = (window.history?.state?.idx ?? 0) > 0;
+  const goBack = () => (canGoBack ? navigate(-1) : navigate(browseHistory))
 
   const { data: task, isLoading, isError } = useTaskById(Number(taskId));
   const {
@@ -139,10 +146,10 @@ export default function TaskDetailPage() {
         </div>
         <div className="text-center mt-4">
           <button
-            onClick={() => navigate("/tasks")}
+            onClick={goBack}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Palaa tehtäviin
+            Palaa takaisin
           </button>
         </div>
       </main>
@@ -177,11 +184,11 @@ export default function TaskDetailPage() {
       )}
 
       <button
-        onClick={() => navigate("/tasks")}
+        onClick={goBack}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
       >
         <span className="material-icons">arrow_back</span>
-        Takaisin tehtäviin
+        Palaa Takaisin
       </button>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">

@@ -145,7 +145,7 @@ export default function ApplicationEditForm({
 
         {/* Free text */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Vapaa teksti</label>
+          <label className="block text-sm text-gray-600 mb-1">Lisätietoja</label>
           <textarea
             rows={6}
             value={desc}
