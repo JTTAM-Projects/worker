@@ -6,9 +6,9 @@ export function useGetApplication(taskId: number) {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   return useQuery({
-    queryKey: ['application', taskId],
+    queryKey: ['applications', 'detail', taskId],
     queryFn: () => fetchApplication(getAccessTokenSilently, taskId),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!taskId,
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -17,7 +17,7 @@ export function useGetUserApplications(params: FetchApplicationParams){
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   return useQuery({
-    queryKey: ['application', params],
+    queryKey: ['applications', 'list', params],
     queryFn: () => fetchAllApplications(getAccessTokenSilently, params),
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,

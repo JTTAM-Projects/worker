@@ -1,12 +1,15 @@
 import { canApplyToTask } from "../utils/applyPermisions";
+import type { Task } from "../types";
+
+type AuthUser = { sub?: string } | undefined;
 
 interface TaskApplyButtonActionsProps {
   isAuthenticated: boolean;
-  user: any;
+  user: AuthUser;
   hasApplied: boolean | undefined;
   checkingApplication: boolean;
   showApplicationForm: boolean;
-  task: any;
+  task: Task;
   onApplyClick: () => void;
 }
 
@@ -19,13 +22,22 @@ export default function TaskApplyButtonActions({
   task,
   onApplyClick,
 }: TaskApplyButtonActionsProps) {
-  // If the user is authenticated and has already applied
   if (isAuthenticated && hasApplied) {
     return (
-      <div className="w-full md:w-[320px] px-6 py-3 bg-gray-200 text-gray-600 font-semibold rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
-        <span className="material-icons">check</span>
-        Olet jo hakenut tähän työhön
-      </div>
+      <button
+        onClick={onApplyClick}
+        disabled={checkingApplication}
+        className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span className="material-icons">
+          {showApplicationForm ? "close" : "edit"}
+        </span>
+        {checkingApplication
+          ? "Tarkistetaan..."
+          : showApplicationForm
+          ? "Sulje lomake"
+          : "Muokkaa hakemusta"}
+      </button>
     );
   }
 

@@ -1,23 +1,24 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
-import { deleteApplication } from "../api/applicationApi";
+import { deleteTask } from "../api/taskApi";
 
-export interface DeleteApplicationInput {
+export interface DeleteTaskInput {
   taskId: number;
 }
 
-export function useDeleteApplication() {
+export function useDeleteTask() {
   const { getAccessTokenSilently } = useAuth0();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ taskId }: DeleteApplicationInput) =>
-      deleteApplication(getAccessTokenSilently, taskId),
+    mutationFn: ({ taskId }: DeleteTaskInput) =>
+      deleteTask(getAccessTokenSilently, taskId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["applications", "detail", variables.taskId],
+        queryKey: ["task", variables.taskId],
       });
-      queryClient.invalidateQueries({ queryKey: ["applications", "list"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["userTasks"] });
       queryClient.invalidateQueries({
         queryKey: ["taskApplications", variables.taskId],
       });
