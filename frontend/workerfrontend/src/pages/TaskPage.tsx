@@ -2,8 +2,9 @@ import { useSearchParams } from "react-router-dom";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
+import { TaskMap } from "../features/task/components/TaskMap";
 import type { TaskFilters, ViewMode } from "../features/task/types";
-import { useTasks } from "../features/task/hooks/useTasks";
+import { useTasks, useAllFilteredTasks } from "../features/task/hooks";
 import { Pagination } from "../ui-library";
 import {
   filtersToSearchParams,
@@ -20,11 +21,32 @@ export default function TaskPage() {
   const viewMode = getViewMode(searchParams);
   const page = getPageNumber(searchParams);
 
-  const { data, isLoading, isError, error } = useTasks({
+  // Fetch paginated tasks for list view
+  const {
+    data: taskPage,
+    isLoading: isLoadingList,
+    isError: isErrorList,
+    error: listError,
+  } = useTasks({
     page,
     size: 20,
     ...filters,
   });
+
+  // Fetch all filtered tasks for map view (up to 1000)
+  const {
+    data: mapTasksPage,
+    isLoading: isLoadingMap,
+    isError: isErrorMap,
+    error: mapError,
+  } = useAllFilteredTasks(filters, {
+    enabled: viewMode === "map", // Only fetch when in map view
+  });
+
+  const isLoading = viewMode === "list" ? isLoadingList : isLoadingMap;
+  const isError = viewMode === "list" ? isErrorList : isErrorMap;
+  const error = viewMode === "list" ? listError : mapError;
+  const data = viewMode === "list" ? taskPage : mapTasksPage;
 
   // Update URL params with new filters
   const updateFilters = (newFilters: TaskFilters, resetPage = true) => {
@@ -94,7 +116,7 @@ export default function TaskPage() {
     return (
       <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
         <div className="text-center text-red-600">
-          Virhe ladattaessa tehtäviä: {error.message}
+          Virhe ladattaessa tehtäviä: {error?.message || "Tuntematon virhe"}
         </div>
       </main>
     );
@@ -144,13 +166,12 @@ export default function TaskPage() {
       ) : viewMode === 'list' ? (
         <TaskList tasks={data?.content || []} />
       ) : (
-        <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-          <div className="text-center text-gray-600 py-12">
-            <span className="material-icons text-gray-400 text-6xl mb-4">map</span>
-            <p className="text-xl font-semibold mb-2">Karttanäkymä</p>
-            <p>Karttanäkymä tulossa pian...</p>
-          </div>
-        </div>
+        <TaskMap
+          tasks={mapTasksPage?.content || []}
+          totalElements={mapTasksPage?.totalElements || 0}
+          filters={filters}
+          isLoading={isLoadingMap}
+        />
       )}
 
       {viewMode === 'list' && data && data.totalPages > 1 && (
