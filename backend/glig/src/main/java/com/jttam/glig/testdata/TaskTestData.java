@@ -21,6 +21,7 @@ import com.jttam.glig.domain.user.User;
 public class TaskTestData {
 
     private final TaskRepository taskRepository;
+    private final LocationTestData locationTestData;
     private final Random random = new Random();
 
     // Task templates for each category
@@ -129,8 +130,9 @@ public class TaskTestData {
             new TaskTemplate("Asennus- ja säätötyöt", "Erilaisten laitteiden asennus ja säätö.", 40, 80, 2, 4)
     );
 
-    public TaskTestData(TaskRepository taskRepository) {
+    public TaskTestData(TaskRepository taskRepository, LocationTestData locationTestData) {
         this.taskRepository = taskRepository;
+        this.locationTestData = locationTestData;
     }
 
     // Helper class for task templates
@@ -158,8 +160,10 @@ public class TaskTestData {
         User user1 = users.get("user1");
         User auth0 = users.get("auth0");
 
-        Location koeLocation = locations.get("koe");
-        Location testiLocation = locations.get("testi");
+        // Get locations - now we have many real Finnish locations
+        List<Location> locationList = new ArrayList<>(locations.values());
+        Location firstLocation = locationList.get(0);  // Use first location for specific test cases
+        Location secondLocation = locationList.size() > 1 ? locationList.get(1) : firstLocation;
 
         Category gardenCategory = categories.get("GARDEN");
         Category cleaningCategory = categories.get("CLEANING");
@@ -179,7 +183,7 @@ public class TaskTestData {
                 "Rikkaruohojen kitkeminen kasvimaalta.",
                 auth0);
         auth0ActiveTask.getCategories().add(gardenCategory);
-        auth0ActiveTask.getLocations().add(testiLocation);
+        auth0ActiveTask.getLocations().add(firstLocation);
         tasks.put("auth0ActiveTask", auth0ActiveTask);
         taskRepository.save(auth0ActiveTask);
 
@@ -193,8 +197,8 @@ public class TaskTestData {
                 "Sohvan kantaminen autoon.",
                 user1);
         multiLocationTask.getCategories().add(movingCategory);
-        multiLocationTask.getLocations().add(koeLocation);
-        multiLocationTask.getLocations().add(testiLocation);
+        multiLocationTask.getLocations().add(firstLocation);
+        multiLocationTask.getLocations().add(secondLocation);
         tasks.put("multiLocationTask", multiLocationTask);
         taskRepository.save(multiLocationTask);
 
@@ -208,7 +212,7 @@ public class TaskTestData {
                 "Iso autotalli vaatii siivousta.",
                 user1);
         inProgressTask.getCategories().add(cleaningCategory);
-        inProgressTask.getLocations().add(testiLocation);
+        inProgressTask.getLocations().add(secondLocation);
         tasks.put("inProgressTask", inProgressTask);
         taskRepository.save(inProgressTask);
 
@@ -279,12 +283,12 @@ public class TaskTestData {
             TaskTemplate template = templateWithCategory.template;
             Category category = templateWithCategory.category;
 
-            // Random user and location
+            // Random user and weighted random location (60% Helsinki, 20% Espoo, 10% Vantaa, 10% other)
             User randomUser = userList.get(random.nextInt(userList.size()));
-            Location randomLocation1 = locationList.get(random.nextInt(locationList.size()));
+            Location randomLocation1 = locationTestData.getRandomLocation(locationList);
             
-            // 30% chance of having a second location
-            Location randomLocation2 = random.nextDouble() < 0.3 ? locationList.get(random.nextInt(locationList.size())) : null;
+            // 20% chance of having a second location (for moving tasks, etc.)
+            Location randomLocation2 = random.nextDouble() < 0.2 ? locationTestData.getRandomLocation(locationList) : null;
 
             // Random status
             TaskStatus status = statuses[random.nextInt(statuses.length)];
