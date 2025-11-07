@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker, Circle } from '@react-google-maps/api';
+import { TaskMapInfoWindow } from './TaskMapInfoWindow';
 import type { Task, TaskFilters } from '../types';
 import { 
   filterMappableTasks, 
@@ -215,6 +216,14 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
             </>
           )}
         </MarkerClusterer>
+
+        {/* InfoWindow for selected task */}
+        {selectedTask && (
+          <TaskMapInfoWindow
+            task={selectedTask}
+            onClose={() => setSelectedTask(null)}
+          />
+        )}
       </GoogleMap>
     </div>
   );
