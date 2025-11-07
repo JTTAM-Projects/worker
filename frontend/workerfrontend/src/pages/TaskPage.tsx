@@ -1,90 +1,52 @@
-import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
 import type { TaskFilters, ViewMode } from "../features/task/types";
 import { useTasks } from "../features/task/hooks/useTasks";
 import { Pagination } from "../ui-library";
-
-const FILTER_STORAGE_KEY = "taskPageFilters";
-const PAGE_STORAGE_KEY = "taskPageNumber";
-
-/**
- * Load filters from sessionStorage
- */
-function loadFiltersFromStorage(): TaskFilters {
-  try {
-    const stored = sessionStorage.getItem(FILTER_STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error("Failed to load filters from storage:", error);
-  }
-  // Default filters
-  return {
-    status: "ACTIVE",
-    sortBy: "newest",
-  };
-}
-
-/**
- * Save filters to sessionStorage
- */
-function saveFiltersToStorage(filters: TaskFilters): void {
-  try {
-    sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
-  } catch (error) {
-    console.error("Failed to save filters to storage:", error);
-  }
-}
-
-/**
- * Load page number from sessionStorage
- */
-function loadPageFromStorage(): number {
-  try {
-    const stored = sessionStorage.getItem(PAGE_STORAGE_KEY);
-    if (stored) {
-      return parseInt(stored, 10);
-    }
-  } catch (error) {
-    console.error("Failed to load page from storage:", error);
-  }
-  return 0;
-}
-
-/**
- * Save page number to sessionStorage
- */
-function savePageToStorage(page: number): void {
-  try {
-    sessionStorage.setItem(PAGE_STORAGE_KEY, page.toString());
-  } catch (error) {
-    console.error("Failed to save page to storage:", error);
-  }
-}
+import {
+  filtersToSearchParams,
+  searchParamsToFilters,
+  getViewMode,
+  getPageNumber,
+} from "../features/task/utils/urlState";
 
 export default function TaskPage() {
-  const [page, setPage] = useState(loadPageFromStorage);
-  const [filters, setFilters] = useState<TaskFilters>(loadFiltersFromStorage);
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Save filters to sessionStorage whenever they change
-  useEffect(() => {
-    saveFiltersToStorage(filters);
-  }, [filters]);
-
-  // Save page to sessionStorage whenever it changes
-  useEffect(() => {
-    savePageToStorage(page);
-  }, [page]);
+  // Parse state from URL (single source of truth)
+  const filters = searchParamsToFilters(searchParams);
+  const viewMode = getViewMode(searchParams);
+  const page = getPageNumber(searchParams);
 
   const { data, isLoading, isError, error } = useTasks({
     page,
     size: 20,
     ...filters,
   });
+
+  // Update URL params with new filters
+  const updateFilters = (newFilters: TaskFilters, resetPage = true) => {
+    const newParams = filtersToSearchParams(
+      newFilters,
+      viewMode,
+      resetPage ? 0 : page
+    );
+    setSearchParams(newParams);
+  };
+
+  // Update URL params with new view mode
+  const updateViewMode = (newViewMode: ViewMode) => {
+    const newParams = filtersToSearchParams(filters, newViewMode, page);
+    setSearchParams(newParams);
+  };
+
+  // Update URL params with new page
+  const updatePage = (newPage: number) => {
+    const newParams = filtersToSearchParams(filters, viewMode, newPage);
+    setSearchParams(newParams);
+  };
 
   const handleRemoveFilter = (filterKey: keyof TaskFilters, value?: string) => {
     const newFilters = { ...filters };
@@ -109,8 +71,7 @@ export default function TaskPage() {
       delete newFilters[filterKey];
     }
     
-    setFilters(newFilters);
-    setPage(0);
+    updateFilters(newFilters, true);
   };
 
   const handleResetFilters = () => {
@@ -118,11 +79,7 @@ export default function TaskPage() {
       status: "ACTIVE",
       sortBy: "newest"
     };
-    setFilters(resetFilters);
-    setPage(0);
-    // Clear storage when explicitly resetting
-    sessionStorage.removeItem(FILTER_STORAGE_KEY);
-    sessionStorage.removeItem(PAGE_STORAGE_KEY);
+    updateFilters(resetFilters, true);
   };
 
   if (isLoading) {
@@ -152,10 +109,7 @@ export default function TaskPage() {
         
         <TaskFilterPanel
           filters={filters}
-          onFiltersChange={(newFilters) => {
-            setFilters(newFilters);
-            setPage(0); // Reset to first page when filters change
-          }}
+          onFiltersChange={(newFilters) => updateFilters(newFilters, true)}
           onReset={handleResetFilters}
         />
 
@@ -166,11 +120,8 @@ export default function TaskPage() {
             filters={filters}
             sortBy={filters.sortBy || 'newest'}
             viewMode={viewMode}
-            onSortChange={(sort) => {
-              setFilters({ ...filters, sortBy: sort });
-              setPage(0);
-            }}
-            onViewModeChange={setViewMode}
+            onSortChange={(sort) => updateFilters({ ...filters, sortBy: sort }, true)}
+            onViewModeChange={updateViewMode}
             onRemoveFilter={handleRemoveFilter}
           />
         )}
@@ -202,13 +153,13 @@ export default function TaskPage() {
         </div>
       )}
 
-      {data && data.totalPages > 1 && (
+      {viewMode === 'list' && data && data.totalPages > 1 && (
         <Pagination
           currentPage={page}
           totalPages={data.totalPages}
-          onPageChange={(newPage) => setPage(newPage)}
-          onPrevious={() => setPage(page - 1)}
-          onNext={() => setPage(page + 1)}
+          onPageChange={updatePage}
+          onPrevious={() => updatePage(page - 1)}
+          onNext={() => updatePage(page + 1)}
           zeroIndexed={true}
         />
       )}
