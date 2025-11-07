@@ -12,7 +12,7 @@ export { useGeolocation } from './useGeolocation';
 export type { GeolocationResult, UseGeolocationReturn } from './useGeolocation';
 
 // Task queries
-export { useTasks, useUserTasks, useTaskById, useTaskApplications } from './useTasks';
+export { useTasks, useUserTasks, useTaskById, useTaskApplications, useAllFilteredTasks } from './useTasks';
 
 // Task mutations
 export { 

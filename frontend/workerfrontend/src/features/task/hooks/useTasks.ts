@@ -44,3 +44,19 @@ export function useTaskApplications(taskId: number, page = 0, size = 10) {
     staleTime: 5 * 60 * 1000,
   });
 }
+
+/**
+ * Fetch ALL filtered tasks (up to 1000) for map view
+ * Note: This hook fetches without pagination for displaying all results on a map
+ */
+export function useAllFilteredTasks(
+  filters: Omit<FetchTasksParams, 'page' | 'size'> = {},
+  options?: { enabled?: boolean }
+) {
+  return useQuery({
+    queryKey: taskQueryKeys.allFiltered(filters),
+    queryFn: () => fetchTasks({ ...filters, page: 0, size: 1000 }),
+    enabled: options?.enabled ?? true,
+    staleTime: 5 * 60 * 1000,
+  });
+}

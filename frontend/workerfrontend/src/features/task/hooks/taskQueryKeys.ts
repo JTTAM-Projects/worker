@@ -9,6 +9,8 @@ export const taskQueryKeys = {
   all: ['tasks'] as const,
   lists: () => [...taskQueryKeys.all, 'list'] as const,
   list: (params: FetchTasksParams) => [...taskQueryKeys.lists(), params] as const,
+  allFiltered: (params: Omit<FetchTasksParams, 'page' | 'size'>) => 
+    [...taskQueryKeys.all, 'allFiltered', params] as const,
   userLists: () => [...taskQueryKeys.all, 'user'] as const,
   userList: (params: FetchTasksParams) => [...taskQueryKeys.userLists(), params] as const,
   details: () => [...taskQueryKeys.all, 'detail'] as const,
