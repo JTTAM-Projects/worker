@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useTaskById } from "../features/task/hooks/useTaskById";
+import { useTaskById } from "../features/task/hooks";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import TaskApplyButtonActions from "../features/task/components/TaskApplyButtonActions";
 import TaskDetails from "../features/task/components/TaskDetails";

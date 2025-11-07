@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useUserTasks } from "../features/task/hooks/useUserTasks";
-import { useDeleteTask } from "../features/task/hooks/useDeleteTask";
+import { useUserTasks, useDeleteTask } from "../features/task/hooks";
 import type { Task } from "../features/task/types";
 
 export default function MyTasksPage() {

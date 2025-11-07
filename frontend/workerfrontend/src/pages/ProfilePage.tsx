@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import UserProfileCard from "../features/Profile/components/shared/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
-import { useUserTasks } from "../features/task/hooks/useUserTasks";
+import { useUserTasks } from "../features/task/hooks";
 import EmployerDetails from "../features/Profile/components/employer/EmployerDetails";
 import TaskerDetails from "../features/Profile/components/tasker/TaskerDetails";
 import type { Category } from "../features/task/types";

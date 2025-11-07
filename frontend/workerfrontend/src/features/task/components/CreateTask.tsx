@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useCreateTask } from "../hooks/useCreateTask";
+import { useCreateTask } from "../hooks";
 import type { Category } from "../types";
 import type { CreateTaskInput } from "../api/taskApi";
 

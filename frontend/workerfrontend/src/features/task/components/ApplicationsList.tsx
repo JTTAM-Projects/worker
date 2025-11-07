@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTaskApplications } from "../hooks/useTaskApplications";
+import { useTaskApplications } from "../hooks";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   fetchApplicationDetails,

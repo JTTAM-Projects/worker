@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useTaskById } from "../features/task/hooks/useTaskById";
+import { useTaskById } from "../features/task/hooks";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/task/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
