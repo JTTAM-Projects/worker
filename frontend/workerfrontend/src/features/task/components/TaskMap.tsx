@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker, Circle } from '@react-google-maps/api';
 import type { Task, TaskFilters } from '../types';
 import { 
   filterMappableTasks, 
@@ -179,6 +179,24 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
         onLoad={onMapLoad}
         options={MAP_OPTIONS}
       >
+        {/* Location filter circle overlay */}
+        {filters.latitude && filters.longitude && filters.radiusKm && (
+          <Circle
+            center={{
+              lat: filters.latitude,
+              lng: filters.longitude,
+            }}
+            radius={filters.radiusKm * 1000} // Convert km to meters
+            options={{
+              fillColor: '#10b981',
+              fillOpacity: 0.1,
+              strokeColor: '#10b981',
+              strokeOpacity: 0.5,
+              strokeWeight: 2,
+            }}
+          />
+        )}
+
         <MarkerClusterer>
           {(clusterer) => (
             <>
