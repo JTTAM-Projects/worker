@@ -18,6 +18,7 @@ export interface TaskFilters {
   latitude?: number;
   longitude?: number;
   radiusKm?: number;
+  locationText?: string; // User-entered location text for display
   status?: TaskStatus;
   sortBy?: SortOption;
 }

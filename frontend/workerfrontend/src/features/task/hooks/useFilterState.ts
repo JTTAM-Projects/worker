@@ -51,7 +51,7 @@ export function useFilterState(initialFilters: TaskFilters): UseFilterStateRetur
     maxPrice: initialFilters.maxPrice?.toString() || '',
     minPriceSlider: initialFilters.minPrice || 0,
     maxPriceSlider: initialFilters.maxPrice || 200,
-    locationSearch: '',
+    locationSearch: initialFilters.locationText || '',
     radiusKm: initialFilters.radiusKm || 10,
   }));
 
@@ -150,7 +150,7 @@ export function useFilterState(initialFilters: TaskFilters): UseFilterStateRetur
       maxPrice: filters.maxPrice?.toString() || '',
       minPriceSlider: filters.minPrice || 0,
       maxPriceSlider: filters.maxPrice || 200,
-      locationSearch: isReset ? '' : prev.locationSearch,
+      locationSearch: filters.locationText || (isReset ? '' : prev.locationSearch),
       radiusKm: filters.radiusKm || 10,
     }));
   }, []);

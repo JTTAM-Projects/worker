@@ -63,7 +63,8 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
         ...filters,
         latitude: result.latitude,
         longitude: result.longitude,
-        radiusKm: filterState.state.radiusKm
+        radiusKm: filterState.state.radiusKm,
+        locationText: filterState.state.locationSearch.trim()
       });
     }
   }, [filterState.state.locationSearch, filterState.state.radiusKm, geocode, filters, onFiltersChange]);
@@ -77,7 +78,8 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
         ...filters,
         latitude: result.latitude,
         longitude: result.longitude,
-        radiusKm: filterState.state.radiusKm
+        radiusKm: filterState.state.radiusKm,
+        locationText: 'Nykyinen sijainti'
       });
     }
   }, [getCurrentLocation, filterState, filters, onFiltersChange]);

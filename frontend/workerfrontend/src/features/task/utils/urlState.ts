@@ -46,6 +46,9 @@ export function filtersToSearchParams(
   if (filters.radiusKm !== undefined) {
     params.set('radiusKm', filters.radiusKm.toString());
   }
+  if (filters.locationText?.trim()) {
+    params.set('locationText', filters.locationText.trim());
+  }
 
   // Sort
   if (filters.sortBy && filters.sortBy !== 'newest') {
@@ -116,6 +119,11 @@ export function searchParamsToFilters(searchParams: URLSearchParams): TaskFilter
     if (!isNaN(parsed)) {
       filters.radiusKm = parsed;
     }
+  }
+
+  const locationText = searchParams.get('locationText');
+  if (locationText) {
+    filters.locationText = locationText;
   }
 
   // Sort

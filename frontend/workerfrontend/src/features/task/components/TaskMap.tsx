@@ -25,6 +25,40 @@ const MAP_OPTIONS: google.maps.MapOptions = {
   gestureHandling: 'greedy',
 };
 
+/**
+ * Filter tasks by distance from center point
+ * Uses Haversine formula for accurate distance calculation
+ */
+function filterTasksByRadius(
+  tasks: Task[],
+  centerLat: number,
+  centerLng: number,
+  radiusKm: number
+): Task[] {
+  return tasks.filter((task) => {
+    const location = task.locations[0];
+    if (!location || !location.latitude || !location.longitude) return false;
+
+    const R = 6371; // Earth's radius in km
+    const dLat = toRad(location.latitude - centerLat);
+    const dLon = toRad(location.longitude - centerLng);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(centerLat)) *
+        Math.cos(toRad(location.latitude)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return distance <= radiusKm;
+  });
+}
+
+function toRad(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
 interface TaskMapProps {
   tasks: Task[];
   totalElements: number;
@@ -39,10 +73,17 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   });
 
   const mapRef = useRef<google.maps.Map | null>(null);
+  const hasInitialized = useRef(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Filter tasks with valid coordinates
   const mappableTasks = filterMappableTasks(tasks);
+  
+  // Filter by radius if location filter is active
+  const displayedTasks = (filters.latitude && filters.longitude && filters.radiusKm)
+    ? filterTasksByRadius(mappableTasks, filters.latitude, filters.longitude, filters.radiusKm)
+    : mappableTasks;
+  
   const stats = getMappingStats(tasks);
   const isCapped = isTaskListCapped(totalElements, tasks.length);
 
@@ -51,11 +92,12 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
     mapRef.current = map;
   };
 
-  // Fit bounds or center map when tasks change
+  // Fit bounds or center map when tasks change - only on first load
   useEffect(() => {
-    if (!mapRef.current || mappableTasks.length === 0) return;
+    if (!mapRef.current || displayedTasks.length === 0 || hasInitialized.current) return;
 
     const map = mapRef.current;
+    hasInitialized.current = true;
 
     // If location filter is active, center on that location
     if (filters.latitude && filters.longitude) {
@@ -70,7 +112,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
       // Fit bounds to show all markers
       const bounds = new google.maps.LatLngBounds();
       
-      mappableTasks.forEach((task) => {
+      displayedTasks.forEach((task) => {
         const location = task.locations[0]; // Use first location
         if (location && location.latitude && location.longitude) {
           bounds.extend({
@@ -94,7 +136,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
         google.maps.event.removeListener(listener);
       };
     }
-  }, [mappableTasks, filters.latitude, filters.longitude, filters.radiusKm]);
+  }, [displayedTasks, filters.latitude, filters.longitude, filters.radiusKm]);
 
   // Loading state
   if (!isLoaded || isLoading) {
@@ -149,6 +191,20 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
     );
   }
 
+  // Empty state - no tasks in radius
+  if (displayedTasks.length === 0 && filters.latitude && filters.longitude) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
+        <div className="text-center text-gray-600 py-12">
+          <span className="material-icons text-gray-400 text-6xl mb-4">near_me_disabled</span>
+          <p className="text-xl font-semibold mb-2">Ei tehtäviä alueella</p>
+          <p>Yhtään tehtävää ei löytynyt {filters.radiusKm} km säteellä sijainnista "{filters.locationText || 'valittu sijainti'}".</p>
+          <p className="mt-2 text-sm">Kokeile suurentaa hakusädettä tai valitse toinen sijainti.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Info bar */}
@@ -156,7 +212,12 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
         <div className="flex items-center gap-2 text-sm text-gray-700">
           <span className="material-icons text-green-600 text-lg">location_on</span>
           <span>
-            Näytetään <strong>{stats.mappableTasks}</strong> tehtävää kartalla
+            Näytetään <strong>{displayedTasks.length}</strong> tehtävää kartalla
+            {filters.latitude && filters.longitude && filters.radiusKm && (
+              <span className="text-gray-600 ml-2">
+                ({filters.radiusKm} km säteellä: {filters.locationText || 'valittu sijainti'})
+              </span>
+            )}
             {stats.hasUnmappableTasks && (
               <span className="text-gray-500 ml-2">
                 ({stats.unmappableTasks} ilman sijaintia)
@@ -202,7 +263,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
         <MarkerClusterer>
           {(clusterer) => (
             <>
-              {mappableTasks.map((task) => {
+              {displayedTasks.map((task) => {
                 const location = task.locations[0]; // Use first location for marker
                 return (
                   <Marker
