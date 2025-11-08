@@ -46,10 +46,31 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
   const locationError = geocodingError || geolocationError;
 
   // Master search function that applies all filters at once
-  const handleSearch = useCallback(() => {
-    const newFilters = filterState.buildFilters(filters);
-    onFiltersChange(newFilters);
-  }, [filterState, filters, onFiltersChange]);
+  const handleSearch = useCallback(async () => {
+    // If there's location text that hasn't been geocoded yet, geocode it first
+    const hasLocationText = filterState.state.locationSearch.trim();
+    const hasLocationCoords = filters.latitude && filters.longitude;
+    const locationTextChanged = hasLocationText && hasLocationText !== filters.locationText;
+    
+    if (hasLocationText && (!hasLocationCoords || locationTextChanged)) {
+      // Geocode the location first
+      const result = await geocode(filterState.state.locationSearch);
+      if (result) {
+        const newFilters = filterState.buildFilters({
+          ...filters,
+          latitude: result.latitude,
+          longitude: result.longitude,
+          radiusKm: filterState.state.radiusKm,
+          locationText: filterState.state.locationSearch.trim()
+        });
+        onFiltersChange(newFilters);
+      }
+    } else {
+      // No location text or already geocoded, just apply filters
+      const newFilters = filterState.buildFilters(filters);
+      onFiltersChange(newFilters);
+    }
+  }, [filterState, filters, onFiltersChange, geocode]);
 
   // Handle location geocoding
   const handleLocationSearch = useCallback(async () => {
