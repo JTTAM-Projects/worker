@@ -13,9 +13,7 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
-  aspectRatio: '1 / 1', // Perfect square (1:1 ratio)
-  maxHeight: '100vw', // Height never exceeds viewport width
-  minHeight: '300px', // Minimum size for usability
+  height: '600px', // Fixed rectangular height
 };
 
 const MAP_OPTIONS: google.maps.MapOptions = {
@@ -69,7 +67,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   });
 
   const mapRef = useRef<google.maps.Map | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTasks, setSelectedTasks] = useState<Task[] | null>(null);
 
   // Use useMemo to calculate these only when 'tasks' prop changes
   const mappableTasks = useMemo(() => filterMappableTasks(tasks), [tasks]);
@@ -93,6 +91,25 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   // Handle map load and fit bounds
   const onMapLoad = (map: google.maps.Map) => {
     mapRef.current = map;
+  };
+
+  // Handle marker click - finds all tasks at the same location
+  const handleMarkerClick = (clickedTask: Task) => {
+    const location = clickedTask.locations[0];
+    if (!location) return;
+
+    // Find all tasks at this exact location (stacked markers)
+    const tasksAtSameLocation = displayedTasks.filter(task => {
+      const loc = task.locations[0];
+      return (
+        loc &&
+        loc.latitude === location.latitude &&
+        loc.longitude === location.longitude
+      );
+    });
+
+    // Set the array of tasks as selected
+    setSelectedTasks(tasksAtSameLocation);
   };
 
   // Fit bounds or center map when tasks or filters change
@@ -261,7 +278,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
                       lng: location.longitude!,
                     }}
                     clusterer={clusterer}
-                    onClick={() => setSelectedTask(task)}
+                    onClick={() => handleMarkerClick(task)}
                     title={task.title}
                   />
                 );
@@ -270,11 +287,11 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
           )}
         </MarkerClusterer>
 
-        {/* InfoWindow for selected task */}
-        {selectedTask && (
+        {/* InfoWindow for selected task(s) */}
+        {selectedTasks && selectedTasks.length > 0 && (
           <TaskMapInfoWindow
-            task={selectedTask}
-            onClose={() => setSelectedTask(null)}
+            tasks={selectedTasks}
+            onClose={() => setSelectedTasks(null)}
           />
         )}
       </GoogleMap>
