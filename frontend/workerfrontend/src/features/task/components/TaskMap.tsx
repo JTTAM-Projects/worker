@@ -25,6 +25,14 @@ const MAP_OPTIONS: google.maps.MapOptions = {
   gestureHandling: 'greedy',
 };
 
+const CLUSTERER_OPTIONS = {
+  minimumClusterSize: 2, // At least 2 markers to form a cluster
+  maxZoom: 17, // Don't cluster beyond zoom level 17 (show individual markers at high zoom)
+  gridSize: 60, // Grid size in pixels for clustering calculation
+  averageCenter: true, // Use average of all markers in cluster for center position
+  zoomOnClick: true, // Zoom into cluster when clicked
+};
+
 /**
  * Filter tasks by distance from center point
  * Uses Haversine formula for accurate distance calculation
@@ -260,7 +268,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
           />
         )}
 
-        <MarkerClusterer>
+        <MarkerClusterer options={CLUSTERER_OPTIONS}>
           {(clusterer) => (
             <>
               {displayedTasks.map((task) => {
