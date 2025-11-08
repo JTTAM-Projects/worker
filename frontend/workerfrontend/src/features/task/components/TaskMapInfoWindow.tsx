@@ -1,5 +1,6 @@
 import { InfoWindow } from '@react-google-maps/api';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import type { Task } from '../types';
 
 interface TaskMapInfoWindowProps {
@@ -12,6 +13,21 @@ interface TaskMapInfoWindowProps {
  * Handles both single tasks and stacked markers at the same location
  */
 export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
+  // Track which tasks have expanded locations
+  const [expandedLocations, setExpandedLocations] = useState<Set<number>>(new Set());
+
+  const toggleLocations = (taskId: number) => {
+    setExpandedLocations(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
   // All tasks are at the same location, so use the first one for position
   const firstTask = tasks[0];
   const location = firstTask.locations[0];
@@ -60,11 +76,54 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
                 </div>
               )}
 
-              {/* Location */}
-              {task.locations[0]?.city && (
-                <div className="flex items-center gap-1 text-gray-600">
-                  <span className="material-icons text-sm">location_on</span>
-                  <span>{task.locations[0].city}</span>
+              {/* Location(s) - Collapsible if multiple */}
+              {task.locations && task.locations.length > 0 && (
+                <div className="text-gray-600">
+                  <div className="flex items-start gap-1">
+                    <span className="material-icons text-sm mt-0.5">location_on</span>
+                    <div className="flex-1">
+                      {/* First location */}
+                      <div>
+                        {task.locations[0].streetAddress && (
+                          <span>{task.locations[0].streetAddress}</span>
+                        )}
+                        {task.locations[0].streetAddress && task.locations[0].city && (
+                          <span>, </span>
+                        )}
+                        {task.locations[0].city && (
+                          <span>{task.locations[0].city}</span>
+                        )}
+                      </div>
+
+                      {/* Expand/collapse button if more than 1 location */}
+                      {task.locations.length > 1 && (
+                        <button
+                          onClick={() => toggleLocations(task.id)}
+                          className="text-blue-600 hover:text-blue-800 underline text-xs mt-1"
+                        >
+                          {expandedLocations.has(task.id) 
+                            ? 'Näytä vähemmän'
+                            : `+ ${task.locations.length - 1} muuta sijaintia`
+                          }
+                        </button>
+                      )}
+
+                      {/* Additional locations (when expanded) */}
+                      {expandedLocations.has(task.id) && task.locations.slice(1).map((loc, idx) => (
+                        <div key={idx} className="mt-1">
+                          {loc.streetAddress && (
+                            <span>{loc.streetAddress}</span>
+                          )}
+                          {loc.streetAddress && loc.city && (
+                            <span>, </span>
+                          )}
+                          {loc.city && (
+                            <span>{loc.city}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

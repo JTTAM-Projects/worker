@@ -1,5 +1,6 @@
 package com.jttam.glig.testdata;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.jttam.glig.domain.category.Category;
 import com.jttam.glig.domain.location.Location;
+import com.jttam.glig.domain.location.LocationRepository;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
 import com.jttam.glig.domain.task.TaskStatus;
@@ -22,6 +24,7 @@ public class TaskTestData {
 
     private final TaskRepository taskRepository;
     private final LocationTestData locationTestData;
+    private final LocationRepository locationRepository;
     private final Random random = new Random();
 
     // Task templates for each category
@@ -130,9 +133,11 @@ public class TaskTestData {
             new TaskTemplate("Asennus- ja säätötyöt", "Erilaisten laitteiden asennus ja säätö.", 40, 80, 2, 4)
     );
 
-    public TaskTestData(TaskRepository taskRepository, LocationTestData locationTestData) {
+    public TaskTestData(TaskRepository taskRepository, LocationTestData locationTestData, 
+                        LocationRepository locationRepository) {
         this.taskRepository = taskRepository;
         this.locationTestData = locationTestData;
+        this.locationRepository = locationRepository;
     }
 
     // Helper class for task templates
@@ -168,6 +173,7 @@ public class TaskTestData {
         Category gardenCategory = categories.get("GARDEN");
         Category cleaningCategory = categories.get("CLEANING");
         Category movingCategory = categories.get("MOVING");
+        Category otherCategory = categories.get("OTHER");
 
         Map<String, Task> tasks = new HashMap<>();
 
@@ -216,7 +222,46 @@ public class TaskTestData {
         tasks.put("inProgressTask", inProgressTask);
         taskRepository.save(inProgressTask);
 
+        // Multi-location Rovaniemi reindeer task (for UI testing)
+        Task reindeerTask = new Task(
+                "Porotallin siivous ja porojen ruokinta 🦌",
+                150,
+                LocalDateTime.now().plusDays(3),
+                LocalDateTime.now().plusDays(3).plusHours(8),
+                TaskStatus.ACTIVE,
+                "Apua porotallin siivoukseen ja porojen ruokintaan Rovaniemellä. Heinän jako, veden vaihto ja porojen hoito. Noin 50 kesyä poroa eri paikoissa. Lämpimät vaatteet!",
+                user1);
+        reindeerTask.getCategories().add(otherCategory);
+        
+        // Add 10 reindeer-related locations in Rovaniemi
+        reindeerTask.getLocations().add(createReindeerLocation("Porokatu 1", "96200", "Rovaniemi", 66.503050, 25.726760)); // City center
+        reindeerTask.getLocations().add(createReindeerLocation("Joulupukin Pajakylä", "96930", "Rovaniemi", 66.543760, 25.847410)); // Santa Claus Village
+        reindeerTask.getLocations().add(createReindeerLocation("Ounasvaara", "96400", "Rovaniemi", 66.495900, 25.693200)); // Ounasvaara
+        reindeerTask.getLocations().add(createReindeerLocation("Saarenkyläntie 15", "96900", "Rovaniemi", 66.557800, 25.835600)); // North
+        reindeerTask.getLocations().add(createReindeerLocation("Napapiirintie 33", "96900", "Rovaniemi", 66.543330, 25.845000)); // Arctic Circle
+        reindeerTask.getLocations().add(createReindeerLocation("Koskikatu 25", "96200", "Rovaniemi", 66.502700, 25.728900)); // Near Kemijoki
+        reindeerTask.getLocations().add(createReindeerLocation("Metsäkatu 7", "96300", "Rovaniemi", 66.510200, 25.715400)); // Forest area
+        reindeerTask.getLocations().add(createReindeerLocation("Pohjolankatu 45", "96100", "Rovaniemi", 66.506500, 25.732100)); // Residential
+        reindeerTask.getLocations().add(createReindeerLocation("Rovakatu 18", "96200", "Rovaniemi", 66.501100, 25.724800)); // Downtown
+        reindeerTask.getLocations().add(createReindeerLocation("Valtatie 4", "96910", "Rovaniemi", 66.548900, 25.855300)); // Highway area
+        
+        tasks.put("reindeerTask", reindeerTask);
+        taskRepository.save(reindeerTask);
+
         return tasks;
+    }
+
+    // Helper method to create reindeer locations
+    private Location createReindeerLocation(String streetAddress, String postalCode, String city, 
+                                           double latitude, double longitude) {
+        Location location = new Location();
+        location.setStreetAddress(streetAddress);
+        location.setPostalCode(postalCode);
+        location.setCity(city);
+        location.setCountry("Finland");
+        location.setLatitude(BigDecimal.valueOf(latitude));
+        location.setLongitude(BigDecimal.valueOf(longitude));
+        return locationRepository.save(location);  // Save and return the persisted location
     }
 
     /**

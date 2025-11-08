@@ -87,18 +87,22 @@ export default function TaskDetails({
             <div className="flex-1">
               <div className="text-gray-700 font-medium mb-1">Sijainti</div>
               {task.locations && task.locations.length > 0 ? (
-                <div className="text-gray-600">
-                  {task.locations[0].streetAddress && (
-                    <div>{task.locations[0].streetAddress}</div>
-                  )}
-                  {task.locations[0].postalCode && task.locations[0].city && (
-                    <div>
-                      {task.locations[0].postalCode} {task.locations[0].city}
+                <div className="text-gray-600 space-y-3">
+                  {task.locations.map((location, index) => (
+                    <div key={index} className={index > 0 ? 'pt-3 border-t border-gray-200' : ''}>
+                      {location.streetAddress && (
+                        <div>{location.streetAddress}</div>
+                      )}
+                      {location.postalCode && location.city && (
+                        <div>
+                          {location.postalCode} {location.city}
+                        </div>
+                      )}
+                      {!location.streetAddress && !location.city && (
+                        <div className="italic">Ei tarkkaa sijaintia</div>
+                      )}
                     </div>
-                  )}
-                  {!task.locations[0].streetAddress && !task.locations[0].city && (
-                    <div className="italic">Ei tarkkaa sijaintia</div>
-                  )}
+                  ))}
                 </div>
               ) : (
                 <div className="text-gray-600 italic">Ei sijaintitietoja</div>
