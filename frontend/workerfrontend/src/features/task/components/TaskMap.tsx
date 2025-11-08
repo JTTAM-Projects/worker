@@ -69,6 +69,22 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   const mapRef = useRef<google.maps.Map | null>(null);
   const [selectedTasks, setSelectedTasks] = useState<Task[] | null>(null);
 
+  // Calculate initial map center based on filters or default to Helsinki
+  const initialCenter = useMemo(() => {
+    if (filters.latitude && filters.longitude) {
+      return { lat: filters.latitude, lng: filters.longitude };
+    }
+    return DEFAULT_MAP_CENTER;
+  }, [filters.latitude, filters.longitude]);
+
+  // Calculate initial zoom based on radius or default
+  const initialZoom = useMemo(() => {
+    if (filters.radiusKm) {
+      return calculateZoomFromRadius(filters.radiusKm);
+    }
+    return 12;
+  }, [filters.radiusKm]);
+
   // Use useMemo to calculate these only when 'tasks' prop changes
   const mappableTasks = useMemo(() => filterMappableTasks(tasks), [tasks]);
   
@@ -242,14 +258,15 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
       {/* Map */}
       <GoogleMap
         mapContainerStyle={MAP_CONTAINER_STYLE}
-        center={DEFAULT_MAP_CENTER}
-        zoom={12}
+        center={initialCenter}
+        zoom={initialZoom}
         onLoad={onMapLoad}
         options={MAP_OPTIONS}
       >
         {/* Location filter circle overlay */}
         {filters.latitude && filters.longitude && filters.radiusKm && (
           <Circle
+            key={`circle-${filters.latitude.toFixed(6)}-${filters.longitude.toFixed(6)}-${filters.radiusKm}`}
             center={{
               lat: filters.latitude,
               lng: filters.longitude,
@@ -261,11 +278,17 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
               strokeColor: '#10b981',
               strokeOpacity: 0.5,
               strokeWeight: 2,
+              clickable: false, // Prevent circle from intercepting map clicks
+              editable: false,
+              draggable: false,
             }}
           />
         )}
 
-        <MarkerClusterer options={CLUSTERER_OPTIONS}>
+        <MarkerClusterer 
+          key={`clusterer-${displayedTasks.length}-${filters.radiusKm || 'all'}`}
+          options={CLUSTERER_OPTIONS}
+        >
           {(clusterer) => (
             <>
               {displayedTasks.map((task) => {

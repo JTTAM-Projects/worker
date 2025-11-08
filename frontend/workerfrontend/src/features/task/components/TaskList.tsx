@@ -98,7 +98,7 @@ export default function TaskList({ tasks }: TaskListProps) {
       <div className="space-y-4 mb-6 max-w-4xl mx-auto">
         {tasks.map((t) => {
           const firstCategory = t.categories?.[0]?.title || "OTHER";
-          const locationStr = getLocationString(t.location);
+          const locationStr = getLocationString(t.locations?.[0]);
           const categoryIcon = getCategoryIcon(firstCategory);
           const categoryBg = getCategoryColor(firstCategory);
 
