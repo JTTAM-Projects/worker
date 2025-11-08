@@ -14,7 +14,8 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
-  height: '600px',
+  height: 'calc(100vh - 200px)', // Full viewport height minus header space
+  minHeight: '600px',
 };
 
 const MAP_OPTIONS: google.maps.MapOptions = {
@@ -27,10 +28,13 @@ const MAP_OPTIONS: google.maps.MapOptions = {
 
 const CLUSTERER_OPTIONS = {
   minimumClusterSize: 2, // At least 2 markers to form a cluster
-  maxZoom: 17, // Don't cluster beyond zoom level 17 (show individual markers at high zoom)
-  gridSize: 60, // Grid size in pixels for clustering calculation
+  maxZoom: 15, // Don't cluster beyond zoom level 15 (show individual markers at moderate zoom)
+  gridSize: 50, // Smaller grid = more granular clustering
   averageCenter: true, // Use average of all markers in cluster for center position
   zoomOnClick: true, // Zoom into cluster when clicked
+  enableRetinaIcons: true, // Better quality on high DPI screens
+  ignoreHidden: true, // Don't cluster hidden markers
+  algorithm: undefined, // Use default algorithm for better viewport-based clustering
 };
 
 /**
@@ -214,7 +218,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white shadow-md overflow-hidden">
       {/* Info bar */}
       <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 text-sm text-gray-700">
