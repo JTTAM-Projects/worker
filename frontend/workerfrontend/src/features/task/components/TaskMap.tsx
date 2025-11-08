@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker, Circle } from '@react-google-maps/api';
 import { TaskMapInfoWindow } from './TaskMapInfoWindow';
 import type { Task, TaskFilters } from '../types';
 import { 
   filterMappableTasks, 
-  getMappingStats, 
   isTaskListCapped,
   DEFAULT_MAP_CENTER,
   calculateZoomFromRadius 
@@ -14,8 +13,9 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
-  height: 'calc(100vh - 200px)', // Full viewport height minus header space
-  minHeight: '600px',
+  aspectRatio: '1 / 1', // Perfect square (1:1 ratio)
+  maxHeight: '100vw', // Height never exceeds viewport width
+  minHeight: '300px', // Minimum size for usability
 };
 
 const MAP_OPTIONS: google.maps.MapOptions = {
@@ -28,48 +28,32 @@ const MAP_OPTIONS: google.maps.MapOptions = {
 
 const CLUSTERER_OPTIONS = {
   minimumClusterSize: 2, // At least 2 markers to form a cluster
-  maxZoom: 15, // Don't cluster beyond zoom level 15 (show individual markers at moderate zoom)
-  gridSize: 50, // Smaller grid = more granular clustering
+  maxZoom: 14, // Clusters break apart at zoom level 15+ (was 18)
+  gridSize: 40, // Smaller grid = only cluster very close markers
   averageCenter: true, // Use average of all markers in cluster for center position
   zoomOnClick: true, // Zoom into cluster when clicked
   enableRetinaIcons: true, // Better quality on high DPI screens
   ignoreHidden: true, // Don't cluster hidden markers
-  algorithm: undefined, // Use default algorithm for better viewport-based clustering
+  // Custom calculator to ensure clusters only form for actually overlapping markers
+  calculator: (markers: google.maps.Marker[], numStyles: number) => {
+    // Only show cluster if there are actually multiple distinct tasks
+    const count = markers.length;
+    if (count < 2) return { text: '', index: 1 };
+    
+    // Use a simple index based on count for styling
+    let index = 0;
+    if (count < 10) index = 1;
+    else if (count < 50) index = 2;
+    else if (count < 100) index = 3;
+    else if (count < 500) index = 4;
+    else index = 5;
+    
+    return {
+      text: String(count),
+      index: Math.min(index, numStyles),
+    };
+  },
 };
-
-/**
- * Filter tasks by distance from center point
- * Uses Haversine formula for accurate distance calculation
- */
-function filterTasksByRadius(
-  tasks: Task[],
-  centerLat: number,
-  centerLng: number,
-  radiusKm: number
-): Task[] {
-  return tasks.filter((task) => {
-    const location = task.locations[0];
-    if (!location || !location.latitude || !location.longitude) return false;
-
-    const R = 6371; // Earth's radius in km
-    const dLat = toRad(location.latitude - centerLat);
-    const dLon = toRad(location.longitude - centerLng);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(centerLat)) *
-        Math.cos(toRad(location.latitude)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-
-    return distance <= radiusKm;
-  });
-}
-
-function toRad(degrees: number): number {
-  return degrees * (Math.PI / 180);
-}
 
 interface TaskMapProps {
   tasks: Task[];
@@ -85,18 +69,25 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   });
 
   const mapRef = useRef<google.maps.Map | null>(null);
-  const hasInitialized = useRef(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  // Filter tasks with valid coordinates
-  const mappableTasks = filterMappableTasks(tasks);
+  // Use useMemo to calculate these only when 'tasks' prop changes
+  const mappableTasks = useMemo(() => filterMappableTasks(tasks), [tasks]);
   
-  // Filter by radius if location filter is active
-  const displayedTasks = (filters.latitude && filters.longitude && filters.radiusKm)
-    ? filterTasksByRadius(mappableTasks, filters.latitude, filters.longitude, filters.radiusKm)
-    : mappableTasks;
+  // Backend should handle radius filtering, so we use all mappable tasks
+  const displayedTasks = mappableTasks;
   
-  const stats = getMappingStats(tasks);
+  // Calculate stats with useMemo to avoid redundant filtering
+  const stats = useMemo(() => {
+    const unmappableTasks = tasks.length - mappableTasks.length;
+    return {
+      totalTasks: tasks.length,
+      mappableTasks: mappableTasks.length,
+      unmappableTasks: unmappableTasks,
+      hasUnmappableTasks: unmappableTasks > 0,
+    };
+  }, [tasks, mappableTasks]);
+  
   const isCapped = isTaskListCapped(totalElements, tasks.length);
 
   // Handle map load and fit bounds
@@ -104,28 +95,27 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
     mapRef.current = map;
   };
 
-  // Fit bounds or center map when tasks change - only on first load
+  // Fit bounds or center map when tasks or filters change
   useEffect(() => {
-    if (!mapRef.current || displayedTasks.length === 0 || hasInitialized.current) return;
-
+    // 1. Get the map instance. If it's not ready, do nothing.
     const map = mapRef.current;
-    hasInitialized.current = true;
+    if (!map) return;
 
-    // If location filter is active, center on that location
+    // 2. If a location filter is active, center on it
     if (filters.latitude && filters.longitude) {
       map.setCenter({ lat: filters.latitude, lng: filters.longitude });
       
-      // Calculate zoom based on radius
       const zoom = filters.radiusKm 
         ? calculateZoomFromRadius(filters.radiusKm) 
-        : 12;
+        : 12; // Default zoom if no radius
       map.setZoom(zoom);
-    } else {
-      // Fit bounds to show all markers
+    } 
+    // 3. If no location filter, but we have tasks, fit them all
+    else if (displayedTasks.length > 0) {
       const bounds = new google.maps.LatLngBounds();
       
       displayedTasks.forEach((task) => {
-        const location = task.locations[0]; // Use first location
+        const location = task.locations[0]; 
         if (location && location.latitude && location.longitude) {
           bounds.extend({
             lat: location.latitude,
@@ -136,18 +126,18 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
 
       map.fitBounds(bounds);
 
-      // Prevent excessive zoom on single marker
+      // 4. Prevent over-zooming on a single pin
       const listener = google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
         const currentZoom = map.getZoom();
         if (currentZoom && currentZoom > 15) {
           map.setZoom(15);
         }
       });
-
       return () => {
         google.maps.event.removeListener(listener);
       };
     }
+    // 5. If no tasks and no filter, do nothing (map stays on default)
   }, [displayedTasks, filters.latitude, filters.longitude, filters.radiusKm]);
 
   // Loading state
@@ -198,20 +188,6 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
           <span className="material-icons text-gray-400 text-6xl mb-4">location_off</span>
           <p className="text-xl font-semibold mb-2">Ei sijaintitietoja</p>
           <p>Löydettyihin tehtäviin ({tasks.length} kpl) ei ole määritelty sijaintitietoja.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Empty state - no tasks in radius
-  if (displayedTasks.length === 0 && filters.latitude && filters.longitude) {
-    return (
-      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-        <div className="text-center text-gray-600 py-12">
-          <span className="material-icons text-gray-400 text-6xl mb-4">near_me_disabled</span>
-          <p className="text-xl font-semibold mb-2">Ei tehtäviä alueella</p>
-          <p>Yhtään tehtävää ei löytynyt {filters.radiusKm} km säteellä sijainnista "{filters.locationText || 'valittu sijainti'}".</p>
-          <p className="mt-2 text-sm">Kokeile suurentaa hakusädettä tai valitse toinen sijainti.</p>
         </div>
       </div>
     );
