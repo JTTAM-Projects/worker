@@ -241,7 +241,7 @@ function TaskCard({ task, onView, onEdit, onDelete, isDeleting }: TaskCardProps)
               <span className="material-icons text-base text-green-500">
                 place
               </span>
-              <span>{task.location?.city ?? "Ei sijaintia"}</span>
+              <span>{task.locations?.[0]?.city ?? "Ei sijaintia"}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="material-icons text-base text-green-500">

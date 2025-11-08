@@ -56,7 +56,7 @@ export interface Task {
   price: number;
   startDate: string; // ISO string from LocalDateTime
   endDate: string; // ISO string from LocalDateTime
-  location: LocationResponse; // Changed from string to LocationResponse
+  locations: LocationResponse[]; // Changed from singular to array to match backend Set<LocationResponse>
   status: TaskStatus;
   description: string;
 }

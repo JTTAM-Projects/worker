@@ -11,11 +11,13 @@ interface TaskMapInfoWindowProps {
  * InfoWindow component displaying task preview when marker is clicked
  */
 export function TaskMapInfoWindow({ task, onClose }: TaskMapInfoWindowProps) {
+  const location = task.locations[0]; // Use first location
+  
   return (
     <InfoWindow
       position={{
-        lat: task.location.latitude!,
-        lng: task.location.longitude!,
+        lat: location.latitude!,
+        lng: location.longitude!,
       }}
       onCloseClick={onClose}
     >
@@ -42,10 +44,10 @@ export function TaskMapInfoWindow({ task, onClose }: TaskMapInfoWindowProps) {
           )}
 
           {/* Location */}
-          {task.location.city && (
+          {location.city && (
             <div className="flex items-center gap-1 text-gray-600">
               <span className="material-icons text-sm">location_on</span>
-              <span>{task.location.city}</span>
+              <span>{location.city}</span>
             </div>
           )}
         </div>

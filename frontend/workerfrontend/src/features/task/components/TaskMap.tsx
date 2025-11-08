@@ -71,10 +71,11 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
       const bounds = new google.maps.LatLngBounds();
       
       mappableTasks.forEach((task) => {
-        if (task.location.latitude && task.location.longitude) {
+        const location = task.locations[0]; // Use first location
+        if (location && location.latitude && location.longitude) {
           bounds.extend({
-            lat: task.location.latitude,
-            lng: task.location.longitude,
+            lat: location.latitude,
+            lng: location.longitude,
           });
         }
       });
@@ -201,18 +202,21 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
         <MarkerClusterer>
           {(clusterer) => (
             <>
-              {mappableTasks.map((task) => (
-                <Marker
-                  key={task.id}
-                  position={{
-                    lat: task.location.latitude!,
-                    lng: task.location.longitude!,
-                  }}
-                  clusterer={clusterer}
-                  onClick={() => setSelectedTask(task)}
-                  title={task.title}
-                />
-              ))}
+              {mappableTasks.map((task) => {
+                const location = task.locations[0]; // Use first location for marker
+                return (
+                  <Marker
+                    key={task.id}
+                    position={{
+                      lat: location.latitude!,
+                      lng: location.longitude!,
+                    }}
+                    clusterer={clusterer}
+                    onClick={() => setSelectedTask(task)}
+                    title={task.title}
+                  />
+                );
+              })}
             </>
           )}
         </MarkerClusterer>

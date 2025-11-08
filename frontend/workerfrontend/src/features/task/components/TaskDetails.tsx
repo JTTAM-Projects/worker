@@ -86,17 +86,17 @@ export default function TaskDetails({
             <span className="material-icons text-gray-600 text-xl">place</span>
             <div className="flex-1">
               <div className="text-gray-700 font-medium mb-1">Sijainti</div>
-              {task.location ? (
+              {task.locations && task.locations.length > 0 ? (
                 <div className="text-gray-600">
-                  {task.location.streetAddress && (
-                    <div>{task.location.streetAddress}</div>
+                  {task.locations[0].streetAddress && (
+                    <div>{task.locations[0].streetAddress}</div>
                   )}
-                  {task.location.postalCode && task.location.city && (
+                  {task.locations[0].postalCode && task.locations[0].city && (
                     <div>
-                      {task.location.postalCode} {task.location.city}
+                      {task.locations[0].postalCode} {task.locations[0].city}
                     </div>
                   )}
-                  {!task.location.streetAddress && !task.location.city && (
+                  {!task.locations[0].streetAddress && !task.locations[0].city && (
                     <div className="italic">Ei tarkkaa sijaintia</div>
                   )}
                 </div>

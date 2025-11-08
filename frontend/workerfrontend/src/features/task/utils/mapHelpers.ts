@@ -2,15 +2,18 @@ import type { Task } from '../types';
 
 /**
  * Filter tasks that have valid location coordinates for mapping
+ * Note: Tasks can have multiple locations, we use the first one for map display
  */
 export function filterMappableTasks(tasks: Task[]): Task[] {
   return tasks.filter(
     (task) =>
-      task.location &&
-      typeof task.location.latitude === 'number' &&
-      typeof task.location.longitude === 'number' &&
-      !isNaN(task.location.latitude) &&
-      !isNaN(task.location.longitude)
+      task.locations &&
+      task.locations.length > 0 &&
+      task.locations[0] &&
+      typeof task.locations[0].latitude === 'number' &&
+      typeof task.locations[0].longitude === 'number' &&
+      !isNaN(task.locations[0].latitude) &&
+      !isNaN(task.locations[0].longitude)
   );
 }
 
