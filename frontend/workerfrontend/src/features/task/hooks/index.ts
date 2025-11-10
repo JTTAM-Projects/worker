@@ -18,6 +18,6 @@ export { useTasks } from './useTasks';
 export { useTaskById } from './useTaskById';
 export { useCreateTask } from './useCreateTask';
 export { useUserTasks } from './useUserTasks';
-export { useTaskApplications } from './useTaskApplications';
-export { useUpdateApplicationStatus } from './useUpdateApplicationStatus';
+export { useTaskApplications } from '../../application/hooks/useTaskApplications';
+export { useUpdateApplicationStatus } from '../hooks/useUpdateApplicationStatus';
 export { useDeleteTask } from './useDeleteTask';

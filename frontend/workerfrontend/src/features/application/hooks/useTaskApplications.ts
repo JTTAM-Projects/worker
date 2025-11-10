@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchTaskApplications } from "../api/taskApi";
+import { fetchTaskApplications } from "../../task/api/taskApi";
 
 export function useTaskApplications(taskId: number, page = 0, size = 10) {
   return useQuery({

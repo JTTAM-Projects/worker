@@ -1,5 +1,5 @@
 import { canApplyToTask } from "../utils/applyPermisions";
-import type { Task } from "../types";
+import type { Task } from "../../task/types";
 
 type AuthUser = { sub?: string } | undefined;
 
@@ -13,6 +13,8 @@ interface TaskApplyButtonActionsProps {
   onApplyClick: () => void;
 }
 
+// Renders the appropriate action button based on authentication status, application state, and user permissions.
+// Shows "Edit Application" if already applied, "Apply" if eligible, or nothing if user owns the task.
 export default function TaskApplyButtonActions({
   isAuthenticated,
   user,

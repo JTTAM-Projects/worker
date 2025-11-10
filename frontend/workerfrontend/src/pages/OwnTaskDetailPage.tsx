@@ -3,10 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTaskById } from "../features/task/hooks/useTaskById";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
-import ApplicationsList from "../features/task/components/ApplicationsList";
+import ApplicationsList from "../features/application/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
-import { useUpdateApplicationStatus, useDeleteTask } from "../features/task/hooks";
-import ApplicationModal from "../features/task/components/ApplicationDetailsModal";
+import {
+  useUpdateApplicationStatus,
+  useDeleteTask,
+} from "../features/task/hooks";
+import ApplicationModal from "../features/application/components/ApplicationDetailsModal";
 import type { TaskApplicationDetails } from "../features/task/api/taskApi";
 
 // Page for viewing and managing own task details

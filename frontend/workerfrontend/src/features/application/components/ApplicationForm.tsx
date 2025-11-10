@@ -19,6 +19,8 @@ interface ApplicationFormProps {
   onCancel: () => void;
 }
 
+// Form component for creating or editing job applications with TanStack Form validation.
+// Handles price suggestion, time suggestion, and description fields with real-time validation and error handling.
 export default function ApplicationForm({
   taskPrice,
   mode = "create",
@@ -216,11 +218,11 @@ export default function ApplicationForm({
 
         <div className="flex gap-3 pt-2">
           <button
-          type="submit"
-          disabled={form.state.isSubmitting}
-          className="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
-        >
-          {form.state.isSubmitting ? (
+            type="submit"
+            disabled={form.state.isSubmitting}
+            className="flex-1 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
+          >
+            {form.state.isSubmitting ? (
               <>
                 <span className="material-icons animate-spin">refresh</span>
                 Lähetetään...
@@ -228,7 +230,8 @@ export default function ApplicationForm({
             ) : (
               <>
                 <span className="material-icons">send</span>
-                {submitLabel ?? (mode === "edit" ? "Tallenna muutokset" : "Lähetä hakemus")}
+                {submitLabel ??
+                  (mode === "edit" ? "Tallenna muutokset" : "Lähetä hakemus")}
               </>
             )}
           </button>
