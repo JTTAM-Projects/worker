@@ -1,4 +1,4 @@
-import type { Task } from "../types";
+import type { Task } from "../../task/types";
 
 type AuthUser = { sub?: string } | null | undefined;
 

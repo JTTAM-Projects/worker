@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateApplicationStatus } from "../api/taskApi";
+import { updateApplicationStatus } from "../../task/api/taskApi";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export function useUpdateApplicationStatus() {

@@ -4,8 +4,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {
   fetchApplicationDetails,
   type TaskApplicationDetails,
-} from "../api/taskApi";
-import type { TaskApplicant } from "../types";
+} from "../../task/api/taskApi";
+import type { TaskApplicant } from "../../task/types";
 
 interface ApplicationsListProps {
   taskId: number;
@@ -13,6 +13,8 @@ interface ApplicationsListProps {
   onSelect?: (application: TaskApplicationDetails) => void;
 }
 
+// Displays paginated list of PENDING applications for a task owner to review.
+// Fetches applications via useTaskApplications hook and allows selection to view details in a modal.
 export default function ApplicationsList({
   taskId,
   pageSize = 4,
@@ -63,9 +65,9 @@ export default function ApplicationsList({
     );
   }
 
-  //Filter out cancelled applications
+  //Filter to show only active (PENDING) applications
   const applications = (data?.content || []).filter(
-    (app) => app.applicationStatus !== "CANCELLED"
+    (app: any) => app.applicationStatus === "PENDING"
   );
 
   if (applications.length === 0) {
@@ -104,7 +106,7 @@ export default function ApplicationsList({
       </h2>
 
       <div className="space-y-3">
-        {applications.map((app, index) => (
+        {applications.map((app: any, index: any) => (
           <div
             key={index}
             onClick={() => handleSelect(app)}
