@@ -1,11 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute(
-  '/_authenticated/worker/own-tasks/waiting-approval/',
-)({
+export const Route = createFileRoute("/_authenticated/worker/own-tasks/waiting-approval/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/_authenticated/_worker/own-tasks/waiting-approval/"!</div>
+  return <div>Hello "/_authenticated/worker/own-tasks/waiting-approval/"!</div>;
 }

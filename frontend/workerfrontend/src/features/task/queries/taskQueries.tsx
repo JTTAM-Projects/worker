@@ -9,10 +9,10 @@ export const taskQueries = {
       staleTime: 5 * 60 * 1000, // 5 minuuttia
     }),
 
-  detail: (taskId: number) =>
+  detail: (taskId: string) =>
     queryOptions({
       queryKey: ["tasks", "detail", taskId],
-      queryFn: () => fetchTaskById(taskId),
+      queryFn: () => fetchTaskById(parseInt(taskId)),
     }),
 
   applications: (taskId: number, page = 0, size = 10) =>

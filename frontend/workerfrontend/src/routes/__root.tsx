@@ -1,5 +1,4 @@
 import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
-import Header from "../features/layoutcomponents/Header";
 import Footer from "../features/layoutcomponents/Footer";
 import type { QueryClient } from "@tanstack/react-query";
 
@@ -9,7 +8,6 @@ export const Route = createRootRouteWithContext<{
   component: () => {
     return (
       <div className="bg-gray-50 min-h-screen w-full">
-        <Header />
         <Outlet />
         <Footer />
       </div>

@@ -102,7 +102,7 @@ export default function TaskList({ tasks }: TaskListProps) {
             <div
               key={t.id}
               className="bg-white rounded-lg border border-gray-200 hover:shadow-lg hover:border-green-400 transition-all duration-200 cursor-pointer overflow-hidden"
-              onClick={() => navigate(`/tasks/${t.id}`)}
+              onClick={() => navigate({ to: "/worker/tasks/$taskId", params: { taskId: t.id.toString() } })}
             >
               <div className="flex">
                 {/* LEFT COLUMN: Image/Icon Area (Square) */}

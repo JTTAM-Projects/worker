@@ -5,5 +5,5 @@ export const Route = createFileRoute("/_authenticated/worker/my-profile/reviews"
 });
 
 function RouteComponent() {
-  return <div>Hello "/__authenticated/__worker/my-profile/reviews"!</div>;
+  return <div>Hello "/_authenticated/worker/my-profile/reviews"!</div>;
 }

@@ -3,9 +3,7 @@ import { getCategoryIcon } from "../utils/generalFunctions";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import type { ApplicationWithDetails } from "../features/application/types";
-import ApplicationForm, {
-  type ApplicationFormValues,
-} from "../features/application/components/ApplicationForm";
+import ApplicationForm, { type ApplicationFormValues } from "../features/application/components/ApplicationForm";
 import { useTaskById } from "../features/task/hooks";
 import { useUpdateApplication } from "../features/application/hooks/useUpdateApplication";
 import { useDeleteApplication } from "../features/application/hooks/useDeleteApplication";
@@ -17,14 +15,9 @@ type LocationState = { application?: ApplicationWithDetails };
 export default function TaskApplicationDetailsPage() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
-  const {
-    data: task,
-    isLoading: taskLoading,
-    isError: taskError,
-  } = useTaskById(Number(taskId));
+  const { data: task, isLoading: taskLoading, isError: taskError } = useTaskById(Number(taskId));
   const location = useLocation();
-  const passed =
-    (location.state as LocationState | undefined)?.application ?? null;
+  const passed = (location.state as LocationState | undefined)?.application ?? null;
 
   const [tab, setTab] = useState<TabKey>("task");
   const [application] = useState<ApplicationWithDetails | null>(passed);
@@ -67,10 +60,7 @@ export default function TaskApplicationDetailsPage() {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-4">
-        <Link
-          to="/active-applications"
-          className="text-sm text-gray-600 hover:text-gray-800"
-        >
+        <Link to="/active-applications" className="text-sm text-gray-600 hover:text-gray-800">
           ← Takaisin hakemuksiin
         </Link>
       </div>
@@ -92,9 +82,7 @@ export default function TaskApplicationDetailsPage() {
       <div className="flex mb-6 justify-center">
         <button
           className={`py-2 px-4 text-sm font-medium ${
-            tab === "task"
-              ? "text-green-600 border-b-2 border-green-600"
-              : "text-gray-500 hover:text-gray-700"
+            tab === "task" ? "text-green-600 border-b-2 border-green-600" : "text-gray-500 hover:text-gray-700"
           }`}
           onClick={() => setTab("task")}
         >
@@ -102,9 +90,7 @@ export default function TaskApplicationDetailsPage() {
         </button>
         <button
           className={`py-2 px-4 text-sm font-medium ${
-            tab === "application"
-              ? "text-green-600 border-b-2 border-green-600"
-              : "text-gray-500 hover:text-gray-700"
+            tab === "application" ? "text-green-600 border-b-2 border-green-600" : "text-gray-500 hover:text-gray-700"
           }`}
           onClick={() => setTab("application")}
         >
@@ -114,15 +100,9 @@ export default function TaskApplicationDetailsPage() {
       <>
         {tab === "task" && (
           <>
-            {taskLoading && (
-              <div className="text-gray-600">Ladataan tehtävää…</div>
-            )}
-            {taskError && (
-              <div className="text-red-600">Tehtävän lataus epäonnistui.</div>
-            )}
-            {!taskLoading && !taskError && !task && (
-              <div className="text-gray-600">Tehtävää ei löytynyt.</div>
-            )}
+            {taskLoading && <div className="text-gray-600">Ladataan tehtävää…</div>}
+            {taskError && <div className="text-red-600">Tehtävän lataus epäonnistui.</div>}
+            {!taskLoading && !taskError && !task && <div className="text-gray-600">Tehtävää ei löytynyt.</div>}
             {!taskLoading && task && (
               <TaskDetails
                 task={task}
@@ -136,9 +116,7 @@ export default function TaskApplicationDetailsPage() {
 
         {tab === "application" && (
           <>
-            {!application && (
-              <div className="text-gray-600">Hakemuksen tiedot puuttuvat.</div>
-            )}
+            {!application && <div className="text-gray-600">Hakemuksen tiedot puuttuvat.</div>}
             {application && task && (
               <div className="max-w-4xl mx-auto">
                 <ApplicationForm
@@ -166,9 +144,7 @@ export default function TaskApplicationDetailsPage() {
                     className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <span className="material-icons text-sm">delete</span>
-                    {deleteApplication.isPending
-                      ? "Poistetaan..."
-                      : "Poista hakemus"}
+                    {deleteApplication.isPending ? "Poistetaan..." : "Poista hakemus"}
                   </button>
                 </div>
               </div>

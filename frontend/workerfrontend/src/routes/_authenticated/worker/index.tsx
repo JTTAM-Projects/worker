@@ -1,9 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_authenticated/worker/')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <div>Hello "/_authenticated/_worker/"!</div>
-}
+export const Route = createFileRoute("/_authenticated/worker/")({
+  beforeLoad: () => {
+    throw redirect({
+      to: "/worker/tasks",
+      // `replace: true` estää "takaisin"-napin menemisen tyhjälle sivulle
+      replace: true,
+    });
+  },
+});
