@@ -12,7 +12,6 @@ export function useCreateTask() {
 
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["tasks"] });
-      qc.invalidateQueries({ queryKey: ["userTasks"] });
     },
   });
 }

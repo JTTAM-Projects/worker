@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchTaskById } from "../api/taskApi";
+import { taskQueries } from "../queries/taskQueries";
 
 export function useTaskById(taskId: number) {
-  return useQuery({
-    queryKey: ["task", taskId],
-    queryFn: () => fetchTaskById(taskId),
-    enabled: !!taskId,
-  });
+  return useQuery(taskQueries.detail(taskId));
 }

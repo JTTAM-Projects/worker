@@ -8,39 +8,388 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { createFileRoute } from '@tanstack/react-router'
 
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as AboutServiceRouteImport } from './routes/about-service'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedWorkerIndexRouteImport } from './routes/_authenticated/worker/index'
+import { Route as AuthenticatedWorkerWorkerLayoutRouteImport } from './routes/_authenticated/worker/_worker-layout'
+import { Route as AuthenticatedWorkerTasksIndexRouteImport } from './routes/_authenticated/worker/tasks/index'
+import { Route as AuthenticatedWorkerOwnTasksIndexRouteImport } from './routes/_authenticated/worker/own-tasks/index'
+import { Route as AuthenticatedWorkerMyProfileIndexRouteImport } from './routes/_authenticated/worker/my-profile/index'
+import { Route as AuthenticatedWorkerMyApplicationsIndexRouteImport } from './routes/_authenticated/worker/my-applications/index'
+import { Route as AuthenticatedWorkerTasksTaskIdRouteImport } from './routes/_authenticated/worker/tasks/$taskId'
+import { Route as AuthenticatedWorkerMyProfileReviewsRouteImport } from './routes/_authenticated/worker/my-profile/reviews'
+import { Route as AuthenticatedWorkerMyProfileEditRouteImport } from './routes/_authenticated/worker/my-profile/edit'
+import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalIndexRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/index'
+import { Route as AuthenticatedWorkerOwnTasksToDoIndexRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/index'
+import { Route as AuthenticatedWorkerOwnTasksPastIndexRouteImport } from './routes/_authenticated/worker/own-tasks/past/index'
+import { Route as AuthenticatedWorkerMyApplicationsPastIndexRouteImport } from './routes/_authenticated/worker/my-applications/past/index'
+import { Route as AuthenticatedWorkerMyApplicationsActiveIndexRouteImport } from './routes/_authenticated/worker/my-applications/active/index'
+import { Route as AuthenticatedWorkerTasksTaskIdApplyRouteImport } from './routes/_authenticated/worker/tasks/$taskId.apply'
+import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/$taskId'
+import { Route as AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/$taskId'
+import { Route as AuthenticatedWorkerOwnTasksPastTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/past/$taskId'
+import { Route as AuthenticatedWorkerMyApplicationsPastTaskIdRouteImport } from './routes/_authenticated/worker/my-applications/past/$taskId'
+import { Route as AuthenticatedWorkerMyApplicationsActiveTaskIdRouteImport } from './routes/_authenticated/worker/my-applications/active/$taskId'
+
+const AuthenticatedWorkerRouteImport = createFileRoute(
+  '/_authenticated/worker',
+)()
+
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutServiceRoute = AboutServiceRouteImport.update({
+  id: '/about-service',
+  path: '/about-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWorkerRoute = AuthenticatedWorkerRouteImport.update({
+  id: '/worker',
+  path: '/worker',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedWorkerIndexRoute =
+  AuthenticatedWorkerIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerWorkerLayoutRoute =
+  AuthenticatedWorkerWorkerLayoutRouteImport.update({
+    id: '/_worker-layout',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerTasksIndexRoute =
+  AuthenticatedWorkerTasksIndexRouteImport.update({
+    id: '/tasks/',
+    path: '/tasks/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksIndexRoute =
+  AuthenticatedWorkerOwnTasksIndexRouteImport.update({
+    id: '/own-tasks/',
+    path: '/own-tasks/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyProfileIndexRoute =
+  AuthenticatedWorkerMyProfileIndexRouteImport.update({
+    id: '/my-profile/',
+    path: '/my-profile/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyApplicationsIndexRoute =
+  AuthenticatedWorkerMyApplicationsIndexRouteImport.update({
+    id: '/my-applications/',
+    path: '/my-applications/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerTasksTaskIdRoute =
+  AuthenticatedWorkerTasksTaskIdRouteImport.update({
+    id: '/tasks/$taskId',
+    path: '/tasks/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyProfileReviewsRoute =
+  AuthenticatedWorkerMyProfileReviewsRouteImport.update({
+    id: '/my-profile/reviews',
+    path: '/my-profile/reviews',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyProfileEditRoute =
+  AuthenticatedWorkerMyProfileEditRouteImport.update({
+    id: '/my-profile/edit',
+    path: '/my-profile/edit',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute =
+  AuthenticatedWorkerOwnTasksWaitingApprovalIndexRouteImport.update({
+    id: '/own-tasks/waiting-approval/',
+    path: '/own-tasks/waiting-approval/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksToDoIndexRoute =
+  AuthenticatedWorkerOwnTasksToDoIndexRouteImport.update({
+    id: '/own-tasks/to-do/',
+    path: '/own-tasks/to-do/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksPastIndexRoute =
+  AuthenticatedWorkerOwnTasksPastIndexRouteImport.update({
+    id: '/own-tasks/past/',
+    path: '/own-tasks/past/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyApplicationsPastIndexRoute =
+  AuthenticatedWorkerMyApplicationsPastIndexRouteImport.update({
+    id: '/my-applications/past/',
+    path: '/my-applications/past/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyApplicationsActiveIndexRoute =
+  AuthenticatedWorkerMyApplicationsActiveIndexRouteImport.update({
+    id: '/my-applications/active/',
+    path: '/my-applications/active/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerTasksTaskIdApplyRoute =
+  AuthenticatedWorkerTasksTaskIdApplyRouteImport.update({
+    id: '/apply',
+    path: '/apply',
+    getParentRoute: () => AuthenticatedWorkerTasksTaskIdRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute =
+  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport.update({
+    id: '/own-tasks/waiting-approval/$taskId',
+    path: '/own-tasks/waiting-approval/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksToDoTaskIdRoute =
+  AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport.update({
+    id: '/own-tasks/to-do/$taskId',
+    path: '/own-tasks/to-do/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksPastTaskIdRoute =
+  AuthenticatedWorkerOwnTasksPastTaskIdRouteImport.update({
+    id: '/own-tasks/past/$taskId',
+    path: '/own-tasks/past/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyApplicationsPastTaskIdRoute =
+  AuthenticatedWorkerMyApplicationsPastTaskIdRouteImport.update({
+    id: '/my-applications/past/$taskId',
+    path: '/my-applications/past/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyApplicationsActiveTaskIdRoute =
+  AuthenticatedWorkerMyApplicationsActiveTaskIdRouteImport.update({
+    id: '/my-applications/active/$taskId',
+    path: '/my-applications/active/$taskId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about-service': typeof AboutServiceRoute
+  '/faq': typeof FaqRoute
+  '/pricing': typeof PricingRoute
+  '/worker': typeof AuthenticatedWorkerWorkerLayoutRoute
+  '/worker/': typeof AuthenticatedWorkerIndexRoute
+  '/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
+  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
+  '/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRouteWithChildren
+  '/worker/my-applications': typeof AuthenticatedWorkerMyApplicationsIndexRoute
+  '/worker/my-profile': typeof AuthenticatedWorkerMyProfileIndexRoute
+  '/worker/own-tasks': typeof AuthenticatedWorkerOwnTasksIndexRoute
+  '/worker/tasks': typeof AuthenticatedWorkerTasksIndexRoute
+  '/worker/my-applications/active/$taskId': typeof AuthenticatedWorkerMyApplicationsActiveTaskIdRoute
+  '/worker/my-applications/past/$taskId': typeof AuthenticatedWorkerMyApplicationsPastTaskIdRoute
+  '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
+  '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/worker/tasks/$taskId/apply': typeof AuthenticatedWorkerTasksTaskIdApplyRoute
+  '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
+  '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
+  '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about-service': typeof AboutServiceRoute
+  '/faq': typeof FaqRoute
+  '/pricing': typeof PricingRoute
+  '/worker': typeof AuthenticatedWorkerIndexRoute
+  '/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
+  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
+  '/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRouteWithChildren
+  '/worker/my-applications': typeof AuthenticatedWorkerMyApplicationsIndexRoute
+  '/worker/my-profile': typeof AuthenticatedWorkerMyProfileIndexRoute
+  '/worker/own-tasks': typeof AuthenticatedWorkerOwnTasksIndexRoute
+  '/worker/tasks': typeof AuthenticatedWorkerTasksIndexRoute
+  '/worker/my-applications/active/$taskId': typeof AuthenticatedWorkerMyApplicationsActiveTaskIdRoute
+  '/worker/my-applications/past/$taskId': typeof AuthenticatedWorkerMyApplicationsPastTaskIdRoute
+  '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
+  '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/worker/tasks/$taskId/apply': typeof AuthenticatedWorkerTasksTaskIdApplyRoute
+  '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
+  '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
+  '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/about-service': typeof AboutServiceRoute
+  '/faq': typeof FaqRoute
+  '/pricing': typeof PricingRoute
+  '/_authenticated/worker': typeof AuthenticatedWorkerRouteWithChildren
+  '/_authenticated/worker/_worker-layout': typeof AuthenticatedWorkerWorkerLayoutRoute
+  '/_authenticated/worker/': typeof AuthenticatedWorkerIndexRoute
+  '/_authenticated/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
+  '/_authenticated/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
+  '/_authenticated/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRouteWithChildren
+  '/_authenticated/worker/my-applications/': typeof AuthenticatedWorkerMyApplicationsIndexRoute
+  '/_authenticated/worker/my-profile/': typeof AuthenticatedWorkerMyProfileIndexRoute
+  '/_authenticated/worker/own-tasks/': typeof AuthenticatedWorkerOwnTasksIndexRoute
+  '/_authenticated/worker/tasks/': typeof AuthenticatedWorkerTasksIndexRoute
+  '/_authenticated/worker/my-applications/active/$taskId': typeof AuthenticatedWorkerMyApplicationsActiveTaskIdRoute
+  '/_authenticated/worker/my-applications/past/$taskId': typeof AuthenticatedWorkerMyApplicationsPastTaskIdRoute
+  '/_authenticated/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/_authenticated/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
+  '/_authenticated/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/_authenticated/worker/tasks/$taskId/apply': typeof AuthenticatedWorkerTasksTaskIdApplyRoute
+  '/_authenticated/worker/my-applications/active/': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/_authenticated/worker/my-applications/past/': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/_authenticated/worker/own-tasks/past/': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
+  '/_authenticated/worker/own-tasks/to-do/': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
+  '/_authenticated/worker/own-tasks/waiting-approval/': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about-service'
+    | '/faq'
+    | '/pricing'
+    | '/worker'
+    | '/worker/'
+    | '/worker/my-profile/edit'
+    | '/worker/my-profile/reviews'
+    | '/worker/tasks/$taskId'
+    | '/worker/my-applications'
+    | '/worker/my-profile'
+    | '/worker/own-tasks'
+    | '/worker/tasks'
+    | '/worker/my-applications/active/$taskId'
+    | '/worker/my-applications/past/$taskId'
+    | '/worker/own-tasks/past/$taskId'
+    | '/worker/own-tasks/to-do/$taskId'
+    | '/worker/own-tasks/waiting-approval/$taskId'
+    | '/worker/tasks/$taskId/apply'
+    | '/worker/my-applications/active'
+    | '/worker/my-applications/past'
+    | '/worker/own-tasks/past'
+    | '/worker/own-tasks/to-do'
+    | '/worker/own-tasks/waiting-approval'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about-service'
+    | '/faq'
+    | '/pricing'
+    | '/worker'
+    | '/worker/my-profile/edit'
+    | '/worker/my-profile/reviews'
+    | '/worker/tasks/$taskId'
+    | '/worker/my-applications'
+    | '/worker/my-profile'
+    | '/worker/own-tasks'
+    | '/worker/tasks'
+    | '/worker/my-applications/active/$taskId'
+    | '/worker/my-applications/past/$taskId'
+    | '/worker/own-tasks/past/$taskId'
+    | '/worker/own-tasks/to-do/$taskId'
+    | '/worker/own-tasks/waiting-approval/$taskId'
+    | '/worker/tasks/$taskId/apply'
+    | '/worker/my-applications/active'
+    | '/worker/my-applications/past'
+    | '/worker/own-tasks/past'
+    | '/worker/own-tasks/to-do'
+    | '/worker/own-tasks/waiting-approval'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/about-service'
+    | '/faq'
+    | '/pricing'
+    | '/_authenticated/worker'
+    | '/_authenticated/worker/_worker-layout'
+    | '/_authenticated/worker/'
+    | '/_authenticated/worker/my-profile/edit'
+    | '/_authenticated/worker/my-profile/reviews'
+    | '/_authenticated/worker/tasks/$taskId'
+    | '/_authenticated/worker/my-applications/'
+    | '/_authenticated/worker/my-profile/'
+    | '/_authenticated/worker/own-tasks/'
+    | '/_authenticated/worker/tasks/'
+    | '/_authenticated/worker/my-applications/active/$taskId'
+    | '/_authenticated/worker/my-applications/past/$taskId'
+    | '/_authenticated/worker/own-tasks/past/$taskId'
+    | '/_authenticated/worker/own-tasks/to-do/$taskId'
+    | '/_authenticated/worker/own-tasks/waiting-approval/$taskId'
+    | '/_authenticated/worker/tasks/$taskId/apply'
+    | '/_authenticated/worker/my-applications/active/'
+    | '/_authenticated/worker/my-applications/past/'
+    | '/_authenticated/worker/own-tasks/past/'
+    | '/_authenticated/worker/own-tasks/to-do/'
+    | '/_authenticated/worker/own-tasks/waiting-approval/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AboutServiceRoute: typeof AboutServiceRoute
+  FaqRoute: typeof FaqRoute
+  PricingRoute: typeof PricingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-service': {
+      id: '/about-service'
+      path: '/about-service'
+      fullPath: '/about-service'
+      preLoaderRoute: typeof AboutServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +397,250 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/worker': {
+      id: '/_authenticated/worker'
+      path: '/worker'
+      fullPath: '/worker'
+      preLoaderRoute: typeof AuthenticatedWorkerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/worker/': {
+      id: '/_authenticated/worker/'
+      path: '/'
+      fullPath: '/worker/'
+      preLoaderRoute: typeof AuthenticatedWorkerIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/_worker-layout': {
+      id: '/_authenticated/worker/_worker-layout'
+      path: '/worker'
+      fullPath: '/worker'
+      preLoaderRoute: typeof AuthenticatedWorkerWorkerLayoutRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/tasks/': {
+      id: '/_authenticated/worker/tasks/'
+      path: '/tasks'
+      fullPath: '/worker/tasks'
+      preLoaderRoute: typeof AuthenticatedWorkerTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/': {
+      id: '/_authenticated/worker/own-tasks/'
+      path: '/own-tasks'
+      fullPath: '/worker/own-tasks'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-profile/': {
+      id: '/_authenticated/worker/my-profile/'
+      path: '/my-profile'
+      fullPath: '/worker/my-profile'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/': {
+      id: '/_authenticated/worker/my-applications/'
+      path: '/my-applications'
+      fullPath: '/worker/my-applications'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/tasks/$taskId': {
+      id: '/_authenticated/worker/tasks/$taskId'
+      path: '/tasks/$taskId'
+      fullPath: '/worker/tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerTasksTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-profile/reviews': {
+      id: '/_authenticated/worker/my-profile/reviews'
+      path: '/my-profile/reviews'
+      fullPath: '/worker/my-profile/reviews'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileReviewsRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-profile/edit': {
+      id: '/_authenticated/worker/my-profile/edit'
+      path: '/my-profile/edit'
+      fullPath: '/worker/my-profile/edit'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileEditRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/waiting-approval/': {
+      id: '/_authenticated/worker/own-tasks/waiting-approval/'
+      path: '/own-tasks/waiting-approval'
+      fullPath: '/worker/own-tasks/waiting-approval'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/to-do/': {
+      id: '/_authenticated/worker/own-tasks/to-do/'
+      path: '/own-tasks/to-do'
+      fullPath: '/worker/own-tasks/to-do'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksToDoIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/past/': {
+      id: '/_authenticated/worker/own-tasks/past/'
+      path: '/own-tasks/past'
+      fullPath: '/worker/own-tasks/past'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/past/': {
+      id: '/_authenticated/worker/my-applications/past/'
+      path: '/my-applications/past'
+      fullPath: '/worker/my-applications/past'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/active/': {
+      id: '/_authenticated/worker/my-applications/active/'
+      path: '/my-applications/active'
+      fullPath: '/worker/my-applications/active'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsActiveIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/tasks/$taskId/apply': {
+      id: '/_authenticated/worker/tasks/$taskId/apply'
+      path: '/apply'
+      fullPath: '/worker/tasks/$taskId/apply'
+      preLoaderRoute: typeof AuthenticatedWorkerTasksTaskIdApplyRouteImport
+      parentRoute: typeof AuthenticatedWorkerTasksTaskIdRoute
+    }
+    '/_authenticated/worker/own-tasks/waiting-approval/$taskId': {
+      id: '/_authenticated/worker/own-tasks/waiting-approval/$taskId'
+      path: '/own-tasks/waiting-approval/$taskId'
+      fullPath: '/worker/own-tasks/waiting-approval/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/to-do/$taskId': {
+      id: '/_authenticated/worker/own-tasks/to-do/$taskId'
+      path: '/own-tasks/to-do/$taskId'
+      fullPath: '/worker/own-tasks/to-do/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/past/$taskId': {
+      id: '/_authenticated/worker/own-tasks/past/$taskId'
+      path: '/own-tasks/past/$taskId'
+      fullPath: '/worker/own-tasks/past/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/past/$taskId': {
+      id: '/_authenticated/worker/my-applications/past/$taskId'
+      path: '/my-applications/past/$taskId'
+      fullPath: '/worker/my-applications/past/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsPastTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/active/$taskId': {
+      id: '/_authenticated/worker/my-applications/active/$taskId'
+      path: '/my-applications/active/$taskId'
+      fullPath: '/worker/my-applications/active/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsActiveTaskIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
   }
 }
 
+interface AuthenticatedWorkerTasksTaskIdRouteChildren {
+  AuthenticatedWorkerTasksTaskIdApplyRoute: typeof AuthenticatedWorkerTasksTaskIdApplyRoute
+}
+
+const AuthenticatedWorkerTasksTaskIdRouteChildren: AuthenticatedWorkerTasksTaskIdRouteChildren =
+  {
+    AuthenticatedWorkerTasksTaskIdApplyRoute:
+      AuthenticatedWorkerTasksTaskIdApplyRoute,
+  }
+
+const AuthenticatedWorkerTasksTaskIdRouteWithChildren =
+  AuthenticatedWorkerTasksTaskIdRoute._addFileChildren(
+    AuthenticatedWorkerTasksTaskIdRouteChildren,
+  )
+
+interface AuthenticatedWorkerRouteChildren {
+  AuthenticatedWorkerWorkerLayoutRoute: typeof AuthenticatedWorkerWorkerLayoutRoute
+  AuthenticatedWorkerIndexRoute: typeof AuthenticatedWorkerIndexRoute
+  AuthenticatedWorkerMyProfileEditRoute: typeof AuthenticatedWorkerMyProfileEditRoute
+  AuthenticatedWorkerMyProfileReviewsRoute: typeof AuthenticatedWorkerMyProfileReviewsRoute
+  AuthenticatedWorkerTasksTaskIdRoute: typeof AuthenticatedWorkerTasksTaskIdRouteWithChildren
+  AuthenticatedWorkerMyApplicationsIndexRoute: typeof AuthenticatedWorkerMyApplicationsIndexRoute
+  AuthenticatedWorkerMyProfileIndexRoute: typeof AuthenticatedWorkerMyProfileIndexRoute
+  AuthenticatedWorkerOwnTasksIndexRoute: typeof AuthenticatedWorkerOwnTasksIndexRoute
+  AuthenticatedWorkerTasksIndexRoute: typeof AuthenticatedWorkerTasksIndexRoute
+  AuthenticatedWorkerMyApplicationsActiveTaskIdRoute: typeof AuthenticatedWorkerMyApplicationsActiveTaskIdRoute
+  AuthenticatedWorkerMyApplicationsPastTaskIdRoute: typeof AuthenticatedWorkerMyApplicationsPastTaskIdRoute
+  AuthenticatedWorkerOwnTasksPastTaskIdRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  AuthenticatedWorkerOwnTasksToDoTaskIdRoute: typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
+  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  AuthenticatedWorkerMyApplicationsActiveIndexRoute: typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  AuthenticatedWorkerMyApplicationsPastIndexRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  AuthenticatedWorkerOwnTasksPastIndexRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRoute
+  AuthenticatedWorkerOwnTasksToDoIndexRoute: typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
+  AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
+}
+
+const AuthenticatedWorkerRouteChildren: AuthenticatedWorkerRouteChildren = {
+  AuthenticatedWorkerWorkerLayoutRoute: AuthenticatedWorkerWorkerLayoutRoute,
+  AuthenticatedWorkerIndexRoute: AuthenticatedWorkerIndexRoute,
+  AuthenticatedWorkerMyProfileEditRoute: AuthenticatedWorkerMyProfileEditRoute,
+  AuthenticatedWorkerMyProfileReviewsRoute:
+    AuthenticatedWorkerMyProfileReviewsRoute,
+  AuthenticatedWorkerTasksTaskIdRoute:
+    AuthenticatedWorkerTasksTaskIdRouteWithChildren,
+  AuthenticatedWorkerMyApplicationsIndexRoute:
+    AuthenticatedWorkerMyApplicationsIndexRoute,
+  AuthenticatedWorkerMyProfileIndexRoute:
+    AuthenticatedWorkerMyProfileIndexRoute,
+  AuthenticatedWorkerOwnTasksIndexRoute: AuthenticatedWorkerOwnTasksIndexRoute,
+  AuthenticatedWorkerTasksIndexRoute: AuthenticatedWorkerTasksIndexRoute,
+  AuthenticatedWorkerMyApplicationsActiveTaskIdRoute:
+    AuthenticatedWorkerMyApplicationsActiveTaskIdRoute,
+  AuthenticatedWorkerMyApplicationsPastTaskIdRoute:
+    AuthenticatedWorkerMyApplicationsPastTaskIdRoute,
+  AuthenticatedWorkerOwnTasksPastTaskIdRoute:
+    AuthenticatedWorkerOwnTasksPastTaskIdRoute,
+  AuthenticatedWorkerOwnTasksToDoTaskIdRoute:
+    AuthenticatedWorkerOwnTasksToDoTaskIdRoute,
+  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute:
+    AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute,
+  AuthenticatedWorkerMyApplicationsActiveIndexRoute:
+    AuthenticatedWorkerMyApplicationsActiveIndexRoute,
+  AuthenticatedWorkerMyApplicationsPastIndexRoute:
+    AuthenticatedWorkerMyApplicationsPastIndexRoute,
+  AuthenticatedWorkerOwnTasksPastIndexRoute:
+    AuthenticatedWorkerOwnTasksPastIndexRoute,
+  AuthenticatedWorkerOwnTasksToDoIndexRoute:
+    AuthenticatedWorkerOwnTasksToDoIndexRoute,
+  AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute:
+    AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute,
+}
+
+const AuthenticatedWorkerRouteWithChildren =
+  AuthenticatedWorkerRoute._addFileChildren(AuthenticatedWorkerRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedWorkerRoute: AuthenticatedWorkerRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AboutServiceRoute: AboutServiceRoute,
+  FaqRoute: FaqRoute,
+  PricingRoute: PricingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

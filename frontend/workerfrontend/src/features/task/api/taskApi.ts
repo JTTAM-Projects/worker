@@ -133,10 +133,9 @@ export async function fetchTasks(
 
 // Fetch user's own tasks (requires authentication)
 export async function fetchUserTasks(
-  getAccessToken: () => Promise<string>,
+  token: string,
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
-  const token = await getAccessToken();
   const { 
     page = 0, 
     size = 10, 

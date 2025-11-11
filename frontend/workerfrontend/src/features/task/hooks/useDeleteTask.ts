@@ -18,7 +18,6 @@ export function useDeleteTask() {
         queryKey: ["task", variables.taskId],
       });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["userTasks"] });
       queryClient.invalidateQueries({
         queryKey: ["taskApplications", variables.taskId],
       });
