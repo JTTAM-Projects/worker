@@ -21,20 +21,25 @@ import { Route as AuthenticatedWorkerTasksIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedWorkerOwnTasksIndexRouteImport } from './routes/_authenticated/worker/own-tasks/index'
 import { Route as AuthenticatedWorkerMyProfileIndexRouteImport } from './routes/_authenticated/worker/my-profile/index'
 import { Route as AuthenticatedWorkerMyApplicationsIndexRouteImport } from './routes/_authenticated/worker/my-applications/index'
+import { Route as AuthenticatedWorkerDashboardIndexRouteImport } from './routes/_authenticated/worker/dashboard/index'
 import { Route as AuthenticatedWorkerTasksTaskIdRouteImport } from './routes/_authenticated/worker/tasks/$taskId'
-import { Route as AuthenticatedWorkerMyProfileReviewsRouteImport } from './routes/_authenticated/worker/my-profile/reviews'
-import { Route as AuthenticatedWorkerMyProfileEditRouteImport } from './routes/_authenticated/worker/my-profile/edit'
 import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalIndexRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/index'
 import { Route as AuthenticatedWorkerOwnTasksToDoIndexRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/index'
 import { Route as AuthenticatedWorkerOwnTasksPastIndexRouteImport } from './routes/_authenticated/worker/own-tasks/past/index'
+import { Route as AuthenticatedWorkerMyProfileReviewsIndexRouteImport } from './routes/_authenticated/worker/my-profile/reviews/index'
+import { Route as AuthenticatedWorkerMyProfileDetailsIndexRouteImport } from './routes/_authenticated/worker/my-profile/details/index'
 import { Route as AuthenticatedWorkerMyApplicationsPastIndexRouteImport } from './routes/_authenticated/worker/my-applications/past/index'
 import { Route as AuthenticatedWorkerMyApplicationsActiveIndexRouteImport } from './routes/_authenticated/worker/my-applications/active/index'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdIndexRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/index'
+import { Route as AuthenticatedWorkerDashboardPaymentsIndexRouteImport } from './routes/_authenticated/worker/dashboard/payments/index'
 import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/$taskId'
 import { Route as AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/$taskId'
 import { Route as AuthenticatedWorkerOwnTasksPastTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/past/$taskId'
+import { Route as AuthenticatedWorkerMyProfileReviewsReviewIdRouteImport } from './routes/_authenticated/worker/my-profile/reviews/$reviewId'
+import { Route as AuthenticatedWorkerMyProfileDetailsEditRouteImport } from './routes/_authenticated/worker/my-profile/details/edit'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/task-details'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/application-details'
+import { Route as AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRouteImport } from './routes/_authenticated/worker/dashboard/payments/$paymentTransactionId'
 
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
@@ -100,22 +105,16 @@ const AuthenticatedWorkerMyApplicationsIndexRoute =
     path: '/my-applications/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerDashboardIndexRoute =
+  AuthenticatedWorkerDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 const AuthenticatedWorkerTasksTaskIdRoute =
   AuthenticatedWorkerTasksTaskIdRouteImport.update({
     id: '/tasks/$taskId',
     path: '/tasks/$taskId',
-    getParentRoute: () => AuthenticatedWorkerRoute,
-  } as any)
-const AuthenticatedWorkerMyProfileReviewsRoute =
-  AuthenticatedWorkerMyProfileReviewsRouteImport.update({
-    id: '/my-profile/reviews',
-    path: '/my-profile/reviews',
-    getParentRoute: () => AuthenticatedWorkerRoute,
-  } as any)
-const AuthenticatedWorkerMyProfileEditRoute =
-  AuthenticatedWorkerMyProfileEditRouteImport.update({
-    id: '/my-profile/edit',
-    path: '/my-profile/edit',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
 const AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute =
@@ -136,6 +135,18 @@ const AuthenticatedWorkerOwnTasksPastIndexRoute =
     path: '/own-tasks/past/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerMyProfileReviewsIndexRoute =
+  AuthenticatedWorkerMyProfileReviewsIndexRouteImport.update({
+    id: '/my-profile/reviews/',
+    path: '/my-profile/reviews/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyProfileDetailsIndexRoute =
+  AuthenticatedWorkerMyProfileDetailsIndexRouteImport.update({
+    id: '/my-profile/details/',
+    path: '/my-profile/details/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 const AuthenticatedWorkerMyApplicationsPastIndexRoute =
   AuthenticatedWorkerMyApplicationsPastIndexRouteImport.update({
     id: '/my-applications/past/',
@@ -152,6 +163,12 @@ const AuthenticatedWorkerMyApplicationsTaskIdIndexRoute =
   AuthenticatedWorkerMyApplicationsTaskIdIndexRouteImport.update({
     id: '/my-applications/$taskId/',
     path: '/my-applications/$taskId/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerDashboardPaymentsIndexRoute =
+  AuthenticatedWorkerDashboardPaymentsIndexRouteImport.update({
+    id: '/dashboard/payments/',
+    path: '/dashboard/payments/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
 const AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute =
@@ -172,6 +189,18 @@ const AuthenticatedWorkerOwnTasksPastTaskIdRoute =
     path: '/own-tasks/past/$taskId',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerMyProfileReviewsReviewIdRoute =
+  AuthenticatedWorkerMyProfileReviewsReviewIdRouteImport.update({
+    id: '/my-profile/reviews/$reviewId',
+    path: '/my-profile/reviews/$reviewId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerMyProfileDetailsEditRoute =
+  AuthenticatedWorkerMyProfileDetailsEditRouteImport.update({
+    id: '/my-profile/details/edit',
+    path: '/my-profile/details/edit',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 const AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute =
   AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRouteImport.update({
     id: '/my-applications/$taskId/task-details',
@@ -184,6 +213,12 @@ const AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute =
     path: '/my-applications/$taskId/application-details',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute =
+  AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRouteImport.update({
+    id: '/dashboard/payments/$paymentTransactionId',
+    path: '/dashboard/payments/$paymentTransactionId',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -193,21 +228,26 @@ export interface FileRoutesByFullPath {
   '/employer': typeof AuthenticatedEmployerRoute
   '/worker': typeof AuthenticatedWorkerRouteWithChildren
   '/worker/': typeof AuthenticatedWorkerIndexRoute
-  '/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
-  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
   '/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRoute
+  '/worker/dashboard': typeof AuthenticatedWorkerDashboardIndexRoute
   '/worker/my-applications': typeof AuthenticatedWorkerMyApplicationsIndexRoute
   '/worker/my-profile': typeof AuthenticatedWorkerMyProfileIndexRoute
   '/worker/own-tasks': typeof AuthenticatedWorkerOwnTasksIndexRoute
   '/worker/tasks': typeof AuthenticatedWorkerTasksIndexRoute
+  '/worker/dashboard/payments/$paymentTransactionId': typeof AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute
   '/worker/my-applications/$taskId/application-details': typeof AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute
   '/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
+  '/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
+  '/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
   '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
   '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
   '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
+  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -219,21 +259,26 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/employer': typeof AuthenticatedEmployerRoute
   '/worker': typeof AuthenticatedWorkerIndexRoute
-  '/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
-  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
   '/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRoute
+  '/worker/dashboard': typeof AuthenticatedWorkerDashboardIndexRoute
   '/worker/my-applications': typeof AuthenticatedWorkerMyApplicationsIndexRoute
   '/worker/my-profile': typeof AuthenticatedWorkerMyProfileIndexRoute
   '/worker/own-tasks': typeof AuthenticatedWorkerOwnTasksIndexRoute
   '/worker/tasks': typeof AuthenticatedWorkerTasksIndexRoute
+  '/worker/dashboard/payments/$paymentTransactionId': typeof AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute
   '/worker/my-applications/$taskId/application-details': typeof AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute
   '/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
+  '/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
+  '/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
   '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
   '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
   '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
+  '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -248,21 +293,26 @@ export interface FileRoutesById {
   '/_authenticated/employer': typeof AuthenticatedEmployerRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRouteWithChildren
   '/_authenticated/worker/': typeof AuthenticatedWorkerIndexRoute
-  '/_authenticated/worker/my-profile/edit': typeof AuthenticatedWorkerMyProfileEditRoute
-  '/_authenticated/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsRoute
   '/_authenticated/worker/tasks/$taskId': typeof AuthenticatedWorkerTasksTaskIdRoute
+  '/_authenticated/worker/dashboard/': typeof AuthenticatedWorkerDashboardIndexRoute
   '/_authenticated/worker/my-applications/': typeof AuthenticatedWorkerMyApplicationsIndexRoute
   '/_authenticated/worker/my-profile/': typeof AuthenticatedWorkerMyProfileIndexRoute
   '/_authenticated/worker/own-tasks/': typeof AuthenticatedWorkerOwnTasksIndexRoute
   '/_authenticated/worker/tasks/': typeof AuthenticatedWorkerTasksIndexRoute
+  '/_authenticated/worker/dashboard/payments/$paymentTransactionId': typeof AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute
   '/_authenticated/worker/my-applications/$taskId/application-details': typeof AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute
   '/_authenticated/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
+  '/_authenticated/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
+  '/_authenticated/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
   '/_authenticated/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
   '/_authenticated/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
   '/_authenticated/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  '/_authenticated/worker/dashboard/payments/': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/_authenticated/worker/my-applications/$taskId/': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/_authenticated/worker/my-applications/active/': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
   '/_authenticated/worker/my-applications/past/': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  '/_authenticated/worker/my-profile/details/': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
+  '/_authenticated/worker/my-profile/reviews/': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
   '/_authenticated/worker/own-tasks/past/': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/_authenticated/worker/own-tasks/to-do/': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/_authenticated/worker/own-tasks/waiting-approval/': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -277,21 +327,26 @@ export interface FileRouteTypes {
     | '/employer'
     | '/worker'
     | '/worker/'
-    | '/worker/my-profile/edit'
-    | '/worker/my-profile/reviews'
     | '/worker/tasks/$taskId'
+    | '/worker/dashboard'
     | '/worker/my-applications'
     | '/worker/my-profile'
     | '/worker/own-tasks'
     | '/worker/tasks'
+    | '/worker/dashboard/payments/$paymentTransactionId'
     | '/worker/my-applications/$taskId/application-details'
     | '/worker/my-applications/$taskId/task-details'
+    | '/worker/my-profile/details/edit'
+    | '/worker/my-profile/reviews/$reviewId'
     | '/worker/own-tasks/past/$taskId'
     | '/worker/own-tasks/to-do/$taskId'
     | '/worker/own-tasks/waiting-approval/$taskId'
+    | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
     | '/worker/my-applications/past'
+    | '/worker/my-profile/details'
+    | '/worker/my-profile/reviews'
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
@@ -303,21 +358,26 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/employer'
     | '/worker'
-    | '/worker/my-profile/edit'
-    | '/worker/my-profile/reviews'
     | '/worker/tasks/$taskId'
+    | '/worker/dashboard'
     | '/worker/my-applications'
     | '/worker/my-profile'
     | '/worker/own-tasks'
     | '/worker/tasks'
+    | '/worker/dashboard/payments/$paymentTransactionId'
     | '/worker/my-applications/$taskId/application-details'
     | '/worker/my-applications/$taskId/task-details'
+    | '/worker/my-profile/details/edit'
+    | '/worker/my-profile/reviews/$reviewId'
     | '/worker/own-tasks/past/$taskId'
     | '/worker/own-tasks/to-do/$taskId'
     | '/worker/own-tasks/waiting-approval/$taskId'
+    | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
     | '/worker/my-applications/past'
+    | '/worker/my-profile/details'
+    | '/worker/my-profile/reviews'
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
@@ -331,21 +391,26 @@ export interface FileRouteTypes {
     | '/_authenticated/employer'
     | '/_authenticated/worker'
     | '/_authenticated/worker/'
-    | '/_authenticated/worker/my-profile/edit'
-    | '/_authenticated/worker/my-profile/reviews'
     | '/_authenticated/worker/tasks/$taskId'
+    | '/_authenticated/worker/dashboard/'
     | '/_authenticated/worker/my-applications/'
     | '/_authenticated/worker/my-profile/'
     | '/_authenticated/worker/own-tasks/'
     | '/_authenticated/worker/tasks/'
+    | '/_authenticated/worker/dashboard/payments/$paymentTransactionId'
     | '/_authenticated/worker/my-applications/$taskId/application-details'
     | '/_authenticated/worker/my-applications/$taskId/task-details'
+    | '/_authenticated/worker/my-profile/details/edit'
+    | '/_authenticated/worker/my-profile/reviews/$reviewId'
     | '/_authenticated/worker/own-tasks/past/$taskId'
     | '/_authenticated/worker/own-tasks/to-do/$taskId'
     | '/_authenticated/worker/own-tasks/waiting-approval/$taskId'
+    | '/_authenticated/worker/dashboard/payments/'
     | '/_authenticated/worker/my-applications/$taskId/'
     | '/_authenticated/worker/my-applications/active/'
     | '/_authenticated/worker/my-applications/past/'
+    | '/_authenticated/worker/my-profile/details/'
+    | '/_authenticated/worker/my-profile/reviews/'
     | '/_authenticated/worker/own-tasks/past/'
     | '/_authenticated/worker/own-tasks/to-do/'
     | '/_authenticated/worker/own-tasks/waiting-approval/'
@@ -445,25 +510,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/worker/dashboard/': {
+      id: '/_authenticated/worker/dashboard/'
+      path: '/dashboard'
+      fullPath: '/worker/dashboard'
+      preLoaderRoute: typeof AuthenticatedWorkerDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
     '/_authenticated/worker/tasks/$taskId': {
       id: '/_authenticated/worker/tasks/$taskId'
       path: '/tasks/$taskId'
       fullPath: '/worker/tasks/$taskId'
       preLoaderRoute: typeof AuthenticatedWorkerTasksTaskIdRouteImport
-      parentRoute: typeof AuthenticatedWorkerRoute
-    }
-    '/_authenticated/worker/my-profile/reviews': {
-      id: '/_authenticated/worker/my-profile/reviews'
-      path: '/my-profile/reviews'
-      fullPath: '/worker/my-profile/reviews'
-      preLoaderRoute: typeof AuthenticatedWorkerMyProfileReviewsRouteImport
-      parentRoute: typeof AuthenticatedWorkerRoute
-    }
-    '/_authenticated/worker/my-profile/edit': {
-      id: '/_authenticated/worker/my-profile/edit'
-      path: '/my-profile/edit'
-      fullPath: '/worker/my-profile/edit'
-      preLoaderRoute: typeof AuthenticatedWorkerMyProfileEditRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
     '/_authenticated/worker/own-tasks/waiting-approval/': {
@@ -487,6 +545,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/worker/my-profile/reviews/': {
+      id: '/_authenticated/worker/my-profile/reviews/'
+      path: '/my-profile/reviews'
+      fullPath: '/worker/my-profile/reviews'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileReviewsIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-profile/details/': {
+      id: '/_authenticated/worker/my-profile/details/'
+      path: '/my-profile/details'
+      fullPath: '/worker/my-profile/details'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileDetailsIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
     '/_authenticated/worker/my-applications/past/': {
       id: '/_authenticated/worker/my-applications/past/'
       path: '/my-applications/past'
@@ -506,6 +578,13 @@ declare module '@tanstack/react-router' {
       path: '/my-applications/$taskId'
       fullPath: '/worker/my-applications/$taskId'
       preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/dashboard/payments/': {
+      id: '/_authenticated/worker/dashboard/payments/'
+      path: '/dashboard/payments'
+      fullPath: '/worker/dashboard/payments'
+      preLoaderRoute: typeof AuthenticatedWorkerDashboardPaymentsIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
     '/_authenticated/worker/own-tasks/waiting-approval/$taskId': {
@@ -529,6 +608,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/worker/my-profile/reviews/$reviewId': {
+      id: '/_authenticated/worker/my-profile/reviews/$reviewId'
+      path: '/my-profile/reviews/$reviewId'
+      fullPath: '/worker/my-profile/reviews/$reviewId'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileReviewsReviewIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-profile/details/edit': {
+      id: '/_authenticated/worker/my-profile/details/edit'
+      path: '/my-profile/details/edit'
+      fullPath: '/worker/my-profile/details/edit'
+      preLoaderRoute: typeof AuthenticatedWorkerMyProfileDetailsEditRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
     '/_authenticated/worker/my-applications/$taskId/task-details': {
       id: '/_authenticated/worker/my-applications/$taskId/task-details'
       path: '/my-applications/$taskId/task-details'
@@ -543,26 +636,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/worker/dashboard/payments/$paymentTransactionId': {
+      id: '/_authenticated/worker/dashboard/payments/$paymentTransactionId'
+      path: '/dashboard/payments/$paymentTransactionId'
+      fullPath: '/worker/dashboard/payments/$paymentTransactionId'
+      preLoaderRoute: typeof AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
   }
 }
 
 interface AuthenticatedWorkerRouteChildren {
   AuthenticatedWorkerIndexRoute: typeof AuthenticatedWorkerIndexRoute
-  AuthenticatedWorkerMyProfileEditRoute: typeof AuthenticatedWorkerMyProfileEditRoute
-  AuthenticatedWorkerMyProfileReviewsRoute: typeof AuthenticatedWorkerMyProfileReviewsRoute
   AuthenticatedWorkerTasksTaskIdRoute: typeof AuthenticatedWorkerTasksTaskIdRoute
+  AuthenticatedWorkerDashboardIndexRoute: typeof AuthenticatedWorkerDashboardIndexRoute
   AuthenticatedWorkerMyApplicationsIndexRoute: typeof AuthenticatedWorkerMyApplicationsIndexRoute
   AuthenticatedWorkerMyProfileIndexRoute: typeof AuthenticatedWorkerMyProfileIndexRoute
   AuthenticatedWorkerOwnTasksIndexRoute: typeof AuthenticatedWorkerOwnTasksIndexRoute
   AuthenticatedWorkerTasksIndexRoute: typeof AuthenticatedWorkerTasksIndexRoute
+  AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute: typeof AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute
   AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute
   AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
+  AuthenticatedWorkerMyProfileDetailsEditRoute: typeof AuthenticatedWorkerMyProfileDetailsEditRoute
+  AuthenticatedWorkerMyProfileReviewsReviewIdRoute: typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
   AuthenticatedWorkerOwnTasksPastTaskIdRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
   AuthenticatedWorkerOwnTasksToDoTaskIdRoute: typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
   AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
+  AuthenticatedWorkerDashboardPaymentsIndexRoute: typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   AuthenticatedWorkerMyApplicationsTaskIdIndexRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   AuthenticatedWorkerMyApplicationsActiveIndexRoute: typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
   AuthenticatedWorkerMyApplicationsPastIndexRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
+  AuthenticatedWorkerMyProfileDetailsIndexRoute: typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
+  AuthenticatedWorkerMyProfileReviewsIndexRoute: typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
   AuthenticatedWorkerOwnTasksPastIndexRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   AuthenticatedWorkerOwnTasksToDoIndexRoute: typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -570,32 +675,43 @@ interface AuthenticatedWorkerRouteChildren {
 
 const AuthenticatedWorkerRouteChildren: AuthenticatedWorkerRouteChildren = {
   AuthenticatedWorkerIndexRoute: AuthenticatedWorkerIndexRoute,
-  AuthenticatedWorkerMyProfileEditRoute: AuthenticatedWorkerMyProfileEditRoute,
-  AuthenticatedWorkerMyProfileReviewsRoute:
-    AuthenticatedWorkerMyProfileReviewsRoute,
   AuthenticatedWorkerTasksTaskIdRoute: AuthenticatedWorkerTasksTaskIdRoute,
+  AuthenticatedWorkerDashboardIndexRoute:
+    AuthenticatedWorkerDashboardIndexRoute,
   AuthenticatedWorkerMyApplicationsIndexRoute:
     AuthenticatedWorkerMyApplicationsIndexRoute,
   AuthenticatedWorkerMyProfileIndexRoute:
     AuthenticatedWorkerMyProfileIndexRoute,
   AuthenticatedWorkerOwnTasksIndexRoute: AuthenticatedWorkerOwnTasksIndexRoute,
   AuthenticatedWorkerTasksIndexRoute: AuthenticatedWorkerTasksIndexRoute,
+  AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute:
+    AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRoute,
   AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute:
     AuthenticatedWorkerMyApplicationsTaskIdApplicationDetailsRoute,
   AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute:
     AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute,
+  AuthenticatedWorkerMyProfileDetailsEditRoute:
+    AuthenticatedWorkerMyProfileDetailsEditRoute,
+  AuthenticatedWorkerMyProfileReviewsReviewIdRoute:
+    AuthenticatedWorkerMyProfileReviewsReviewIdRoute,
   AuthenticatedWorkerOwnTasksPastTaskIdRoute:
     AuthenticatedWorkerOwnTasksPastTaskIdRoute,
   AuthenticatedWorkerOwnTasksToDoTaskIdRoute:
     AuthenticatedWorkerOwnTasksToDoTaskIdRoute,
   AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute:
     AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute,
+  AuthenticatedWorkerDashboardPaymentsIndexRoute:
+    AuthenticatedWorkerDashboardPaymentsIndexRoute,
   AuthenticatedWorkerMyApplicationsTaskIdIndexRoute:
     AuthenticatedWorkerMyApplicationsTaskIdIndexRoute,
   AuthenticatedWorkerMyApplicationsActiveIndexRoute:
     AuthenticatedWorkerMyApplicationsActiveIndexRoute,
   AuthenticatedWorkerMyApplicationsPastIndexRoute:
     AuthenticatedWorkerMyApplicationsPastIndexRoute,
+  AuthenticatedWorkerMyProfileDetailsIndexRoute:
+    AuthenticatedWorkerMyProfileDetailsIndexRoute,
+  AuthenticatedWorkerMyProfileReviewsIndexRoute:
+    AuthenticatedWorkerMyProfileReviewsIndexRoute,
   AuthenticatedWorkerOwnTasksPastIndexRoute:
     AuthenticatedWorkerOwnTasksPastIndexRoute,
   AuthenticatedWorkerOwnTasksToDoIndexRoute:

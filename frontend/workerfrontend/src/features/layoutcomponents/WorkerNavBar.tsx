@@ -39,6 +39,12 @@ export default function WorkerNavBar() {
             >
               Hakemukset
             </Link>
+            <Link
+              to="/worker/dashboard"
+              className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
+            >
+              Hallintapaneeli
+            </Link>
           </div>
         </div>
         {/* oikean reunan painikkeet */}
