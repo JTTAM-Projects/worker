@@ -38,6 +38,29 @@ export default function EmployerNavBar() {
         </div>
         {/* oikean reunan painikkeet */}
         <div className="flex items-center space-x-3">
+          <Link
+            to="/worker"
+            className="
+              bg-white/10
+              text-white
+              border-2
+              border-white/30
+              px-5
+              py-2.5
+              rounded-lg
+              hover:bg-white
+              hover:text-green-600
+              hover:border-white
+              hover:shadow-xl
+              hover:scale-105
+              text-sm
+              font-bold
+              transition-all
+              duration-200
+              shadow-md"
+          >
+            Ryhdy työntekijäksi
+          </Link>
           {isAuthenticated ? (
             <Link
               to="/employer/my-proflie"

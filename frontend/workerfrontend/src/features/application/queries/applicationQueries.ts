@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query"
-import type { FetchApplicationParams } from "../api/applicationApi"
+import { fetchAllApplications, type FetchApplicationParams } from "../api/applicationApi"
 
 export const applicationQueries = {
   ownApplication: (taskId: number) => 
@@ -8,9 +8,10 @@ export const applicationQueries = {
       staleTime: 5 * 60 * 1000,
     }),
 
-  ownApplications: (params: FetchApplicationParams) =>
+  ownApplications: (getAccessTokenSilently: () => Promise<string>, params: FetchApplicationParams) =>
     queryOptions({    
       queryKey: ['applications', 'list', params],
+      queryFn: () => fetchAllApplications(getAccessTokenSilently, params),
       staleTime: 5 * 60 * 1000,
     })
 }

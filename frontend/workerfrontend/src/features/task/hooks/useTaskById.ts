@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { taskQueries } from "../queries/taskQueries";
 
-export function useTaskById(taskId: number) {
+export function useTaskById(taskId: string) {
   return useQuery(taskQueries.detail(taskId));
 }

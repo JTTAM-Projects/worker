@@ -1,28 +1,41 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { ApplicationFilters } from "../../../../../features/application/types";
 import { useState } from "react";
-import { useGetUserApplications } from "../../../../../features/application/hooks/useGetApplication";
 import { ApplicationFilterPanel } from "../../../../../features/application/components/ApplicationFilterPanel";
 import ApplicationToList from "../../../../../features/application/components/applicationsToList";
+import { applicationQueries } from "../../../../../features/application/queries/applicationQueries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export const Route = createFileRoute("/_authenticated/worker/my-applications/active/")({
   component: ActiveApplicationsPage,
+  loader: async ({ context }) => {
+    return context.queryClient.ensureQueryData(
+      applicationQueries.ownApplications(context.auth.getAccessToken, {
+        page: 0,
+        size: 5,
+        applicationStatus: "PENDING",
+      })
+    );
+  },
 });
 
 export default function ActiveApplicationsPage() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
+  const { getAccessTokenSilently } = useAuth0();
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "PENDING",
   });
 
-  const { data: paginatedResponse } = useGetUserApplications({
-    page: currentPage,
-    size: pageSize,
-    ...filters,
-    applicationStatus: "PENDING",
-  });
+  const { data: paginatedResponse } = useSuspenseQuery(
+    applicationQueries.ownApplications(getAccessTokenSilently, {
+      applicationStatus: "PENDING",
+      page: currentPage,
+      size: pageSize,
+    })
+  );
 
   const handleResetFilters = () => {
     setFilters((prev) => ({

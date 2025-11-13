@@ -9,11 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as AboutServiceRouteImport } from './routes/about-service'
+import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicPricingRouteImport } from './routes/_public/pricing'
+import { Route as PublicFaqRouteImport } from './routes/_public/faq'
+import { Route as PublicAboutServiceRouteImport } from './routes/_public/about-service'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedEmployerRouteImport } from './routes/_authenticated/employer'
 import { Route as AuthenticatedWorkerIndexRouteImport } from './routes/_authenticated/worker/index'
@@ -58,19 +59,8 @@ import { Route as AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRouteImpo
 import { Route as AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/details/edit'
 import { Route as AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/applcations/$username'
 
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutServiceRoute = AboutServiceRouteImport.update({
-  id: '/about-service',
-  path: '/about-service',
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -81,6 +71,21 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicPricingRoute = PublicPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicFaqRoute = PublicFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicAboutServiceRoute = PublicAboutServiceRouteImport.update({
+  id: '/about-service',
+  path: '/about-service',
+  getParentRoute: () => PublicRoute,
 } as any)
 const AuthenticatedWorkerRoute = AuthenticatedWorkerRouteImport.update({
   id: '/worker',
@@ -341,11 +346,11 @@ const AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about-service': typeof AboutServiceRoute
-  '/faq': typeof FaqRoute
-  '/pricing': typeof PricingRoute
   '/employer': typeof AuthenticatedEmployerRouteWithChildren
   '/worker': typeof AuthenticatedWorkerRouteWithChildren
+  '/about-service': typeof PublicAboutServiceRoute
+  '/faq': typeof PublicFaqRoute
+  '/pricing': typeof PublicPricingRoute
   '/employer/': typeof AuthenticatedEmployerIndexRoute
   '/worker/': typeof AuthenticatedWorkerIndexRoute
   '/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -390,9 +395,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about-service': typeof AboutServiceRoute
-  '/faq': typeof FaqRoute
-  '/pricing': typeof PricingRoute
+  '/about-service': typeof PublicAboutServiceRoute
+  '/faq': typeof PublicFaqRoute
+  '/pricing': typeof PublicPricingRoute
   '/employer': typeof AuthenticatedEmployerIndexRoute
   '/worker': typeof AuthenticatedWorkerIndexRoute
   '/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -439,11 +444,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/about-service': typeof AboutServiceRoute
-  '/faq': typeof FaqRoute
-  '/pricing': typeof PricingRoute
+  '/_public': typeof PublicRouteWithChildren
   '/_authenticated/employer': typeof AuthenticatedEmployerRouteWithChildren
   '/_authenticated/worker': typeof AuthenticatedWorkerRouteWithChildren
+  '/_public/about-service': typeof PublicAboutServiceRoute
+  '/_public/faq': typeof PublicFaqRoute
+  '/_public/pricing': typeof PublicPricingRoute
   '/_authenticated/employer/': typeof AuthenticatedEmployerIndexRoute
   '/_authenticated/worker/': typeof AuthenticatedWorkerIndexRoute
   '/_authenticated/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -490,11 +496,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/employer'
+    | '/worker'
     | '/about-service'
     | '/faq'
     | '/pricing'
-    | '/employer'
-    | '/worker'
     | '/employer/'
     | '/worker/'
     | '/employer/create-task/job-offer'
@@ -587,11 +593,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/about-service'
-    | '/faq'
-    | '/pricing'
+    | '/_public'
     | '/_authenticated/employer'
     | '/_authenticated/worker'
+    | '/_public/about-service'
+    | '/_public/faq'
+    | '/_public/pricing'
     | '/_authenticated/employer/'
     | '/_authenticated/worker/'
     | '/_authenticated/employer/create-task/job-offer'
@@ -638,32 +645,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AboutServiceRoute: typeof AboutServiceRoute
-  FaqRoute: typeof FaqRoute
-  PricingRoute: typeof PricingRoute
+  PublicRoute: typeof PublicRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about-service': {
-      id: '/about-service'
-      path: '/about-service'
-      fullPath: '/about-service'
-      preLoaderRoute: typeof AboutServiceRouteImport
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -679,6 +670,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_public/pricing': {
+      id: '/_public/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PublicPricingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/faq': {
+      id: '/_public/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof PublicFaqRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/about-service': {
+      id: '/_public/about-service'
+      path: '/about-service'
+      fullPath: '/about-service'
+      preLoaderRoute: typeof PublicAboutServiceRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/_authenticated/worker': {
       id: '/_authenticated/worker'
@@ -1136,12 +1148,25 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface PublicRouteChildren {
+  PublicAboutServiceRoute: typeof PublicAboutServiceRoute
+  PublicFaqRoute: typeof PublicFaqRoute
+  PublicPricingRoute: typeof PublicPricingRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicAboutServiceRoute: PublicAboutServiceRoute,
+  PublicFaqRoute: PublicFaqRoute,
+  PublicPricingRoute: PublicPricingRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AboutServiceRoute: AboutServiceRoute,
-  FaqRoute: FaqRoute,
-  PricingRoute: PricingRoute,
+  PublicRoute: PublicRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

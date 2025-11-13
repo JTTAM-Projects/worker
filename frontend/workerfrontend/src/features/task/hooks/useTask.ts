@@ -3,7 +3,7 @@ import { updateTask, type CreateTaskInput } from "../api/taskApi";
 import { useAuth0 } from "@auth0/auth0-react";
 import { taskQueries } from "../queries/taskQueries";
 
-export function useTask(taskId: number) {
+export function useTask(taskId: string) {
   return useQuery(taskQueries.detail(taskId));
 }
 

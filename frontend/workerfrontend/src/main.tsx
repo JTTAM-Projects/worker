@@ -1,11 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { Auth0Wrapper, useAuth0Context, type Auth0ContextType } from "./auth/auth0";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,20 +16,11 @@ const queryClient = new QueryClient({
   },
 });
 
-type Auth0AppState = {
-  returnTo?: string;
-};
-
-const onRedirectCallback = (appState?: Auth0AppState) => {
-  const targetUrl = appState?.returnTo ?? window.location.pathname;
-  window.history.replaceState({}, document.title, targetUrl);
-  window.dispatchEvent(new PopStateEvent("popstate"));
-};
-
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
+    auth: undefined! as Auth0ContextType,
   },
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -37,6 +28,17 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
 });
+
+// eslint-disable-next-line react-refresh/only-export-components
+function App() {
+  const auth = useAuth0Context();
+
+  if (auth.isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  return <RouterProvider router={router} context={{ queryClient, auth }} />;
+}
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -47,17 +49,9 @@ declare module "@tanstack/react-router" {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Auth0Provider
-        domain="jk-projects.eu.auth0.com"
-        clientId="aDYOG7a9fYDDBoTgWX9AW3BKYdv6XdlJ"
-        authorizationParams={{
-          redirect_uri: window.location.origin,
-          audience: "https://glig.com",
-        }}
-        onRedirectCallback={onRedirectCallback}
-      >
-        <RouterProvider router={router} />
-      </Auth0Provider>
+      <Auth0Wrapper>
+        <App />
+      </Auth0Wrapper>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>
