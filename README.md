@@ -44,21 +44,43 @@ erDiagram
     Tasker_Profile {
         int tasker_profile_id PK
         string user_id FK "unique"
-        text bio
-        int location_id FK "optional, for home base"
+        string first_name
+        string last_name
+        text bio "optional"
+        string street_address "optional"
+        string postal_code "optional"
+        string city "optional"
+        string country "optional"
+        string website_link "optional"
+        string profile_image_url "optional"
         decimal average_rating
         boolean is_verified
+        string status "e.g., ACTIVE, DELETED"
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at "optional"
     }
 
     Employer_Profile {
-        int employer_profile_id PK
+        long employer_profile_id PK
         string user_id FK "unique"
+        string first_name
+        string last_name
         string employer_type "e.g., INDIVIDUAL, COMPANY"
-        int location_id FK "optional, for default address"
-        text bio
+        string street_address "optional"
+        string postal_code "optional"
+        string city "optional"
+        string country "optional"
+        text bio "optional"
         string company_name "optional"
         string business_id "optional"
         string website_link "optional"
+        string profile_image_url "optional"
+        boolean is_verified
+        string status "e.g., ACTIVE, DELETED, SUSPENDED"
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at "optional"
     }
 
     Job_Category {
@@ -135,9 +157,6 @@ erDiagram
     User }o--o| Message : "sends"
     User }o--o| Review : "as reviewer/reviewee"
 
-    Location }o--o| Tasker_Profile : "optional home base"
-    Location }o--o| Employer_Profile : "optional default address"
-
     Job_Category ||--o{ Task : "categorizes"
 
     Task ||--o{ Application : "has"
@@ -149,6 +168,25 @@ erDiagram
 
     Application ||--o| Conversation : "can lead to"
     Conversation ||--o{ Message : "contains"
+```
+## Swagger-UI
+
+When you run Java-application on localhost, you can find api-documentation in this address:
+[Swagger-ui](http://localhost:8080/swagger-ui/index.html#/)
+
+## Backend
+
+Java version 17.0.12
+
+**MacOS & Windows**  
+Terminal commands:
+
+```bash
+cd glig
+```
+
+```bash
+./mvnw spring-boot:run
 ```
 
 ## Authors

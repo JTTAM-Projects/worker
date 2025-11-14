@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.jttam.glig.domain.apply.Apply;
+import com.jttam.glig.domain.application.Application;
+import com.jttam.glig.domain.category.Category;
+import com.jttam.glig.domain.common.baseClass;
+import com.jttam.glig.domain.location.Location;
 import com.jttam.glig.domain.user.User;
 
 import jakarta.persistence.CascadeType;
@@ -16,21 +19,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task extends baseClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category")
-    private Category category;
+    @ManyToMany
+    @JoinTable(name = "task_category", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
 
     @Column(name = "title")
     private String title = "";
@@ -44,8 +49,9 @@ public class Task {
     @Column(name = "end_date")
     private LocalDateTime endDate = LocalDateTime.now();
 
-    @Column(name = "location")
-    private String location = "";
+    @ManyToMany
+    @JoinTable(name = "task_location", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "location_id"))
+    private Set<Location> locations = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -59,19 +65,17 @@ public class Task {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = false)
-    private Set<Apply> applies = new HashSet<>();
+    private Set<Application> applies = new HashSet<>();
 
     public Task() {
     }
 
-    public Task(Category category, String title, int price, LocalDateTime startDate, LocalDateTime endDate,
-            String location, TaskStatus status, String description, User user, Set<Apply> applies) {
-        this.category = category;
+    public Task(String title, int price, LocalDateTime startDate, LocalDateTime endDate,
+            TaskStatus status, String description, User user) {
         this.title = title;
         this.price = price;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.location = location;
         this.status = status;
         this.description = description;
         this.user = user;
@@ -85,12 +89,12 @@ public class Task {
         this.id = id;
     }
 
-    public Category getCategory() {
-        return category;
+    public Set<Category> getCategories() {
+        return categories;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     public String getTitle() {
@@ -125,12 +129,12 @@ public class Task {
         this.endDate = endDate;
     }
 
-    public String getLocation() {
-        return location;
+    public Set<Location> getLocations() {
+        return locations;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
     }
 
     public TaskStatus getStatus() {
@@ -157,12 +161,21 @@ public class Task {
         this.user = user;
     }
 
-    public Set<Apply> getApplies() {
+    public Set<Application> getApplies() {
         return applies;
     }
 
-    public void setApplies(Set<Apply> applies) {
+    public void setApplies(Set<Application> applies) {
         this.applies = applies;
+    }
+
+    @Override
+    public String toString() {
+        return "Task [id=" + id + ", category count=" + categories.size() + ", title=" + title + ", price=" + price
+                + ", startDate="
+                + startDate + ", endDate=" + endDate + ", locations count=" + locations.size() + ", status="
+                + status.getDisplayName()
+                + ", description=" + description + ", user=" + user.getUserName() + "]";
     }
 
 }
