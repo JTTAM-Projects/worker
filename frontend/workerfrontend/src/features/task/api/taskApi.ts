@@ -136,7 +136,6 @@ export async function fetchUserTasks(
   getAccessToken: () => Promise<string>,
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
-  const token = await getAccessToken();
   const { 
     page = 0, 
     size = 10, 
@@ -150,6 +149,8 @@ export async function fetchUserTasks(
     status,
     sortBy
   } = params;
+
+  const token = await getAccessToken();
 
   const queryParams = new URLSearchParams({
     page: page.toString(),

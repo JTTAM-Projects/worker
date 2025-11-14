@@ -1,12 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
 import type { CategoryResponse } from "../../task/types";
-import type {
-  TaskCategoryInput,
-  TaskLocationInput,
-} from "../api/taskApi";
+import type { TaskCategoryInput, TaskLocationInput } from "../api/taskApi";
 
 type Step = 0 | 1 | 2;
 
@@ -32,11 +28,7 @@ export type ContactFormState = {
   email: string;
 };
 
-const STEP_LABELS = [
-  "Ilmoituksen tiedot",
-  "Yhteystiedot",
-  "Viimeistely",
-] as const;
+const STEP_LABELS = ["Ilmoituksen tiedot", "Yhteystiedot", "Viimeistely"] as const;
 
 const datetimeLocalString = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
@@ -100,11 +92,9 @@ export function TaskWizardForm({
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [step, setStep] = useState<Step>(0);
   const [taskForm, setTaskForm] = useState<TaskFormState>(defaultTaskValues);
-  const [contactForm, setContactForm] =
-    useState<ContactFormState>(defaultContactValues);
+  const [contactForm, setContactForm] = useState<ContactFormState>(defaultContactValues);
 
-  const cardClass =
-    "bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4";
+  const cardClass = "bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4";
   const inputClass =
     "mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-3 focus:border-green-500 focus:ring-green-500";
   const labelClass = "block text-sm font-medium text-gray-600";
@@ -199,10 +189,7 @@ export function TaskWizardForm({
 
   const selectedCategory = useMemo(() => {
     if (!taskForm.categoryTitle) return undefined;
-    return categories?.find(
-      (cat) =>
-        cat.title.toLowerCase() === taskForm.categoryTitle.toLowerCase()
-    );
+    return categories?.find((cat) => cat.title.toLowerCase() === taskForm.categoryTitle.toLowerCase());
   }, [categories, taskForm.categoryTitle]);
 
   const isStepOneValid =
@@ -240,18 +227,16 @@ export function TaskWizardForm({
           {
             title: selectedCategory.title,
             categoryId:
-              "categoryId" in selectedCategory
-                ? (selectedCategory.categoryId as number | undefined)
-                : undefined,
+              "categoryId" in selectedCategory ? (selectedCategory.categoryId as number | undefined) : undefined,
           },
         ]
       : taskForm.categoryTitle
-      ? [
-          {
-            title: taskForm.categoryTitle,
-          },
-        ]
-      : [];
+        ? [
+            {
+              title: taskForm.categoryTitle,
+            },
+          ]
+        : [];
 
     const payload: TaskWizardPayload = {
       task: taskForm,
@@ -274,28 +259,19 @@ export function TaskWizardForm({
         const isActive = index === step;
         const isCompleted = index < step;
         return (
-          <div
-            key={label}
-            className="flex items-center gap-2 text-sm font-medium text-gray-600"
-          >
+          <div key={label} className="flex items-center gap-2 text-sm font-medium text-gray-600">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
                 isActive
                   ? "border-green-500 bg-green-500 text-white"
                   : isCompleted
-                  ? "border-green-400 bg-green-100 text-green-700"
-                  : "border-gray-300 bg-white text-gray-500"
+                    ? "border-green-400 bg-green-100 text-green-700"
+                    : "border-gray-300 bg-white text-gray-500"
               }`}
             >
               {index + 1}
             </div>
-            <span
-              className={`hidden sm:inline ${
-                isActive ? "text-green-600" : "text-gray-600"
-              }`}
-            >
-              {label}
-            </span>
+            <span className={`hidden sm:inline ${isActive ? "text-green-600" : "text-gray-600"}`}>{label}</span>
           </div>
         );
       })}
@@ -305,16 +281,12 @@ export function TaskWizardForm({
   const renderTaskStep = () => (
     <div className="space-y-8">
       <section>
-        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-          Ilmoituksen tiedot
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Ilmoituksen tiedot</h2>
 
         <div className="grid gap-8 md:grid-cols-2">
-            <div className="space-y-6">
+          <div className="space-y-6">
             <div className={cardClass}>
-              <h3 className="text-lg font-semibold text-gray-700">
-                Työtehtävä
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-700">Työtehtävä</h3>
               <div className="space-y-4">
                 <label className={labelClass}>
                   Otsikko
@@ -387,9 +359,7 @@ export function TaskWizardForm({
             </div>
 
             <div className={cardClass}>
-              <h3 className="text-lg font-semibold text-gray-700">
-                Aikataulu
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-700">Aikataulu</h3>
               <div className="space-y-4">
                 <label className={labelClass}>
                   Alkamisaika
@@ -425,9 +395,7 @@ export function TaskWizardForm({
 
           <div className="space-y-6">
             <div className={cardClass}>
-              <h3 className="text-lg font-semibold text-gray-700">
-                Sijainti
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-700">Sijainti</h3>
               {locationFields.map(({ label, name, placeholder }) => (
                 <label key={name} className={labelClass}>
                   {label}
@@ -448,13 +416,9 @@ export function TaskWizardForm({
             </div>
 
             <div className={cardClass.replace(" space-y-4", "")}>
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
-                Lisää kuvia (valinnainen)
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">Lisää kuvia (valinnainen)</h3>
               <div className="flex flex-col items-center justify-center gap-4 rounded-md border-2 border-dashed border-gray-300 bg-gray-50 py-10 text-center text-gray-600">
-                <p>
-                  Raahaa ja pudota kuvia tähän tai valitse ne tietokoneeltasi.
-                </p>
+                <p>Raahaa ja pudota kuvia tähän tai valitse ne tietokoneeltasi.</p>
                 <button
                   type="button"
                   className="rounded-md border border-gray-300 px-5 py-2 text-sm font-medium text-gray-600 hover:border-green-500 hover:text-green-600"
@@ -463,8 +427,7 @@ export function TaskWizardForm({
                 </button>
               </div>
               <p className="mt-3 text-xs text-gray-500">
-                Kuvien lisääminen on valinnaista. Tuettuja formaatteja ovat
-                JPEG- ja PNG-tiedostot.
+                Kuvien lisääminen on valinnaista. Tuettuja formaatteja ovat JPEG- ja PNG-tiedostot.
               </p>
             </div>
           </div>
@@ -475,9 +438,7 @@ export function TaskWizardForm({
 
   const renderContactStep = () => (
     <div className="space-y-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Yhteystiedot
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Yhteystiedot</h2>
 
       <div className="max-w-3xl mx-auto space-y-6 bg-white p-8 rounded-lg shadow-sm border border-gray-200">
         <div className="grid gap-6 md:grid-cols-2">
@@ -500,8 +461,7 @@ export function TaskWizardForm({
           ))}
         </div>
         <p className="text-sm text-gray-500">
-          Näitä tietoja käytetään yhteydenottoon työntekijöihin sekä
-          ilmoituksen hallintaan.
+          Näitä tietoja käytetään yhteydenottoon työntekijöihin sekä ilmoituksen hallintaan.
         </p>
       </div>
     </div>
@@ -509,9 +469,7 @@ export function TaskWizardForm({
 
   const renderReviewStep = () => (
     <div className="space-y-10">
-      <h2 className="text-3xl font-bold text-gray-800 text-center">
-        Viimeistely
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-800 text-center">Viimeistely</h2>
       <p className="text-center text-gray-600 max-w-2xl mx-auto">
         Tarkista ilmoituksen tiedot ennen {mode === "create" ? "julkaisua" : "päivitystä"}. Voit palata edellisiin
         vaiheisiin tarvittaessa.
@@ -519,9 +477,7 @@ export function TaskWizardForm({
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-4 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-700">
-            Työtehtävän tiedot
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-700">Työtehtävän tiedot</h3>
           <ReviewRow label="Otsikko" value={taskForm.title} />
           <ReviewRow label="Kuvaus" value={taskForm.description} />
           <ReviewRow label="Kategoria" value={taskForm.categoryTitle} />
@@ -541,9 +497,7 @@ export function TaskWizardForm({
         </div>
 
         <div className="space-y-4 bg-white p-6 rounded-lg shadow-sm border border-gray-200 md:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-700">
-            Yhteystiedot
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-700">Yhteystiedot</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <ReviewRow label="Etunimi" value={contactForm.firstName} />
             <ReviewRow label="Sukunimi" value={contactForm.lastName} />
@@ -583,27 +537,9 @@ export function TaskWizardForm({
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="container mx-auto px-6 py-10">
-        <nav className="text-sm text-gray-500 mb-6">
-          <Link to="/" className="hover:text-green-600">
-            Etusivu
-          </Link>{" "}
-          /{" "}
-          <Link
-            to={mode === "create" ? "/tasks" : "/my-tasks"}
-            className="hover:text-green-600"
-          >
-            {mode === "create" ? "Työilmoitukset" : "Omat työilmoitukset"}
-          </Link>{" "}
-          /{" "}
-          <span className="text-gray-700">
-            {mode === "create" ? "Luo työilmoitus" : "Muokkaa työilmoitusta"}
-          </span>
-        </nav>
-
         <h1 className="text-4xl font-bold text-gray-800 text-center">
           {mode === "create" ? "Luo uusi työilmoitus" : "Muokkaa työilmoitusta"}
         </h1>
-
         <StepIndicator />
 
         <div className="mt-6">{renderContent()}</div>
@@ -633,13 +569,9 @@ export function TaskWizardForm({
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={
-                  (step === 0 && !isStepOneValid) ||
-                  (step === 1 && !isStepTwoValid)
-                }
+                disabled={(step === 0 && !isStepOneValid) || (step === 1 && !isStepTwoValid)}
                 className={`rounded-md px-6 py-2 text-sm font-semibold transition-colors ${
-                  (step === 0 && !isStepOneValid) ||
-                  (step === 1 && !isStepTwoValid)
+                  (step === 0 && !isStepOneValid) || (step === 1 && !isStepTwoValid)
                     ? "bg-gray-300 text-white"
                     : "bg-green-500 text-white hover:bg-green-600"
                 }`}
@@ -667,9 +599,7 @@ export function TaskWizardForm({
 
 const ReviewRow = ({ label, value }: { label: string; value: string }) => (
   <div>
-    <span className="block text-xs uppercase tracking-wide text-gray-500">
-      {label}
-    </span>
+    <span className="block text-xs uppercase tracking-wide text-gray-500">{label}</span>
     <span className="mt-1 block rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-700">
       {value || "—"}
     </span>

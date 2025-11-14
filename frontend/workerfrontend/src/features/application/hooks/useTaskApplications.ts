@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchTaskApplications } from "../../task/api/taskApi";
+import { taskQueries } from "../../task/queries/taskQueries";
 
 export function useTaskApplications(taskId: number, page = 0, size = 10) {
-  return useQuery({
-    queryKey: ["taskApplications", taskId, page, size],
-    queryFn: () => fetchTaskApplications(taskId, { page, size }),
-    enabled: !!taskId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  return useQuery(taskQueries.applications(taskId, page, size));
 }

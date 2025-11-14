@@ -1,6 +1,6 @@
 import type { ApplicationWithDetails } from "../types";
 import { formatDate, formatTime } from "../../../utils/generalFunctions";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 
 type ApplicationListRow = ApplicationWithDetails & {
   task?: {
@@ -113,14 +113,8 @@ export default function ApplicationToList({
     }
   };
 
-  const renderApplicationCard = (
-    application: ApplicationListRow,
-    index: number
-  ) => {
-    const categories =
-      application.task?.categories ??
-      application.categories?.map((title) => ({ title })) ??
-      [];
+  const renderApplicationCard = (application: ApplicationListRow, index: number) => {
+    const categories = application.task?.categories ?? application.categories?.map((title) => ({ title })) ?? [];
     const primaryCategory = categories[0]?.title ?? "OTHER";
     const categoryIcon = getCategoryIcon(primaryCategory);
     const categoryBg = getCategoryColor(primaryCategory);
@@ -129,40 +123,26 @@ export default function ApplicationToList({
 
     const location = application.task?.locations?.[0];
     const locationLabel = location
-      ? [
-          location.streetAddress,
-          location.city?.toUpperCase(),
-          location.postalCode,
-        ]
-          .filter(Boolean)
-          .join(" ") || "Ei sijaintitietoja"
+      ? [location.streetAddress, location.city?.toUpperCase(), location.postalCode].filter(Boolean).join(" ") ||
+        "Ei sijaintitietoja"
       : "Ei sijaintitietoja";
 
     return (
       <div
         key={taskId ?? index}
         className={`bg-white rounded-lg border border-gray-200 transition-all duration-200 ${
-          isClickable
-            ? "hover:shadow-lg hover:border-green-400 cursor-pointer"
-            : "cursor-default"
+          isClickable ? "hover:shadow-lg hover:border-green-400 cursor-pointer" : "cursor-default"
         } overflow-hidden`}
         onClick={
           isClickable
-            ? () =>
-                navigate(`/tasks/${taskId}`, {
-                  state: { from: "applications" },
-                })
+            ? () => navigate({ to: "/worker/my-applications/$taskId", params: { taskId: taskId.toString() } })
             : undefined
         }
       >
         <div className="flex items-start justify-between gap-6">
           <div className="flex items-start gap-4 flex-shrink-0 pr-2">
-            <div
-              className={`w-32 h-32 ${categoryBg} rounded-md flex items-center justify-center`}
-            >
-              <span className="material-icons text-gray-600 text-4xl">
-                {categoryIcon}
-              </span>
+            <div className={`w-32 h-32 ${categoryBg} rounded-md flex items-center justify-center`}>
+              <span className="material-icons text-gray-600 text-4xl">{categoryIcon}</span>
             </div>
             <div className="pt-4">
               <span
@@ -187,35 +167,23 @@ export default function ApplicationToList({
             </div>
           </div>
           <div className="flex-1 mt-2 min-w-0">
-            <h3 className="text-xl font-bold text-gray-800 mb-1">
-              {application.task?.title ?? application.taskTitle}
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">{application.task?.title ?? application.taskTitle}</h3>
             <div className="flex items-center text-gray-600 text-sm mb-1">
-              <span className="material-icons text-green-500 text-sm mr-1">
-                location_on
-              </span>
+              <span className="material-icons text-green-500 text-sm mr-1">location_on</span>
               <span>{locationLabel}</span>
             </div>
             <div className="flex items-center text-gray-600 text-sm mb-1">
-              <span className="material-icons text-green-500 text-sm mr-1">
-                event
-              </span>
+              <span className="material-icons text-green-500 text-sm mr-1">event</span>
               <span>{formatDate(application.timeSuggestion)}</span>
             </div>
             <div className="flex items-center text-gray-600 text-sm">
-              <span className="material-icons text-green-500 text-sm mr-1">
-                schedule
-              </span>
+              <span className="material-icons text-green-500 text-sm mr-1">schedule</span>
               <span>{formatTime(application.timeSuggestion)}</span>
             </div>
           </div>
           <div className="text-right pt-9 pr-5 flex-shrink-0">
-            <div className="text-green-600 font-bold text-xl whitespace-nowrap">
-              {application.priceSuggestion} €
-            </div>
-            <div className="text-sm font-bold text-gray-600 whitespace-nowrap">
-              Hintaehdotus
-            </div>
+            <div className="text-green-600 font-bold text-xl whitespace-nowrap">{application.priceSuggestion} €</div>
+            <div className="text-sm font-bold text-gray-600 whitespace-nowrap">Hintaehdotus</div>
           </div>
         </div>
       </div>
@@ -242,9 +210,7 @@ export default function ApplicationToList({
   return (
     <section className="bg-white rounded-lg shadow-lg p-6 md:p-8 max-w-4xl mx-auto">
       <div className="space-y-4">
-        {applications.map((application, index) =>
-          renderApplicationCard(application, index)
-        )}
+        {applications.map((application, index) => renderApplicationCard(application, index))}
         <div className="flex items-center justify-center mt-6">
           <div className="flex items-center space-x-2">
             <button
@@ -261,11 +227,7 @@ export default function ApplicationToList({
             </button>
 
             {getPageNumbers().map((pageNum) => (
-              <button
-                key={pageNum}
-                onClick={() => onPageChange(pageNum)}
-                className="px-3 py-2 text-sm font-medium"
-              >
+              <button key={pageNum} onClick={() => onPageChange(pageNum)} className="px-3 py-2 text-sm font-medium">
                 {pageNum + 1} / {totalPages}
               </button>
             ))}
