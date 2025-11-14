@@ -39,6 +39,7 @@ import { Route as AuthenticatedWorkerMyApplicationsPastIndexRouteImport } from '
 import { Route as AuthenticatedWorkerMyApplicationsActiveIndexRouteImport } from './routes/_authenticated/worker/my-applications/active/index'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdIndexRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/index'
 import { Route as AuthenticatedWorkerDashboardPaymentsIndexRouteImport } from './routes/_authenticated/worker/dashboard/payments/index'
+import { Route as AuthenticatedEmployerMyTasksTaskIdIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/index'
 import { Route as AuthenticatedEmployerMyProflieReviewsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/reviews/index'
 import { Route as AuthenticatedEmployerMyProfliePaymentsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/payments/index'
 import { Route as AuthenticatedEmployerMyProflieDetailsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/details/index'
@@ -53,11 +54,10 @@ import { Route as AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRouteI
 import { Route as AuthenticatedEmployerMyProflieReviewsReviewIdRouteImport } from './routes/_authenticated/employer/my-proflie/reviews/$reviewId'
 import { Route as AuthenticatedEmployerMyProfliePaymentsPaymentIdRouteImport } from './routes/_authenticated/employer/my-proflie/payments/$paymentId'
 import { Route as AuthenticatedEmployerMyProflieDetailsEditRouteImport } from './routes/_authenticated/employer/my-proflie/details/edit'
-import { Route as AuthenticatedEmployerMyTasksTaskIdTsxIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/index'
-import { Route as AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/details/index'
-import { Route as AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/applcations/index'
-import { Route as AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/details/edit'
-import { Route as AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId.tsx/applcations/$username'
+import { Route as AuthenticatedEmployerMyTasksTaskIdDetailsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/details/index'
+import { Route as AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/applications/index'
+import { Route as AuthenticatedEmployerMyTasksTaskIdDetailsEditRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/details/edit'
+import { Route as AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/applications/$username'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -229,6 +229,12 @@ const AuthenticatedWorkerDashboardPaymentsIndexRoute =
     path: '/dashboard/payments/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedEmployerMyTasksTaskIdIndexRoute =
+  AuthenticatedEmployerMyTasksTaskIdIndexRouteImport.update({
+    id: '/my-tasks/$taskId/',
+    path: '/my-tasks/$taskId/',
+    getParentRoute: () => AuthenticatedEmployerRoute,
+  } as any)
 const AuthenticatedEmployerMyProflieReviewsIndexRoute =
   AuthenticatedEmployerMyProflieReviewsIndexRouteImport.update({
     id: '/my-proflie/reviews/',
@@ -313,34 +319,28 @@ const AuthenticatedEmployerMyProflieDetailsEditRoute =
     path: '/my-proflie/details/edit',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
-const AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute =
-  AuthenticatedEmployerMyTasksTaskIdTsxIndexRouteImport.update({
-    id: '/my-tasks/$taskId/tsx/',
-    path: '/my-tasks/$taskId/tsx/',
+const AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute =
+  AuthenticatedEmployerMyTasksTaskIdDetailsIndexRouteImport.update({
+    id: '/my-tasks/$taskId/details/',
+    path: '/my-tasks/$taskId/details/',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
-const AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute =
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRouteImport.update({
-    id: '/my-tasks/$taskId/tsx/details/',
-    path: '/my-tasks/$taskId/tsx/details/',
+const AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute =
+  AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRouteImport.update({
+    id: '/my-tasks/$taskId/applications/',
+    path: '/my-tasks/$taskId/applications/',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
-const AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute =
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRouteImport.update({
-    id: '/my-tasks/$taskId/tsx/applcations/',
-    path: '/my-tasks/$taskId/tsx/applcations/',
+const AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute =
+  AuthenticatedEmployerMyTasksTaskIdDetailsEditRouteImport.update({
+    id: '/my-tasks/$taskId/details/edit',
+    path: '/my-tasks/$taskId/details/edit',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
-const AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute =
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRouteImport.update({
-    id: '/my-tasks/$taskId/tsx/details/edit',
-    path: '/my-tasks/$taskId/tsx/details/edit',
-    getParentRoute: () => AuthenticatedEmployerRoute,
-  } as any)
-const AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute =
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRouteImport.update({
-    id: '/my-tasks/$taskId/tsx/applcations/$username',
-    path: '/my-tasks/$taskId/tsx/applcations/$username',
+const AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute =
+  AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRouteImport.update({
+    id: '/my-tasks/$taskId/applications/$username',
+    path: '/my-tasks/$taskId/applications/$username',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
 
@@ -378,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/employer/my-proflie/details': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/employer/my-proflie/payments': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/employer/my-proflie/reviews': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
+  '/employer/my-tasks/$taskId': typeof AuthenticatedEmployerMyTasksTaskIdIndexRoute
   '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
@@ -387,11 +388,10 @@ export interface FileRoutesByFullPath {
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
-  '/employer/my-tasks/$taskId/tsx': typeof AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute
-  '/employer/my-tasks/$taskId/tsx/applcations/$username': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute
-  '/employer/my-tasks/$taskId/tsx/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute
-  '/employer/my-tasks/$taskId/tsx/applcations': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute
-  '/employer/my-tasks/$taskId/tsx/details': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute
+  '/employer/my-tasks/$taskId/applications/$username': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute
+  '/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
+  '/employer/my-tasks/$taskId/applications': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
+  '/employer/my-tasks/$taskId/details': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -425,6 +425,7 @@ export interface FileRoutesByTo {
   '/employer/my-proflie/details': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/employer/my-proflie/payments': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/employer/my-proflie/reviews': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
+  '/employer/my-tasks/$taskId': typeof AuthenticatedEmployerMyTasksTaskIdIndexRoute
   '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
@@ -434,11 +435,10 @@ export interface FileRoutesByTo {
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
-  '/employer/my-tasks/$taskId/tsx': typeof AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute
-  '/employer/my-tasks/$taskId/tsx/applcations/$username': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute
-  '/employer/my-tasks/$taskId/tsx/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute
-  '/employer/my-tasks/$taskId/tsx/applcations': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute
-  '/employer/my-tasks/$taskId/tsx/details': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute
+  '/employer/my-tasks/$taskId/applications/$username': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute
+  '/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
+  '/employer/my-tasks/$taskId/applications': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
+  '/employer/my-tasks/$taskId/details': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -477,6 +477,7 @@ export interface FileRoutesById {
   '/_authenticated/employer/my-proflie/details/': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/_authenticated/employer/my-proflie/payments/': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/_authenticated/employer/my-proflie/reviews/': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
+  '/_authenticated/employer/my-tasks/$taskId/': typeof AuthenticatedEmployerMyTasksTaskIdIndexRoute
   '/_authenticated/worker/dashboard/payments/': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/_authenticated/worker/my-applications/$taskId/': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/_authenticated/worker/my-applications/active/': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
@@ -486,11 +487,10 @@ export interface FileRoutesById {
   '/_authenticated/worker/own-tasks/past/': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/_authenticated/worker/own-tasks/to-do/': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/_authenticated/worker/own-tasks/waiting-approval/': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
-  '/_authenticated/employer/my-tasks/$taskId/tsx/': typeof AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute
-  '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/$username': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute
-  '/_authenticated/employer/my-tasks/$taskId/tsx/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute
-  '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/': typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute
-  '/_authenticated/employer/my-tasks/$taskId/tsx/details/': typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute
+  '/_authenticated/employer/my-tasks/$taskId/applications/$username': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute
+  '/_authenticated/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
+  '/_authenticated/employer/my-tasks/$taskId/applications/': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
+  '/_authenticated/employer/my-tasks/$taskId/details/': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -528,6 +528,7 @@ export interface FileRouteTypes {
     | '/employer/my-proflie/details'
     | '/employer/my-proflie/payments'
     | '/employer/my-proflie/reviews'
+    | '/employer/my-tasks/$taskId'
     | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
@@ -537,11 +538,10 @@ export interface FileRouteTypes {
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
-    | '/employer/my-tasks/$taskId/tsx'
-    | '/employer/my-tasks/$taskId/tsx/applcations/$username'
-    | '/employer/my-tasks/$taskId/tsx/details/edit'
-    | '/employer/my-tasks/$taskId/tsx/applcations'
-    | '/employer/my-tasks/$taskId/tsx/details'
+    | '/employer/my-tasks/$taskId/applications/$username'
+    | '/employer/my-tasks/$taskId/details/edit'
+    | '/employer/my-tasks/$taskId/applications'
+    | '/employer/my-tasks/$taskId/details'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -575,6 +575,7 @@ export interface FileRouteTypes {
     | '/employer/my-proflie/details'
     | '/employer/my-proflie/payments'
     | '/employer/my-proflie/reviews'
+    | '/employer/my-tasks/$taskId'
     | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
@@ -584,11 +585,10 @@ export interface FileRouteTypes {
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
-    | '/employer/my-tasks/$taskId/tsx'
-    | '/employer/my-tasks/$taskId/tsx/applcations/$username'
-    | '/employer/my-tasks/$taskId/tsx/details/edit'
-    | '/employer/my-tasks/$taskId/tsx/applcations'
-    | '/employer/my-tasks/$taskId/tsx/details'
+    | '/employer/my-tasks/$taskId/applications/$username'
+    | '/employer/my-tasks/$taskId/details/edit'
+    | '/employer/my-tasks/$taskId/applications'
+    | '/employer/my-tasks/$taskId/details'
   id:
     | '__root__'
     | '/'
@@ -626,6 +626,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employer/my-proflie/details/'
     | '/_authenticated/employer/my-proflie/payments/'
     | '/_authenticated/employer/my-proflie/reviews/'
+    | '/_authenticated/employer/my-tasks/$taskId/'
     | '/_authenticated/worker/dashboard/payments/'
     | '/_authenticated/worker/my-applications/$taskId/'
     | '/_authenticated/worker/my-applications/active/'
@@ -635,11 +636,10 @@ export interface FileRouteTypes {
     | '/_authenticated/worker/own-tasks/past/'
     | '/_authenticated/worker/own-tasks/to-do/'
     | '/_authenticated/worker/own-tasks/waiting-approval/'
-    | '/_authenticated/employer/my-tasks/$taskId/tsx/'
-    | '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/$username'
-    | '/_authenticated/employer/my-tasks/$taskId/tsx/details/edit'
-    | '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/'
-    | '/_authenticated/employer/my-tasks/$taskId/tsx/details/'
+    | '/_authenticated/employer/my-tasks/$taskId/applications/$username'
+    | '/_authenticated/employer/my-tasks/$taskId/details/edit'
+    | '/_authenticated/employer/my-tasks/$taskId/applications/'
+    | '/_authenticated/employer/my-tasks/$taskId/details/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -860,6 +860,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerDashboardPaymentsIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/employer/my-tasks/$taskId/': {
+      id: '/_authenticated/employer/my-tasks/$taskId/'
+      path: '/my-tasks/$taskId'
+      fullPath: '/employer/my-tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdIndexRouteImport
+      parentRoute: typeof AuthenticatedEmployerRoute
+    }
     '/_authenticated/employer/my-proflie/reviews/': {
       id: '/_authenticated/employer/my-proflie/reviews/'
       path: '/my-proflie/reviews'
@@ -958,39 +965,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEmployerMyProflieDetailsEditRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
-    '/_authenticated/employer/my-tasks/$taskId/tsx/': {
-      id: '/_authenticated/employer/my-tasks/$taskId/tsx/'
-      path: '/my-tasks/$taskId/tsx'
-      fullPath: '/employer/my-tasks/$taskId/tsx'
-      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxIndexRouteImport
+    '/_authenticated/employer/my-tasks/$taskId/details/': {
+      id: '/_authenticated/employer/my-tasks/$taskId/details/'
+      path: '/my-tasks/$taskId/details'
+      fullPath: '/employer/my-tasks/$taskId/details'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
-    '/_authenticated/employer/my-tasks/$taskId/tsx/details/': {
-      id: '/_authenticated/employer/my-tasks/$taskId/tsx/details/'
-      path: '/my-tasks/$taskId/tsx/details'
-      fullPath: '/employer/my-tasks/$taskId/tsx/details'
-      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRouteImport
+    '/_authenticated/employer/my-tasks/$taskId/applications/': {
+      id: '/_authenticated/employer/my-tasks/$taskId/applications/'
+      path: '/my-tasks/$taskId/applications'
+      fullPath: '/employer/my-tasks/$taskId/applications'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
-    '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/': {
-      id: '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/'
-      path: '/my-tasks/$taskId/tsx/applcations'
-      fullPath: '/employer/my-tasks/$taskId/tsx/applcations'
-      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRouteImport
+    '/_authenticated/employer/my-tasks/$taskId/details/edit': {
+      id: '/_authenticated/employer/my-tasks/$taskId/details/edit'
+      path: '/my-tasks/$taskId/details/edit'
+      fullPath: '/employer/my-tasks/$taskId/details/edit'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
-    '/_authenticated/employer/my-tasks/$taskId/tsx/details/edit': {
-      id: '/_authenticated/employer/my-tasks/$taskId/tsx/details/edit'
-      path: '/my-tasks/$taskId/tsx/details/edit'
-      fullPath: '/employer/my-tasks/$taskId/tsx/details/edit'
-      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRouteImport
-      parentRoute: typeof AuthenticatedEmployerRoute
-    }
-    '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/$username': {
-      id: '/_authenticated/employer/my-tasks/$taskId/tsx/applcations/$username'
-      path: '/my-tasks/$taskId/tsx/applcations/$username'
-      fullPath: '/employer/my-tasks/$taskId/tsx/applcations/$username'
-      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRouteImport
+    '/_authenticated/employer/my-tasks/$taskId/applications/$username': {
+      id: '/_authenticated/employer/my-tasks/$taskId/applications/$username'
+      path: '/my-tasks/$taskId/applications/$username'
+      fullPath: '/employer/my-tasks/$taskId/applications/$username'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
   }
@@ -1009,11 +1009,11 @@ interface AuthenticatedEmployerRouteChildren {
   AuthenticatedEmployerMyProflieDetailsIndexRoute: typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   AuthenticatedEmployerMyProfliePaymentsIndexRoute: typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   AuthenticatedEmployerMyProflieReviewsIndexRoute: typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
-  AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute
+  AuthenticatedEmployerMyTasksTaskIdIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdIndexRoute
+  AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute: typeof AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute
+  AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
+  AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
+  AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
 }
 
 const AuthenticatedEmployerRouteChildren: AuthenticatedEmployerRouteChildren = {
@@ -1040,16 +1040,16 @@ const AuthenticatedEmployerRouteChildren: AuthenticatedEmployerRouteChildren = {
     AuthenticatedEmployerMyProfliePaymentsIndexRoute,
   AuthenticatedEmployerMyProflieReviewsIndexRoute:
     AuthenticatedEmployerMyProflieReviewsIndexRoute,
-  AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute:
-    AuthenticatedEmployerMyTasksTaskIdTsxIndexRoute,
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute:
-    AuthenticatedEmployerMyTasksTaskIdTsxApplcationsUsernameRoute,
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute:
-    AuthenticatedEmployerMyTasksTaskIdTsxDetailsEditRoute,
-  AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute:
-    AuthenticatedEmployerMyTasksTaskIdTsxApplcationsIndexRoute,
-  AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute:
-    AuthenticatedEmployerMyTasksTaskIdTsxDetailsIndexRoute,
+  AuthenticatedEmployerMyTasksTaskIdIndexRoute:
+    AuthenticatedEmployerMyTasksTaskIdIndexRoute,
+  AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute:
+    AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute,
+  AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute:
+    AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute,
+  AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute:
+    AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute,
+  AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute:
+    AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute,
 }
 
 const AuthenticatedEmployerRouteWithChildren =

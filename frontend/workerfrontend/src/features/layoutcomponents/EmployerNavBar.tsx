@@ -4,7 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "@tanstack/react-router";
 
 export default function EmployerNavBar() {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   return (
     <header className="bg-gradient-to-r from-green-600 to-green-500 shadow-lg sticky top-0 z-50 border-b-2 border-green-700">
       {/* navigaatio */}
@@ -61,7 +61,7 @@ export default function EmployerNavBar() {
           >
             Ryhdy työntekijäksi
           </Link>
-          {isAuthenticated ? (
+          {isAuthenticated && (
             <Link
               to="/employer/my-proflie"
               className="
@@ -84,29 +84,6 @@ export default function EmployerNavBar() {
             >
               Profiili
             </Link>
-          ) : (
-            <button
-              onClick={() => loginWithRedirect()}
-              className="
-              bg-white
-              text-green-600 
-              px-5
-              py-2.5
-              rounded-lg
-              hover:bg-green-700
-              hover:text-white
-              hover:shadow-xl
-              hover:scale-105
-              text-sm 
-              font-bold
-              transition-all
-              duration-200
-              border-2
-              border-white
-              shadow-md"
-            >
-              Profiili
-            </button>
           )}
           <div className="hidden lg:flex items-center space-x-3">
             <LoginButton />

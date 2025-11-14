@@ -1,24 +1,30 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { useDeleteTask } from "../../../../features/task/hooks/useDeleteTask";
 import { useAuth0 } from "@auth0/auth0-react";
+import { taskQueries } from "../../../../features/task/queries/taskQueries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import type { Task } from "../../../../features/task/types";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/employer/my-tasks/")({
   component: MyTasksPage,
+  loader: async ({ context }) => {
+    return context.queryClient.ensureQueryData(taskQueries.own(context.auth.getAccessToken, { page: 0, size: 5 }));
+  },
 });
 
 function MyTasksPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
-  const pageSize = 6;
+  const pageSize = 5;
   const deleteTaskMutation = useDeleteTask();
   const [banner, setBanner] = useState<null | {
     type: "success" | "error";
     message: string;
   }>(null);
 
-  const { data, isLoading, isError } = useUserTasks({ page, size: pageSize });
+  const { data } = useSuspenseQuery(taskQueries.own(getAccessTokenSilently, { page: page, size: pageSize }));
 
   const tasks = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
@@ -46,41 +52,12 @@ function MyTasksPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-lg border border-gray-200 bg-white px-6 py-4 text-gray-600 shadow-sm">
-          Ladataan kirjautumistietoja...
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <h1 className="mb-4 text-2xl font-semibold text-gray-800">Kirjaudu tarkastellaksesi omia työilmoituksiasi</h1>
-          <p className="mb-6 text-gray-600">
-            Sinun tulee olla kirjautuneena nähdäksesi ja hallitaksesi omia ilmoituksiasi.
-          </p>
-          <button
-            onClick={() => loginWithRedirect({ appState: { returnTo: "/my-tasks" } })}
-            className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
-          >
-            Kirjaudu sisään
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-800">Omat työilmoitukset</h1>
         <button
-          onClick={() => navigate("/create-task")}
+          onClick={() => navigate({ to: "/employer/create-task" })}
           className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700"
         >
           <span className="material-icons text-base">add</span>
@@ -103,25 +80,13 @@ function MyTasksPage() {
         </div>
       )}
 
-      {isLoading && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-600 shadow-sm">
-          Ladataan ilmoituksia...
-        </div>
-      )}
-
-      {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700 shadow-sm">
-          Ilmoitusten lataaminen epäonnistui.
-        </div>
-      )}
-
-      {!isLoading && !isError && tasks.length === 0 && (
+      {tasks.length === 0 && (
         <div className="rounded-lg border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
           Sinulla ei ole vielä työilmoituksia. Luo ensimmäinen ilmoitus painamalla "Uusi ilmoitus" -painiketta.
         </div>
       )}
 
-      {!isLoading && !isError && tasks.length > 0 && (
+      {tasks.length > 0 && (
         <div className="space-y-4">
           {tasks.map((task) => {
             const isDeleting = deleteTaskMutation.isPending && deleteTaskMutation.variables?.taskId === task.id;
@@ -129,8 +94,12 @@ function MyTasksPage() {
               <TaskCard
                 key={task.id}
                 task={task}
-                onView={() => navigate(`/my-tasks/${task.id}`)}
-                onEdit={() => navigate(`/edit-task/${task.id}`)}
+                onView={() =>
+                  navigate({ to: "/employer/my-tasks/$taskId/details", params: { taskId: task.id.toString() } })
+                }
+                onEdit={() =>
+                  navigate({ to: "/employer/my-tasks/$taskId/details/edit", params: { taskId: task.id.toString() } })
+                }
                 onDelete={() => handleDelete(task)}
                 isDeleting={isDeleting}
               />
@@ -139,7 +108,7 @@ function MyTasksPage() {
         </div>
       )}
 
-      {!isLoading && !isError && totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="mt-8 flex items-center justify-between">
           <button
             onClick={() => setPage((prev) => Math.max(prev - 1, 0))}

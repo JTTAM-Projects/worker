@@ -10,7 +10,10 @@ import { Outlet } from "react-router-dom";
 
 export const Route = createFileRoute("/_authenticated/worker/tasks/$taskId")({
   loader: ({ context: { queryClient }, params: { taskId } }) => {
-    return queryClient.ensureQueryData(taskQueries.detail(taskId));
+    return (
+      queryClient.ensureQueryData(taskQueries.detail(taskId)),
+      queryClient.ensureQueryData(taskQueries.applications(parseInt(taskId)))
+    );
   },
   component: TaskDetailPage,
 });
@@ -23,6 +26,7 @@ function TaskDetailPage() {
 
   const taskId = Route.useParams().taskId;
   const { data: task } = useSuspenseQuery(taskQueries.detail(taskId));
+  const { data: applications } = useSuspenseQuery(taskQueries.applications(parseInt(taskId)));
 
   const showFeedback = (type: "success" | "error", message: string) => {
     setFeedback({ type, message });
@@ -66,7 +70,7 @@ function TaskDetailPage() {
       <Outlet />
 
       <div className="mt-8">
-        <ApplicationsList taskId={task.id} />
+        <ApplicationsList applications={applications} taskId={taskId} />
       </div>
     </main>
   );

@@ -1,5 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchTaskApplications, fetchTaskById, fetchTasks, type FetchTasksParams } from "../api/taskApi";
+import {
+  fetchTaskApplications,
+  fetchTaskById,
+  fetchTasks,
+  fetchUserTasks,
+  type FetchTasksParams,
+} from "../api/taskApi";
 
 export const taskQueries = {
   all: (params: FetchTasksParams = { status: "ACTIVE", sortBy: "newest" }) =>
@@ -23,9 +29,10 @@ export const taskQueries = {
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
 
-  own: (params: FetchTasksParams = {}) =>
+  own: (getAccessTokenSilently: () => Promise<string>, params: FetchTasksParams = {}) =>
     queryOptions({
       queryKey: ["tasks", "own", params],
+      queryFn: () => fetchUserTasks(getAccessTokenSilently, params),
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
 };

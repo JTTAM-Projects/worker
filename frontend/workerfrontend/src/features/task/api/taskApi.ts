@@ -133,7 +133,7 @@ export async function fetchTasks(
 
 // Fetch user's own tasks (requires authentication)
 export async function fetchUserTasks(
-  token: string,
+  getAccessToken: () => Promise<string>,
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
   const { 
@@ -149,6 +149,8 @@ export async function fetchUserTasks(
     status,
     sortBy
   } = params;
+
+  const token = await getAccessToken();
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
