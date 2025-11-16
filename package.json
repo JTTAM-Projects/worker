@@ -1,12 +1,27 @@
 {
-  "dependencies": {
-    "@tanstack/react-query": "^5.90.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "This project is a desktop-first (mobile-optimized) application designed to connect individuals seeking help (\"Employers\") with skilled individuals looking for work (\"Taskers\"). The platform facilitates the entire process from posting a job to secure payment and feedback.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.9",
-    "typescript": "^5.9.2"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JTTAM-Projects/worker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JTTAM-Projects/worker/issues"
+  },
+  "homepage": "https://github.com/JTTAM-Projects/worker#readme",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+  
 }
