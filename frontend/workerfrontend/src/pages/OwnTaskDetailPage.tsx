@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useTaskById } from "../features/task/hooks/useTaskById";
+import { useTaskById, useTaskApplications } from "../features/task/hooks";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/application/components/ApplicationsList";
 import TaskDetails from "../features/task/components/TaskDetails";
@@ -18,6 +18,7 @@ export default function OwnTaskDetailPage() {
   const { taskId } = useParams<{ taskId: string }>();
   const numericTaskId = taskId ? Number(taskId) : NaN;
   const { data: task, isLoading, isError } = useTaskById(numericTaskId);
+  const { data: applications } = useTaskApplications(numericTaskId);
   const updateApplicationStatus = useUpdateApplicationStatus();
   const lastStatus = updateApplicationStatus.variables?.status;
   const deleteTaskMutation = useDeleteTask();
@@ -244,10 +245,13 @@ export default function OwnTaskDetailPage() {
               </>
             ) : (
               <>
-                <ApplicationsList
-                  taskId={task.id}
-                  onSelect={setSelectedApplication}
-                />
+                {applications && (
+                  <ApplicationsList
+                    applications={applications}
+                    taskId={task.id.toString()}
+                    onSelect={setSelectedApplication}
+                  />
+                )}
                 {selectedApplication && (
                   <ApplicationModal
                     application={selectedApplication}

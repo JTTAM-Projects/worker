@@ -1,128 +1,140 @@
-import { useState, useEffect } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useEffect } from "react";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
+import { TaskMap } from "../features/task/components/TaskMap";
 import type { TaskFilters, ViewMode } from "../features/task/types";
-import { useTasks } from "../features/task/hooks/useTasks";
+import { useTasks, useAllFilteredTasks } from "../features/task/hooks";
 import { Pagination } from "../ui-library";
 
-const FILTER_STORAGE_KEY = "taskPageFilters";
-const PAGE_STORAGE_KEY = "taskPageNumber";
-
-/**
- * Load filters from sessionStorage
- */
-function loadFiltersFromStorage(): TaskFilters {
-  try {
-    const stored = sessionStorage.getItem(FILTER_STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error("Failed to load filters from storage:", error);
-  }
-  // Default filters
-  return {
-    status: "ACTIVE",
-    sortBy: "newest",
-  };
-}
-
-/**
- * Save filters to sessionStorage
- */
-function saveFiltersToStorage(filters: TaskFilters): void {
-  try {
-    sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
-  } catch (error) {
-    console.error("Failed to save filters to storage:", error);
-  }
-}
-
-/**
- * Load page number from sessionStorage
- */
-function loadPageFromStorage(): number {
-  try {
-    const stored = sessionStorage.getItem(PAGE_STORAGE_KEY);
-    if (stored) {
-      return parseInt(stored, 10);
-    }
-  } catch (error) {
-    console.error("Failed to load page from storage:", error);
-  }
-  return 0;
-}
-
-/**
- * Save page number to sessionStorage
- */
-function savePageToStorage(page: number): void {
-  try {
-    sessionStorage.setItem(PAGE_STORAGE_KEY, page.toString());
-  } catch (error) {
-    console.error("Failed to save page to storage:", error);
-  }
-}
-
 export default function TaskPage() {
-  const [page, setPage] = useState(loadPageFromStorage);
-  const [filters, setFilters] = useState<TaskFilters>(loadFiltersFromStorage);
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const navigate = useNavigate({ from: "/worker/tasks" });
+  const search = useSearch({ from: "/_authenticated/worker/tasks/" });
 
-  // Save filters to sessionStorage whenever they change
+  // Save search params to sessionStorage whenever they change
   useEffect(() => {
-    saveFiltersToStorage(filters);
-  }, [filters]);
+    if (Object.keys(search).length > 0) {
+      sessionStorage.setItem('worker-tasks-search', JSON.stringify(search));
+    }
+  }, [search]);
 
-  // Save page to sessionStorage whenever it changes
-  useEffect(() => {
-    savePageToStorage(page);
-  }, [page]);
+  // Build filters from search params with defaults
+  const filters: TaskFilters = {
+    status: (search.status as TaskFilters['status']) ?? "ACTIVE",
+    sortBy: (search.sortBy as TaskFilters['sortBy']) ?? "newest",
+    searchText: search.searchText,
+    categories: search.categories,
+    minPrice: search.minPrice,
+    maxPrice: search.maxPrice,
+    latitude: search.latitude,
+    longitude: search.longitude,
+    radiusKm: search.radiusKm,
+    locationText: search.locationText,
+  };
 
-  const { data, isLoading, isError, error } = useTasks({
+  const viewMode: ViewMode = search.view ?? "list";
+  const page = search.page ?? 0;
+
+  // Fetch paginated tasks for list view
+  const {
+    data: taskPage,
+    isLoading: isLoadingList,
+    isError: isErrorList,
+    error: listError,
+  } = useTasks({
     page,
     size: 20,
     ...filters,
   });
 
+  // Fetch all filtered tasks for map view (up to 1000)
+  const {
+    data: mapTasksPage,
+    isLoading: isLoadingMap,
+    isError: isErrorMap,
+    error: mapError,
+  } = useAllFilteredTasks(filters, {
+    enabled: viewMode === "map", // Only fetch when in map view
+  });
+
+  const isLoading = viewMode === "list" ? isLoadingList : isLoadingMap;
+  const isError = viewMode === "list" ? isErrorList : isErrorMap;
+  const error = viewMode === "list" ? listError : mapError;
+  const data = viewMode === "list" ? taskPage : mapTasksPage;
+
+  // Update filters and reset to page 0
+  const updateFilters = (newFilters: TaskFilters, resetPage = true) => {
+    navigate({
+      search: {
+        ...search,
+        ...newFilters,
+        page: resetPage ? 0 : search.page,
+      },
+    });
+  };
+
+  // Update view mode
+  const updateViewMode = (newViewMode: ViewMode) => {
+    navigate({
+      search: {
+        ...search,
+        view: newViewMode,
+      },
+    });
+  };
+
+  // Update page
+  const updatePage = (newPage: number) => {
+    navigate({
+      search: {
+        ...search,
+        page: newPage,
+      },
+    });
+  };
+
   const handleRemoveFilter = (filterKey: keyof TaskFilters, value?: string) => {
-    const newFilters = { ...filters };
+    const newSearch = { ...search };
     
     if (filterKey === 'categories' && value) {
       // Remove specific category
-      newFilters.categories = filters.categories?.filter(c => c !== value);
-      if (newFilters.categories?.length === 0) {
-        delete newFilters.categories;
+      newSearch.categories = search.categories?.filter(c => c !== value);
+      if (newSearch.categories?.length === 0) {
+        delete newSearch.categories;
       }
     } else if (filterKey === 'minPrice' || filterKey === 'maxPrice') {
       // Remove both price filters
-      delete newFilters.minPrice;
-      delete newFilters.maxPrice;
+      delete newSearch.minPrice;
+      delete newSearch.maxPrice;
     } else if (filterKey === 'latitude' || filterKey === 'longitude') {
       // Remove location filters
-      delete newFilters.latitude;
-      delete newFilters.longitude;
-      delete newFilters.radiusKm;
+      delete newSearch.latitude;
+      delete newSearch.longitude;
+      delete newSearch.radiusKm;
+      delete newSearch.locationText;
     } else {
       // Remove single filter
-      delete newFilters[filterKey];
+      delete newSearch[filterKey as keyof typeof newSearch];
     }
     
-    setFilters(newFilters);
-    setPage(0);
+    navigate({
+      search: {
+        ...newSearch,
+        page: 0,
+      },
+    });
   };
 
   const handleResetFilters = () => {
-    const resetFilters: TaskFilters = { 
-      status: "ACTIVE",
-      sortBy: "newest"
-    };
-    setFilters(resetFilters);
-    setPage(0);
-    // Clear storage when explicitly resetting
-    sessionStorage.removeItem(FILTER_STORAGE_KEY);
-    sessionStorage.removeItem(PAGE_STORAGE_KEY);
+    navigate({
+      search: {
+        page: 0,
+        view: search.view,
+        status: "ACTIVE",
+        sortBy: "newest",
+      },
+    });
   };
 
   if (isLoading) {
@@ -137,7 +149,7 @@ export default function TaskPage() {
     return (
       <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
         <div className="text-center text-red-600">
-          Virhe ladattaessa tehtäviä: {error.message}
+          Virhe ladattaessa tehtäviä: {error?.message || "Tuntematon virhe"}
         </div>
       </main>
     );
@@ -152,10 +164,7 @@ export default function TaskPage() {
         
         <TaskFilterPanel
           filters={filters}
-          onFiltersChange={(newFilters) => {
-            setFilters(newFilters);
-            setPage(0); // Reset to first page when filters change
-          }}
+          onFiltersChange={(newFilters) => updateFilters(newFilters, true)}
           onReset={handleResetFilters}
         />
 
@@ -166,11 +175,8 @@ export default function TaskPage() {
             filters={filters}
             sortBy={filters.sortBy || 'newest'}
             viewMode={viewMode}
-            onSortChange={(sort) => {
-              setFilters({ ...filters, sortBy: sort });
-              setPage(0);
-            }}
-            onViewModeChange={setViewMode}
+            onSortChange={(sort) => updateFilters({ ...filters, sortBy: sort }, true)}
+            onViewModeChange={updateViewMode}
             onRemoveFilter={handleRemoveFilter}
           />
         )}
@@ -193,22 +199,21 @@ export default function TaskPage() {
       ) : viewMode === 'list' ? (
         <TaskList tasks={data?.content || []} />
       ) : (
-        <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-          <div className="text-center text-gray-600 py-12">
-            <span className="material-icons text-gray-400 text-6xl mb-4">map</span>
-            <p className="text-xl font-semibold mb-2">Karttanäkymä</p>
-            <p>Karttanäkymä tulossa pian...</p>
-          </div>
-        </div>
+        <TaskMap
+          tasks={mapTasksPage?.content || []}
+          totalElements={mapTasksPage?.totalElements || 0}
+          filters={filters}
+          isLoading={isLoadingMap}
+        />
       )}
 
-      {data && data.totalPages > 1 && (
+      {viewMode === 'list' && data && data.totalPages > 1 && (
         <Pagination
           currentPage={page}
           totalPages={data.totalPages}
-          onPageChange={(newPage) => setPage(newPage)}
-          onPrevious={() => setPage(page - 1)}
-          onNext={() => setPage(page + 1)}
+          onPageChange={updatePage}
+          onPrevious={() => updatePage(page - 1)}
+          onNext={() => updatePage(page + 1)}
           zeroIndexed={true}
         />
       )}

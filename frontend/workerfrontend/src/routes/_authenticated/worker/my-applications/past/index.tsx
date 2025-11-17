@@ -54,7 +54,6 @@ export default function PastApplicationsPage() {
         </button>
         <button
           className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "fhsak" })}
         >
           Työtarjoukset
         </button>

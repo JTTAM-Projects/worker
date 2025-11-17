@@ -10,13 +10,19 @@ import { useAuth0 } from "@auth0/auth0-react";
 export const Route = createFileRoute("/_authenticated/worker/my-applications/active/")({
   component: ActiveApplicationsPage,
   loader: async ({ context }) => {
-    return context.queryClient.ensureQueryData(
-      applicationQueries.ownApplications(context.auth.getAccessToken, {
-        page: 0,
-        size: 5,
-        applicationStatus: "PENDING",
-      })
-    );
+    try {
+      return await context.queryClient.ensureQueryData(
+        applicationQueries.ownApplications(context.auth.getAccessToken, {
+          page: 0,
+          size: 5,
+          applicationStatus: "PENDING",
+        })
+      );
+    } catch (error) {
+      console.error('Failed to load applications:', error);
+      // Return empty data on error to prevent crash
+      return { content: [], totalPages: 0, number: 0, first: true, last: true };
+    }
   },
 });
 
@@ -67,7 +73,6 @@ export default function ActiveApplicationsPage() {
         </button>
         <button
           className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "fhsak" })}
         >
           Työtarjoukset
         </button>

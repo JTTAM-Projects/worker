@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useGetUserDetails } from "../../../../features/Profile/hooks/userHooks";
-import { useCreateTask } from "../../../../features/task/hooks/useCreateTask";
+import { useCreateTask } from "../../../../features/task/hooks";
 import { useEffect, useMemo, useState } from "react";
 import {
   TaskWizardForm,

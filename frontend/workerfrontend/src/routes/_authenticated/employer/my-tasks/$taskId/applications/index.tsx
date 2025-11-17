@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { taskQueries } from "../../../../../../features/task/queries/taskQueries";
 import ApplicationsList from "../../../../../../features/application/components/ApplicationsList";
-import { useUpdateApplicationStatus } from "../../../../../../features/task/hooks/useUpdateApplicationStatus";
+import { useUpdateApplicationStatus } from "../../../../../../features/task/hooks";
 import { useEffect, useState } from "react";
 import ApplicationModal from "../../../../../../features/application/components/ApplicationDetailsModal";
 import { useSuspenseQuery } from "@tanstack/react-query";
