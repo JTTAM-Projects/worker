@@ -19,14 +19,14 @@ The Task feature module provides comprehensive task browsing, filtering, and man
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                 Core Components Layer                           │
+├── Core Components Layer                           │
 ├─────────────────────────────────────────────────────────────────┤
 │  TaskFilterPanel       - Advanced filtering interface           │
 │  ResultsControlBar     - Active filters + sort + view toggle    │
-│  TaskList              - Two-column card layout (list view)     │
+│  TaskList              - Responsive card grid layout             │
+│  TaskCard              - Individual task card (extracted)        │
 │  TaskMap               - Google Maps with clustering (map view) │
 │  TaskMapInfoWindow     - Marker popup with task details         │
-│  Pagination            - Page navigation controls (list only)   │
 └─────┬────────┬────────┬────────────────┬───────────────────────┘
       │        │        │                │
       │        │        │                │
@@ -82,14 +82,23 @@ Task Feature Module
 │   │   ├── View mode toggle (list/map with icons)
 │   │   └── Results count display with warning for capped results
 │   │
-│   ├── TaskList.tsx (List View)
-│   │   ├── Two-column responsive grid layout
-│   │   ├── Square image area (160px) with category icon overlay
-│   │   ├── Three content zones:
-│   │   │   - Title + Price (€)
-│   │   │   - Location (city) + Date
-│   │   │   - Poster avatar + username
-│   │   └── Color-coded category backgrounds
+│  ├── TaskList.tsx (List View Container)
+│   │   ├── Responsive grid: 1-2 columns based on screen size
+│   │   ├── Renders TaskCard components for each task
+│   │   └── Empty state handling
+│   │
+│   ├── TaskCard.tsx (Individual Task Card - Extracted Component)
+│   │   ├── Optimized with React.memo and useMemo
+│   │   ├── Four-column horizontal layout:
+│   │   │   1. Category icon block (color-coded, 96-112px square)
+│   │   │   2. Title, location(s), user info
+│   │   │   3. Description (hidden on mobile)
+│   │   │   4. Price and date
+│   │   ├── Material Icons for visual elements
+│   │   ├── Multiple locations display (+X indicator)
+│   │   ├── User initials avatar
+│   │   ├── Accessible (keyboard navigation, ARIA labels)
+│   │   └── Click/Enter navigation to task details
 │   │
 │   ├── TaskMap.tsx (Map View)
 │   │   ├── Google Maps integration (@react-google-maps/api)
@@ -143,33 +152,38 @@ Task Feature Module
     ├── ApplicationsList.tsx - List of task applications
     ├── ApplicationDetailsModal.tsx - Application detail modal
     ├── CreateTask.tsx - Task creation modal/form
-    ├── TaskWizardForm.tsx - Multi-step task creation wizard
-    ├── TaskApplyButtonActions.tsx - Task application actions
-    ├── TaskerPromoCard.tsx - Marketing card for taskers
-    ├── TaskFilter.tsx - (Legacy) Simple category filter
-    └── SearchBar.tsx - Quick text search input
+│   ├── TaskWizardForm.tsx - Multi-step task creation wizard
+│   ├── TaskerPromoCard.tsx - Marketing card for taskers
+│   ├── TaskFilter.tsx - (Legacy) Simple category filter
+│   └── SearchBar.tsx - Quick text search input
 ```
 
 ## Data Flow
 
-### 1. URL-Based State Management Flow
+### 1. URL-Based State Management Flow (with SessionStorage Persistence)
 
 ```
 Page loads
         ↓
-Parse URL searchParams
+Parse URL search params via useSearch()
+        ↓
+beforeLoad hook: If URL empty, load from sessionStorage
+        ↓
+redirect() to populate URL with saved filters
         ↓
 Extract filters, viewMode, page
         ↓
 Pass to components as props
         ↓
+useEffect: Save current search params to sessionStorage
+        ↓
 User interacts with filters
         ↓
-Component calls onFiltersChange()
+Component calls updateFilters/updatePage/etc
         ↓
-TaskPage updates URL via setSearchParams()
+TaskPage calls navigate() with new search params
         ↓
-URL change triggers re-render
+URL updates (with replace: true for tab switches)
         ↓
 TanStack Query detects new queryKey
         ↓
@@ -291,7 +305,11 @@ Output: {
 - Synchronizes internal state with external filter changes (URL updates)
 - Builds TaskFilters object for API consumption
 
-### API Integration Hooks (TanStack Query)
+### API Integration Hooks (TanStack Query v5)
+
+**Location:** `src/features/task/queries/taskQueries.tsx`
+
+All task-related queries use the **taskQueryKeys factory** for structured cache management.
 
 #### useTasks
 
@@ -307,11 +325,11 @@ Output: {
 
 **Features:**
 
-- Uses TanStack Query for caching and automatic refetching
+- Uses TanStack Query v5 for caching and automatic refetching
 - Converts frontend sortBy to Spring Pageable sort parameter
 - 5-minute stale time for cached results
 - Automatic retry on failure
-- Query key includes all filter parameters for precise cache invalidation
+- Query key: `taskQueryKeys.list(params)` for precise cache invalidation
 
 #### useAllFilteredTasks
 
@@ -331,12 +349,14 @@ Output: {
 
 - Fetches with page=0, size=1000
 - Only enabled when viewMode === 'map'
-- Shares query cache with useTasks
+- Query key: `taskQueryKeys.allFiltered(filters)`
 - Used exclusively by TaskMap component
 
 #### useUserTasks
 
 Same as useTasks but fetches only authenticated user's tasks
+
+Query key: `taskQueryKeys.userList(params)`
 
 #### useTaskById
 
@@ -350,34 +370,44 @@ Output: {
 }
 ```
 
+Query key: `taskQueryKeys.detail(id)`
+
 #### useTaskApplications
 
 Fetches all applications for a specific task
+
+Query key: `taskQueryKeys.applications(taskId, page, size)`
 
 #### useCreateTask
 
 ```typescript
 Output: {
   mutate: (taskData: CreateTaskInput) => void,
-  isLoading: boolean,
+  isPending: boolean,
   isError: boolean,
   isSuccess: boolean
 }
 ```
 
-**Mutations:** Automatically invalidates task lists cache on success
+**Mutations:** Automatically invalidates `taskQueryKeys.lists()` cache on success
 
 #### useUpdateTask
 
 Update existing task with automatic cache invalidation
 
+Invalidates: `taskQueryKeys.detail(id)` and `taskQueryKeys.lists()`
+
 #### useDeleteTask
 
 Delete task and clean up all related cache entries
 
+Invalidates: `taskQueryKeys.all` (entire task cache)
+
 #### useUpdateApplicationStatus
 
 Accept or reject task applications with cache invalidation
+
+Invalidates: `taskQueryKeys.applications(taskId, page, size)`
 
 ### Browser API Integration Hooks
 
@@ -516,27 +546,54 @@ Props: {
 
 ## State Ownership
 
-### URL State (Single Source of Truth)
+### URL State (Single Source of Truth with SessionStorage Backup)
 
-**Managed by:** TaskPage via useSearchParams()
+**Managed by:** 
+- Route: `routes/_authenticated/worker/tasks/index.tsx` (with Zod validation)
+- Page Component: `pages/TaskPage.tsx` via useSearch() and useNavigate()
 
-- filters (complete TaskFilters object)
-  - searchText
-  - categories (array)
-  - minPrice / maxPrice
-  - latitude / longitude / radiusKm
-  - locationText (display text for location)
-  - status (default: ACTIVE)
-  - sortBy (default: newest)
-- page (1-indexed in URL, 0-indexed in API)
-- viewMode (list/map, default: list)
+**State Structure (from taskSearchSchema):**
 
-**Serialization:** urlState.ts utility functions
+- page: number (optional, default: 1)
+- view: "list" | "map" (optional, default: "list")
+- status: string (optional, default: "ACTIVE")
+- sortBy: string (optional, default: "newest")
+- searchText: string (optional)
+- categories: string[] (optional)
+- minPrice: number (optional)
+- maxPrice: number (optional)
+- latitude: number (optional)
+- longitude: number (optional)
+- radiusKm: number (optional)
+- locationText: string (optional, display only)
 
-- filtersToSearchParams() - TaskFilters → URLSearchParams
-- searchParamsToFilters() - URLSearchParams → TaskFilters
-- getViewMode() - Extract view mode from URL
-- getPageNumber() - Extract page (converts 1-indexed → 0-indexed)
+**Zod Schema Validation:**
+
+All parameters are optional with no forced defaults in schema. Defaults applied in TaskPage component with `??` operator.
+
+**SessionStorage Persistence:**
+
+- Key: `'worker-tasks-search'`
+- Saved: On every search param change via useEffect in TaskPage
+- Restored: Via beforeLoad hook in route when URL params are empty
+- Used by: Logo links, navigation links (getSavedTasksSearch() helper)
+
+**Route-Level Restoration:**
+
+```typescript
+beforeLoad: ({ search }) => {
+  if (Object.keys(search).length === 0) {
+    const saved = sessionStorage.getItem('worker-tasks-search');
+    if (saved) {
+      throw redirect({
+        to: "/worker/tasks",
+        search: JSON.parse(saved),
+        replace: true,
+      });
+    }
+  }
+}
+```
 
 ### Local State (TaskFilterPanel + useFilterState)
 
@@ -564,23 +621,40 @@ Props: {
 - geocoding loading/error states
 - geolocation loading/error states
 
-### TanStack Query Cache
+### TanStack Query v5 Cache
 
-**Query Keys (taskQueryKeys.ts):**
+**Query Keys Factory (taskQueryKeys.ts):**
 
-- lists() - All task list queries
-- list(params) - Specific paginated list
-- allFiltered(filters) - Map view query (1000 tasks)
-- userLists() - User's task queries
-- detail(taskId) - Single task detail
-- applications(taskId, page, size) - Task applications
+Hierarchical structure for precise cache invalidation:
+
+```typescript
+taskQueryKeys = {
+  all: ['tasks'],                              // Invalidate everything
+  lists: () => ['tasks', 'list'],              // All paginated lists
+  list: (params) => ['tasks', 'list', params], // Specific list query
+  allFiltered: (params) => ['tasks', 'allFiltered', params], // Map view
+  userLists: () => ['tasks', 'user'],          // User's tasks
+  userList: (params) => ['tasks', 'user', params],
+  details: () => ['tasks', 'detail'],          // All details
+  detail: (id) => ['tasks', 'detail', id],     // Single task
+  applicationLists: () => ['tasks', 'applications'],
+  applications: (taskId, page, size) => ['tasks', 'applications', taskId, page, size]
+}
+```
 
 **Cache Configuration:**
 
-- staleTime: 5 minutes
+- staleTime: 5 minutes (300,000ms)
+- gcTime: 10 minutes (default garbage collection)
 - Automatic refetch on window focus
-- Automatic retry on failure
+- Automatic retry on failure (3 attempts with exponential backoff)
 - Cache invalidation on mutations (create/update/delete)
+
+**TanStack Query v5 Changes:**
+
+- `isLoading` → `isPending` for mutations
+- `cacheTime` → `gcTime`
+- Improved TypeScript inference
 
 ## Performance Optimizations
 
@@ -640,17 +714,13 @@ src/features/task/
 │   ├── LocationSearchInput.tsx     (Location search - 80 lines)
 │   ├── ResultsControlBar.tsx       (Active filters + controls - ~180 lines)
 │   ├── SearchBar.tsx               (Quick search input - ~50 lines)
-│   ├── TaskList.tsx                (Two-column card layout - 170 lines)
+│   ├── TaskList.tsx                (Task grid container - ~50 lines)
+│   ├── TaskCard.tsx                (Optimized task card - 240 lines)
 │   ├── TaskMap.tsx                 (Google Maps with clustering - 301 lines)
 │   ├── TaskMapInfoWindow.tsx       (Marker popup for tasks - 85 lines)
-│   ├── Pagination.tsx              (Page navigation - ~100 lines)
 │   ├── TaskDetails.tsx             (Task detail view - ~200 lines)
-│   ├── ApplicationForm.tsx         (Apply to task - ~150 lines)
-│   ├── ApplicationsList.tsx        (Applications list - ~100 lines)
-│   ├── ApplicationDetailsModal.tsx (Application detail modal - ~120 lines)
 │   ├── CreateTask.tsx              (Task creation - ~250 lines)
 │   ├── TaskWizardForm.tsx          (Multi-step task wizard - ~300 lines)
-│   ├── TaskApplyButtonActions.tsx  (Application actions - ~80 lines)
 │   ├── TaskerPromoCard.tsx         (Promo card - ~80 lines)
 │   └── TaskFilter.tsx              (Legacy simple filter - 58 lines)
 │
@@ -658,10 +728,22 @@ src/features/task/
 │   ├── useFilterState.ts           (Filter state logic - 196 lines)
 │   ├── useGeocoding.ts             (Nominatim API - 68 lines)
 │   ├── useGeolocation.ts           (Browser geolocation - 56 lines)
-│   ├── useTasks.ts                 (Fetch tasks with filters - 61 lines)
+│   ├── useTasks.ts                 (Task query hooks - 61 lines)
 │   ├── useTask.ts                  (Task CRUD mutations - ~100 lines)
-│   ├── taskQueryKeys.ts            (TanStack Query keys - ~60 lines)
+│   ├── taskQueryKeys.ts            (Query key factory - 23 lines)
 │   └── index.ts                     (Hook exports)
+│
+├── queries/
+│   └── taskQueries.tsx             (TanStack Query v5 queries - ~200 lines)
+│       ├── useTasks()              - Paginated task list
+│       ├── useAllFilteredTasks()   - Map view (all tasks)
+│       ├── useUserTasks()          - User's created tasks
+│       ├── useTaskById()           - Single task detail
+│       ├── useTaskApplications()   - Task applications
+│       ├── useCreateTask()         - Create task mutation
+│       ├── useUpdateTask()         - Update task mutation
+│       ├── useDeleteTask()         - Delete task mutation
+│       └── useUpdateApplicationStatus() - Application status mutation
 │
 ├── api/
 │   └── taskApi.ts                   (API integration - 356 lines)
@@ -677,12 +759,6 @@ src/features/task/
 │       └── Type definitions
 │
 ├── utils/
-│   ├── urlState.ts                  (URL state management - 155 lines)
-│   │   ├── filtersToSearchParams() - Serialize filters to URL
-│   │   ├── searchParamsToFilters() - Parse URL to filters
-│   │   ├── getViewMode()           - Extract view mode
-│   │   └── getPageNumber()         - Extract page number
-│   │
 │   ├── mapHelpers.ts               (Map utility functions - 58 lines)
 │   │   ├── filterMappableTasks()   - Filter tasks with valid coordinates
 │   │   ├── isTaskListCapped()      - Check if hit 1000 task limit
@@ -690,8 +766,9 @@ src/features/task/
 │   │   ├── calculateZoomFromRadius() - Convert km to zoom level
 │   │   └── DEFAULT_MAP_CENTER      - Helsinki coordinates
 │   │
-│   ├── categoryUtils.ts            (Category utilities - ~50 lines)
-│   └── applyPermissions.ts         (Application permissions - ~40 lines)
+│   └── categoryUtils.ts            (Category utilities - ~50 lines)
+│       ├── getCategoryIcon()       - Map category to Material Icon
+│       └── getCategoryColor()      - Map category to Tailwind class
 │
 ├── types.ts                         (TypeScript interfaces - 104 lines)
 │   ├── Category type (10 categories)
@@ -709,8 +786,17 @@ src/features/task/
 │
 ├── index.ts                         (Feature exports)
 │
+├── routes/ (in src/routes/_authenticated/worker/)
+│   └── tasks/
+│       └── index.tsx                (Route with Zod validation + beforeLoad)
+│
 ├── pages/ (in src/pages/)
-│   ├── TaskPage.tsx                 (Main browsing - 185 lines)
+│   ├── TaskPage.tsx                 (Main browsing - ~200 lines)
+│   │   ├── URL state via useSearch() + useNavigate()
+│   │   ├── SessionStorage save on search change
+│   │   ├── Dual data fetching (list vs map)
+│   │   └── Filter coordination
+│   │
 │   ├── LandingPage.tsx              (Homepage - ~100 lines)
 │   ├── TaskDetailPage.tsx           (Task detail - ~150 lines)
 │   ├── OwnTaskDetailPage.tsx        (Owner view - ~200 lines)
@@ -719,18 +805,21 @@ src/features/task/
 └── ARCHITECTURE.md                  (This file)
 ```
 
-**Total Lines of Code:** ~4,500+ lines across 35+ files
+**Total Lines of Code:** ~3,500+ lines across 30+ files
 
 **Key Metrics:**
 
-- 18 Components (6 core, 12 supporting)
-- 7 Custom Hooks (1 state, 4 API, 2 browser)
-- 4 Utility modules (URL state, map helpers, categories, permissions)
+- 15 Components (6 core, 9 supporting)
+- 7 Custom Hooks (1 state, 2 browser, 4 API/query-related)
+- 9 TanStack Query hooks (in taskQueries.tsx)
+- 2 Utility modules (map helpers, category utils)
 - 5 Page-level components
+- 1 Route definition with Zod validation
 - Full TypeScript coverage
 - Google Maps integration (@react-google-maps/api)
-- TanStack Query for data fetching
-- URL-based state management
+- TanStack Query v5 for data fetching
+- TanStack Router for routing
+- URL-based state management with SessionStorage persistence
 
 ## Integration Points
 

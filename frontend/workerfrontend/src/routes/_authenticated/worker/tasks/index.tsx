@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import TaskPage from "../../../../pages/TaskPage";
 import { z } from "zod";
 
@@ -20,5 +20,27 @@ const taskSearchSchema = z.object({
 export const Route = createFileRoute("/_authenticated/worker/tasks/")({
   component: TaskPage,
   validateSearch: taskSearchSchema,
+  beforeLoad: ({ search }) => {
+    // If URL has no search params, try to restore from sessionStorage
+    if (Object.keys(search).length === 0) {
+      try {
+        const saved = sessionStorage.getItem('worker-tasks-search');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Redirect to the same route with saved search params
+          throw redirect({
+            to: "/worker/tasks",
+            search: parsed,
+            replace: true,
+          });
+        }
+      } catch (error) {
+        // If it's not a redirect, ignore the error
+        if (error instanceof Error && error.message === 'REACT_ROUTER_REDIRECT') {
+          throw error;
+        }
+      }
+    }
+  },
 });
 
