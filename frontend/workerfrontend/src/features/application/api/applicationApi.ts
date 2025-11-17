@@ -1,5 +1,4 @@
 import type {
-  Application,
   ApplicationFilters,
   ApplicationStatus,
   ApplicationWithDetails,
@@ -134,7 +133,7 @@ export async function deleteApplication(
 export async function fetchAllApplications(
   getAccessToken: () => Promise<string>,
   params: Partial<FetchApplicationParams> = {}
-): Promise<PaginatedResponse<Application>> {
+): Promise<PaginatedResponse<ApplicationWithDetails>> {
   const { 
     page = 0, 
     size = 10, 

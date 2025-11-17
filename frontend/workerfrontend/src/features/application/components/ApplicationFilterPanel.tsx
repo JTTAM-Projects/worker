@@ -1,8 +1,8 @@
-import { memo, useCallback } from 'react';
-import type { ApplicationFilters } from '../types';
-import { useApplicationFilterState } from '../hooks/useApplicationFilterState';
-import { PriceRangeInput } from '../../task/components/PriceRangeInput';
-import { CategoryFilter } from '../../task/components/CategoryFilter';
+import { memo, useCallback } from "react";
+import type { ApplicationFilters } from "../types";
+import { useApplicationFilterState } from "../hooks/useApplicationFilterState";
+import { PriceRangeInput } from "../../task/components/PriceRangeInput";
+import { CategoryFilter } from "../../task/components/CategoryFilter";
 
 interface ApplicationFilterPanelProps {
   filters: ApplicationFilters;
@@ -10,9 +10,15 @@ interface ApplicationFilterPanelProps {
   onReset: () => void;
 }
 
-function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: ApplicationFilterPanelProps) {
+// Filter panel for user's application list with text search, category selection, and price range inputs.
+// Uses useApplicationFilterState hook for managing filter state and provides reset functionality.
+function ApplicationFilterPanelComponent({
+  filters,
+  onFiltersChange,
+  onReset,
+}: ApplicationFilterPanelProps) {
   const filterState = useApplicationFilterState(filters);
-  
+
   const handleSearch = useCallback(() => {
     const newFilters = filterState.buildFilters(filters);
     onFiltersChange(newFilters);
@@ -32,11 +38,13 @@ function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: 
           onClick={handleReset}
           className="px-4 py-2 text-sm bg-white text-green-600 border-2 border-green-500 rounded-lg hover:bg-green-50 hover:border-green-600 transition-colors font-medium"
         >
-          <span className="material-icons text-sm align-middle mr-1">refresh</span>
+          <span className="material-icons text-sm align-middle mr-1">
+            refresh
+          </span>
           Nollaa suodattimet
         </button>
       </div>
-      
+
       {/* Text Search */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -46,7 +54,7 @@ function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: 
           type="text"
           value={filterState.state.searchText}
           onChange={(e) => filterState.setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Etsi otsikosta tai kuvauksesta..."
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
         />
@@ -85,17 +93,21 @@ function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: 
   );
 }
 
-const ApplicationFilterPanelMemoized = memo(ApplicationFilterPanelComponent, (prevProps, nextProps) => {
-  return(
-    prevProps.filters?.searchText === nextProps.filters?.searchText &&
-    prevProps.filters?.minPrice === nextProps.filters?.minPrice &&
-    prevProps.filters?.maxPrice === nextProps.filters?.maxPrice &&
-    JSON.stringify(prevProps.filters?.categories) === JSON.stringify(nextProps.filters?.categories) &&
-    prevProps.onFiltersChange === nextProps.onFiltersChange &&
-    prevProps.onReset === nextProps.onReset
-  );
-});
+const ApplicationFilterPanelMemoized = memo(
+  ApplicationFilterPanelComponent,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.filters?.searchText === nextProps.filters?.searchText &&
+      prevProps.filters?.minPrice === nextProps.filters?.minPrice &&
+      prevProps.filters?.maxPrice === nextProps.filters?.maxPrice &&
+      JSON.stringify(prevProps.filters?.categories) ===
+        JSON.stringify(nextProps.filters?.categories) &&
+      prevProps.onFiltersChange === nextProps.onFiltersChange &&
+      prevProps.onReset === nextProps.onReset
+    );
+  }
+);
 
-ApplicationFilterPanelMemoized.displayName = 'ApplicationFilterPanel';
+ApplicationFilterPanelMemoized.displayName = "ApplicationFilterPanel";
 
 export { ApplicationFilterPanelMemoized as ApplicationFilterPanel };

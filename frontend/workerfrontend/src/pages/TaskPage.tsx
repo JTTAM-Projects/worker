@@ -1,4 +1,5 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useEffect } from "react";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
@@ -6,20 +7,34 @@ import { TaskMap } from "../features/task/components/TaskMap";
 import type { TaskFilters, ViewMode } from "../features/task/types";
 import { useTasks, useAllFilteredTasks } from "../features/task/hooks";
 import { Pagination } from "../ui-library";
-import {
-  filtersToSearchParams,
-  searchParamsToFilters,
-  getViewMode,
-  getPageNumber,
-} from "../features/task/utils/urlState";
 
 export default function TaskPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: "/worker/tasks" });
+  const search = useSearch({ from: "/_authenticated/worker/tasks/" });
 
-  // Parse state from URL (single source of truth)
-  const filters = searchParamsToFilters(searchParams);
-  const viewMode = getViewMode(searchParams);
-  const page = getPageNumber(searchParams);
+  // Save search params to sessionStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(search).length > 0) {
+      sessionStorage.setItem('worker-tasks-search', JSON.stringify(search));
+    }
+  }, [search]);
+
+  // Build filters from search params with defaults
+  const filters: TaskFilters = {
+    status: (search.status as TaskFilters['status']) ?? "ACTIVE",
+    sortBy: (search.sortBy as TaskFilters['sortBy']) ?? "newest",
+    searchText: search.searchText,
+    categories: search.categories,
+    minPrice: search.minPrice,
+    maxPrice: search.maxPrice,
+    latitude: search.latitude,
+    longitude: search.longitude,
+    radiusKm: search.radiusKm,
+    locationText: search.locationText,
+  };
+
+  const viewMode: ViewMode = search.view ?? "list";
+  const page = search.page ?? 0;
 
   // Fetch paginated tasks for list view
   const {
@@ -48,60 +63,78 @@ export default function TaskPage() {
   const error = viewMode === "list" ? listError : mapError;
   const data = viewMode === "list" ? taskPage : mapTasksPage;
 
-  // Update URL params with new filters
+  // Update filters and reset to page 0
   const updateFilters = (newFilters: TaskFilters, resetPage = true) => {
-    const newParams = filtersToSearchParams(
-      newFilters,
-      viewMode,
-      resetPage ? 0 : page
-    );
-    setSearchParams(newParams);
+    navigate({
+      search: {
+        ...search,
+        ...newFilters,
+        page: resetPage ? 0 : search.page,
+      },
+    });
   };
 
-  // Update URL params with new view mode
+  // Update view mode
   const updateViewMode = (newViewMode: ViewMode) => {
-    const newParams = filtersToSearchParams(filters, newViewMode, page);
-    setSearchParams(newParams);
+    navigate({
+      search: {
+        ...search,
+        view: newViewMode,
+      },
+    });
   };
 
-  // Update URL params with new page
+  // Update page
   const updatePage = (newPage: number) => {
-    const newParams = filtersToSearchParams(filters, viewMode, newPage);
-    setSearchParams(newParams);
+    navigate({
+      search: {
+        ...search,
+        page: newPage,
+      },
+    });
   };
 
   const handleRemoveFilter = (filterKey: keyof TaskFilters, value?: string) => {
-    const newFilters = { ...filters };
+    const newSearch = { ...search };
     
     if (filterKey === 'categories' && value) {
       // Remove specific category
-      newFilters.categories = filters.categories?.filter(c => c !== value);
-      if (newFilters.categories?.length === 0) {
-        delete newFilters.categories;
+      newSearch.categories = search.categories?.filter(c => c !== value);
+      if (newSearch.categories?.length === 0) {
+        delete newSearch.categories;
       }
     } else if (filterKey === 'minPrice' || filterKey === 'maxPrice') {
       // Remove both price filters
-      delete newFilters.minPrice;
-      delete newFilters.maxPrice;
+      delete newSearch.minPrice;
+      delete newSearch.maxPrice;
     } else if (filterKey === 'latitude' || filterKey === 'longitude') {
       // Remove location filters
-      delete newFilters.latitude;
-      delete newFilters.longitude;
-      delete newFilters.radiusKm;
+      delete newSearch.latitude;
+      delete newSearch.longitude;
+      delete newSearch.radiusKm;
+      delete newSearch.locationText;
     } else {
       // Remove single filter
-      delete newFilters[filterKey];
+      delete newSearch[filterKey as keyof typeof newSearch];
     }
     
-    updateFilters(newFilters, true);
+    navigate({
+      search: {
+        ...newSearch,
+        page: 0,
+      },
+    });
   };
 
   const handleResetFilters = () => {
-    const resetFilters: TaskFilters = { 
-      status: "ACTIVE",
-      sortBy: "newest"
-    };
-    updateFilters(resetFilters, true);
+    navigate({
+      search: {
+        page: 0,
+        view: search.view,
+        status: "ACTIVE",
+        sortBy: "newest",
+      },
+    });
   };
 
   if (isLoading) {

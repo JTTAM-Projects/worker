@@ -1,6 +1,6 @@
 import type { Task, LocationResponse } from "../types";
-import { useNavigate } from "react-router-dom";
-import { useMemo, useCallback, KeyboardEvent } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useMemo, useCallback, type KeyboardEvent } from "react";
 
 // --- Helper Functions & Constants (Moved Outside Component) ---
 
@@ -147,7 +147,7 @@ export default function TaskCard({ task }: TaskCardProps) {
    * `useCallback` for stable function identity.
    */
   const handleClick = useCallback(() => {
-    navigate(`/tasks/${task.id}`);
+    navigate({ to: "/worker/tasks/$taskId", params: { taskId: task.id.toString() } });
   }, [navigate, task.id]);
 
   /**

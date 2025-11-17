@@ -1,5 +1,5 @@
 import { InfoWindow } from '@react-google-maps/api';
-import { Link } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import type { Task } from '../types';
 
@@ -13,6 +13,8 @@ interface TaskMapInfoWindowProps {
  * Handles both single tasks and stacked markers at the same location
  */
 export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
+  const navigate = useNavigate();
+  
   // Track which tasks have expanded locations
   const [expandedLocations, setExpandedLocations] = useState<Set<number>>(new Set());
 
@@ -136,12 +138,12 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
             )}
 
             {/* View Details Button */}
-            <Link
-              to={`/tasks/${task.id}`}
+            <button
+              onClick={() => navigate({ to: "/worker/tasks/$taskId", params: { taskId: task.id.toString() } })}
               className="inline-block w-full text-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
             >
               Näytä tiedot
-            </Link>
+            </button>
           </div>
         ))}
       </div>

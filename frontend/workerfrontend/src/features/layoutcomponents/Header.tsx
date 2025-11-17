@@ -1,16 +1,19 @@
 import { Fragment } from "react";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import LoginButton from "../authentication/login";
 import LogoutButton from "../authentication/logout";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
+
+function getSavedTasksSearch() {
+  try {
+    const saved = sessionStorage.getItem('worker-tasks-search');
+    return saved ? JSON.parse(saved) : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -26,7 +29,8 @@ export default function Header() {
         <div className="flex items-center space-x-10">
           {/* Logo/Nimi */}
           <Link
-            to="/"
+            to="/worker/tasks"
+            search={getSavedTasksSearch()}
             className="text-white font-bold text-2xl tracking-wide hover:scale-105 transition-transform duration-200"
           >
             LOGO
@@ -36,7 +40,8 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-6">
             {/* Etusivu -linkki */}
             <Link
-              to="/"
+              to="/worker/tasks"
+              search={getSavedTasksSearch()}
               className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
             >
               Etusivu
@@ -47,10 +52,7 @@ export default function Header() {
               <div>
                 <MenuButton className="inline-flex items-center text-white/90 hover:text-white font-medium transition-all duration-200">
                   Työilmoitukset
-                  <ChevronDownIcon
-                    className="ml-1 h-5 w-5"
-                    aria-hidden="true"
-                  />
+                  <ChevronDownIcon className="ml-1 h-5 w-5" aria-hidden="true" />
                 </MenuButton>
               </div>
 
@@ -68,11 +70,10 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/tasks"
+                          to="/worker/tasks"
+                          search={getSavedTasksSearch()}
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -83,11 +84,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/create-task"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -98,11 +97,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/my-tasks"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -120,10 +117,7 @@ export default function Header() {
               <div>
                 <MenuButton className="inline-flex items-center text-white/90 hover:text-white font-medium transition-all duration-200">
                   Työhakemukset
-                  <ChevronDownIcon
-                    className="ml-1 h-5 w-5"
-                    aria-hidden="true"
-                  />
+                  <ChevronDownIcon className="ml-1 h-5 w-5" aria-hidden="true" />
                 </MenuButton>
               </div>
 
@@ -141,11 +135,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/active-applications"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -156,11 +148,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/accepted-applications"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -171,11 +161,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="#"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -186,11 +174,9 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/past-applications"
+                          to="/"
                           className={classNames(
-                            focus
-                              ? "bg-green-50 text-green-700"
-                              : "text-gray-700",
+                            focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"
                           )}
                         >
@@ -208,7 +194,7 @@ export default function Header() {
         <div className="flex items-center space-x-3">
           {isAuthenticated ? (
             <Link
-              to="/profile"
+              to="/"
               className="
               bg-white
               text-green-600 

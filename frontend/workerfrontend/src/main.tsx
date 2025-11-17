@@ -1,11 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import { BrowserRouter } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+import { Auth0Wrapper, useAuth0Context, type Auth0ContextType } from "./auth/auth0";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,33 +16,50 @@ const queryClient = new QueryClient({
   },
 });
 
-type Auth0AppState = {
-  returnTo?: string;
-};
+// Create router instance that will be shared
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+    auth: undefined! as Auth0ContextType,
+  },
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+  scrollRestoration: true,
+});
 
-const onRedirectCallback = (appState?: Auth0AppState) => {
-  const targetUrl = appState?.returnTo ?? window.location.pathname;
-  window.history.replaceState({}, document.title, targetUrl);
-  window.dispatchEvent(new PopStateEvent("popstate"));
-};
+// eslint-disable-next-line react-refresh/only-export-components
+function InnerApp() {
+  const auth = useAuth0Context();
+
+  if (auth.isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  return <RouterProvider router={router} context={{ queryClient, auth }} />;
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Auth0Wrapper>
+        <InnerApp />
+      </Auth0Wrapper>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Auth0Provider
-          domain="jk-projects.eu.auth0.com"
-          clientId="aDYOG7a9fYDDBoTgWX9AW3BKYdv6XdlJ"
-          authorizationParams={{
-            redirect_uri: window.location.origin,
-            audience: "https://glig.com",
-          }}
-          onRedirectCallback={onRedirectCallback}
-        >
-          <App />
-        </Auth0Provider>
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <App />
   </StrictMode>
 );

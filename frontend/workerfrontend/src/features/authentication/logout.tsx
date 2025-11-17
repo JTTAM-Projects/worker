@@ -1,11 +1,12 @@
 import { useAuth0 } from "@auth0/auth0-react";
 
 const LogoutButton = () => {
-  const { logout } = useAuth0();
+  const { logout, isAuthenticated } = useAuth0();
 
   return (
-    <button
-      className="
+    isAuthenticated && (
+      <button
+        className="
       bg-white/10
       text-white
       border-2
@@ -23,12 +24,11 @@ const LogoutButton = () => {
       transition-all
       duration-200
       shadow-md"
-      onClick={() =>
-        logout({ logoutParams: { returnTo: window.location.origin } })
-      }
-    >
-      Kirjaudu ulos
-    </button>
+        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+      >
+        Kirjaudu ulos
+      </button>
+    )
   );
 };
 

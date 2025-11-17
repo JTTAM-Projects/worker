@@ -10,11 +10,7 @@ export default function TaskList({ tasks }: TaskListProps) {
     <section className="bg-white rounded-lg shadow-lg p-6 md:p-8">
       {/* Task Count */}
       <div className="mb-4 text-gray-600 max-w-4xl mx-auto">
-        {tasks.length > 0 ? (
-          <span>Näytetään {tasks.length} tehtävää</span>
-        ) : (
-          <span>Ei tehtäviä näytettävänä</span>
-        )}
+        {tasks.length > 0 ? <span>Näytetään {tasks.length} tehtävää</span> : <span>Ei tehtäviä näytettävänä</span>}
       </div>
 
       {/* Task List */}

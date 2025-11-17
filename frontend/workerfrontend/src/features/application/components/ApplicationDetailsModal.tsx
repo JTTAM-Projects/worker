@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TaskApplicationDetails } from "../api/taskApi";
+import type { TaskApplicationDetails } from "../../task/api/taskApi";
 
 type Props = {
   application: TaskApplicationDetails;
@@ -8,6 +8,8 @@ type Props = {
   loading?: boolean;
 };
 
+// Modal dialog for task owners to view detailed application information and accept/reject applicants.
+// Displays applicant profile, rating, message, price suggestion, and provides action buttons for status updates.
 export default function ApplicationDetailsModal({
   application,
   onClose,
