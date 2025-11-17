@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useAuth0 } from "@auth0/auth0-react";
 import { Route } from "../routes/_authenticated/employer/my-tasks/index";
 import { useUserTasks } from "../features/task/hooks/useUserTasks";
 import { useDeleteTask } from "../features/task/hooks/useDeleteTask";
 import type { Task } from "../features/task/types";
+import TaskCard from "../features/task/components/TaskCard";
 
 export default function MyTasksPage() {
   const navigate = useNavigate();
-  const {
-    isAuthenticated,
-    isLoading: authLoading,
-    loginWithRedirect,
-  } = useAuth0();
   const { tab = "active" } = Route.useSearch();
 
   const [page, setPage] = useState(0);
@@ -23,10 +18,12 @@ export default function MyTasksPage() {
       ? "ACTIVE"
       : tab === "in-progress"
         ? "IN_PROGRESS"
-        : tab === "done"
-          ? "COMPLETED"
-          : "ACTIVE";
-
+        : tab === "done" // Waiting for employers acceptance
+          ? "IN_PROGRESS"
+          : tab === "completed"
+            ? "COMPLETED"
+            : "ACTIVE";
+  const showActions = tab === "active";
   const deleteTaskMutation = useDeleteTask();
   const [banner, setBanner] = useState<null | {
     type: "success" | "error";
@@ -47,7 +44,9 @@ export default function MyTasksPage() {
     window.setTimeout(() => setBanner(null), 6000);
   };
 
-  const handleTabChange = (newTab: "active" | "in-progress" | "done") => {
+  const handleTabChange = (
+    newTab: "active" | "in-progress" | "done" | "completed"
+  ) => {
     navigate({
       to: "/employer/my-tasks",
       search: { tab: newTab },
@@ -78,40 +77,6 @@ export default function MyTasksPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-lg border border-gray-200 bg-white px-6 py-4 text-gray-600 shadow-sm">
-          Ladataan kirjautumistietoja...
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <h1 className="mb-4 text-2xl font-semibold text-gray-800">
-            Kirjaudu tarkastellaksesi omia työilmoituksiasi
-          </h1>
-          <p className="mb-6 text-gray-600">
-            Sinun tulee olla kirjautuneena nähdäksesi ja hallitaksesi omia
-            ilmoituksiasi.
-          </p>
-          <button
-            onClick={() =>
-              loginWithRedirect({ appState: { returnTo: "/my-tasks" } })
-            }
-            className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700"
-          >
-            Kirjaudu sisään
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-6 flex items-center justify-between">
@@ -126,7 +91,6 @@ export default function MyTasksPage() {
           Uusi ilmoitus
         </button>
       </div>
-
       {banner && (
         <div
           className={`mb-6 rounded-lg border px-4 py-4 text-sm ${
@@ -144,7 +108,6 @@ export default function MyTasksPage() {
         </div>
       )}
 
-      {/* Tabs navigointi */}
       <div className="mb-6 border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -156,7 +119,7 @@ export default function MyTasksPage() {
             }`}
           >
             <span className="flex items-center gap-2">
-              <span className="material-icons text-base">task_alt</span>
+              <span className="material-icons text-base">assignment</span>
               Aktiiviset
             </span>
           </button>
@@ -169,7 +132,7 @@ export default function MyTasksPage() {
             }`}
           >
             <span className="flex items-center gap-2">
-              <span className="material-icons text-base">autorenew</span>
+              <span className="material-icons text-base">work_history</span>
               Käynnissä
             </span>
           </button>
@@ -182,32 +145,42 @@ export default function MyTasksPage() {
             }`}
           >
             <span className="flex items-center gap-2">
-              <span className="material-icons text-base">check_circle</span>
+              <span className="material-icons text-base">rate_review</span>
               Hyväksyttävät
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleTabChange("completed")}
+            className={`whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors ${
+              tab === "completed"
+                ? "border-green-500 text-green-600"
+                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className="material-icons text-base">task_alt</span>
+              Valmiit
             </span>
           </button>
         </nav>
       </div>
-
       {isLoading && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-600 shadow-sm">
           Ladataan ilmoituksia...
         </div>
       )}
-
       {isError && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700 shadow-sm">
           Ilmoitusten lataaminen epäonnistui.
         </div>
       )}
-
       {!isLoading && !isError && tasks.length === 0 && (
         <div className="rounded-lg border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
           Sinulla ei ole vielä työilmoituksia. Luo ensimmäinen ilmoitus
           painamalla "Uusi ilmoitus" -painiketta.
         </div>
       )}
-
       {!isLoading && !isError && tasks.length > 0 && (
         <div className="space-y-4">
           {tasks.map((task) => {
@@ -218,6 +191,7 @@ export default function MyTasksPage() {
               <TaskCard
                 key={task.id}
                 task={task}
+                showActions={showActions}
                 onView={() =>
                   navigate({
                     to: "/employer/my-tasks/$taskId/details",
@@ -237,7 +211,6 @@ export default function MyTasksPage() {
           })}
         </div>
       )}
-
       {!isLoading && !isError && totalPages > 1 && (
         <div className="mt-8 flex items-center justify-between">
           <button
@@ -267,139 +240,4 @@ export default function MyTasksPage() {
       )}
     </div>
   );
-}
-
-interface TaskCardProps {
-  task: Task;
-  onView: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  isDeleting: boolean;
-}
-
-function TaskCard({
-  task,
-  onView,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: TaskCardProps) {
-  const status = getStatusDisplay(task.status);
-
-  const formatDate = (value: string) => {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-    return date.toLocaleDateString("fi-FI", {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
-    });
-  };
-
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              {task.title}
-            </h2>
-            <span
-              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${status.className}`}
-            >
-              {status.label}
-            </span>
-          </div>
-
-          <div className="mt-3 grid gap-4 text-sm text-gray-600 md:grid-cols-3">
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                event
-              </span>
-              <span>
-                {formatDate(task.startDate)} – {formatDate(task.endDate)}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                place
-              </span>
-              <span>{task.location?.city ?? "Ei sijaintia"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                euro
-              </span>
-              <span>{task.price} €</span>
-            </div>
-          </div>
-
-          {task.description && (
-            <p className="mt-3 line-clamp-2 text-gray-700">
-              {task.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-shrink-0 flex-col gap-2">
-          <button
-            onClick={onView}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Näytä
-          </button>
-          <button
-            onClick={onEdit}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Muokkaa
-          </button>
-          <button
-            onClick={onDelete}
-            disabled={isDeleting}
-            className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isDeleting ? "Poistetaan..." : "Poista"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function getStatusDisplay(status: Task["status"]) {
-  switch (status) {
-    case "ACTIVE":
-      return {
-        label: "Aktiivinen",
-        className: "border-green-300 bg-green-100 text-green-700",
-      };
-    case "IN_PROGRESS":
-      return {
-        label: "Käynnissä",
-        className: "border-blue-300 bg-blue-100 text-blue-700",
-      };
-    case "COMPLETED":
-      return {
-        label: "Valmistunut, Hyväksy työ!",
-        className: "border-gray-300 bg-gray-100 text-gray-700",
-      };
-    case "CANCELLED":
-      return {
-        label: "Peruttu",
-        className: "border-red-300 bg-red-100 text-red-700",
-      };
-    case "EXPIRED":
-      return {
-        label: "Vanhentunut",
-        className: "border-yellow-300 bg-yellow-100 text-yellow-700",
-      };
-    default:
-      return {
-        label: status,
-        className: "border-gray-300 bg-gray-100 text-gray-700",
-      };
-  }
 }
