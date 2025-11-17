@@ -113,6 +113,25 @@ public class ApplicationControllerService {
     }
 
     @Transactional
+    public ResponseEntity<ApplicationResponse> tryCompleteApplication(Long taskId, String username) {
+        Application application = tryGetSingleApplicationByUsernameAndTaskId(taskId, username);
+
+        if (application.getApplicationStatus() != ApplicationStatus.ACCEPTED
+                && application.getApplicationStatus() != ApplicationStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Application must be accepted before it can be completed");
+        }
+
+        application.setApplicationStatus(ApplicationStatus.COMPLETED);
+        Task task = application.getTask();
+        task.setStatus(TaskStatus.COMPLETED);
+        taskRepository.save(task);
+
+        Application saved = applyRepository.save(application);
+        ApplicationResponse response = mapper.toApplicationResponse(saved);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Transactional
     public ResponseEntity<Message> tryDeleteApplication(Long taskId, String username) {
         ApplicationId applyId = new ApplicationId(taskId, username);
         if (!applyRepository.existsById(applyId)) {

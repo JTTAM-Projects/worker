@@ -29,6 +29,13 @@ export interface ApplicationWithDetails {
   timeSuggestion: string;
   description?: string;
   applicationStatus: ApplicationStatus;
+  task?: {
+    id: number;
+    title?: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
+  };
 }
 
 export interface PaginatedApplications {
@@ -75,4 +82,3 @@ export type UpdateApplicationPayload = {
   allowCounterOffers?: boolean;
   allowCalls?: boolean;
 };
-
