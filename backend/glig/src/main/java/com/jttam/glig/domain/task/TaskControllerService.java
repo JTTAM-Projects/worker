@@ -196,11 +196,6 @@ public class TaskControllerService {
         
         // Post-filter by exact circular distance if location filter is active
         if (filters != null && filters.latitude() != null && filters.longitude() != null && filters.radiusKm() != null) {
-            System.out.println("=== DISTANCE FILTER DEBUG ===");
-            System.out.println("Filter center: lat=" + filters.latitude() + ", lon=" + filters.longitude());
-            System.out.println("Filter radius: " + filters.radiusKm() + " km");
-            System.out.println("Tasks before filtering: " + tasks.getContent().size());
-            
             List<Task> filteredTasks = tasks.getContent().stream()
                     .filter(task -> {
                         // Check if any of the task's locations are within the radius
@@ -215,17 +210,10 @@ public class TaskControllerService {
                                     location.getLongitude().doubleValue()
                             );
                             boolean withinRadius = distance <= filters.radiusKm();
-                            System.out.println("Task: " + task.getTitle() + 
-                                    " | Location: (" + location.getLatitude() + ", " + location.getLongitude() + ")" +
-                                    " | Distance: " + String.format("%.2f", distance) + " km" +
-                                    " | Within radius: " + withinRadius);
                             return withinRadius;
                         });
                     })
                     .collect(Collectors.toList());
-            
-            System.out.println("Tasks after filtering: " + filteredTasks.size());
-            System.out.println("=== END DEBUG ===");
             
             // Convert filtered list back to Page
             Page<Task> filteredPage = new org.springframework.data.domain.PageImpl<>(
