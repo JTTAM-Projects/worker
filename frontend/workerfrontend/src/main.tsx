@@ -16,6 +16,7 @@ const queryClient = new QueryClient({
   },
 });
 
+// Create router instance that will be shared
 const router = createRouter({
   routeTree,
   context: {
@@ -30,7 +31,7 @@ const router = createRouter({
 });
 
 // eslint-disable-next-line react-refresh/only-export-components
-function App() {
+function InnerApp() {
   const auth = useAuth0Context();
 
   if (auth.isLoading) {
@@ -38,6 +39,17 @@ function App() {
   }
 
   return <RouterProvider router={router} context={{ queryClient, auth }} />;
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Auth0Wrapper>
+        <InnerApp />
+      </Auth0Wrapper>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
 
 declare module "@tanstack/react-router" {
@@ -48,11 +60,6 @@ declare module "@tanstack/react-router" {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Auth0Wrapper>
-        <App />
-      </Auth0Wrapper>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <App />
   </StrictMode>
 );

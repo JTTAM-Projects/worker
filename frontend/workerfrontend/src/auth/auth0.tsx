@@ -30,8 +30,11 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
       authorizationParams={{
         redirect_uri: window.location.origin,
         audience: "https://glig.com",
+        scope: "openid profile email offline_access",
       }}
       onRedirectCallback={onRedirectCallback}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       <Auth0ContextProvider>{children}</Auth0ContextProvider>
     </Auth0Provider>

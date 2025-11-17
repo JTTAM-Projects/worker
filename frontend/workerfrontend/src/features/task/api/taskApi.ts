@@ -418,3 +418,23 @@ export async function updateApplicationStatus(
     throw new Error(`Failed to update application status: ${response.status} ${errorText}`);
   }
 }
+
+export async function completeTaskExecution(
+  getAccessTokenSilently: () => Promise<string>,
+  taskId: number
+): Promise<void> {
+  const token = await getAccessTokenSilently();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application/complete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `Työn päättäminen epäonnistui (${response.status})`);
+  }
+}

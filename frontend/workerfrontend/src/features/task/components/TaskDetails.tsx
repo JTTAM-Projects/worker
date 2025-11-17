@@ -86,19 +86,23 @@ export default function TaskDetails({
             <span className="material-icons text-gray-600 text-xl">place</span>
             <div className="flex-1">
               <div className="text-gray-700 font-medium mb-1">Sijainti</div>
-              {task.location ? (
-                <div className="text-gray-600">
-                  {task.location.streetAddress && (
-                    <div>{task.location.streetAddress}</div>
-                  )}
-                  {task.location.postalCode && task.location.city && (
-                    <div>
-                      {task.location.postalCode} {task.location.city}
+              {task.locations && task.locations.length > 0 ? (
+                <div className="text-gray-600 space-y-3">
+                  {task.locations.map((location, index) => (
+                    <div key={index} className={index > 0 ? 'pt-3 border-t border-gray-200' : ''}>
+                      {location.streetAddress && (
+                        <div>{location.streetAddress}</div>
+                      )}
+                      {location.postalCode && location.city && (
+                        <div>
+                          {location.postalCode} {location.city}
+                        </div>
+                      )}
+                      {!location.streetAddress && !location.city && (
+                        <div className="italic">Ei tarkkaa sijaintia</div>
+                      )}
                     </div>
-                  )}
-                  {!task.location.streetAddress && !task.location.city && (
-                    <div className="italic">Ei tarkkaa sijaintia</div>
-                  )}
+                  ))}
                 </div>
               ) : (
                 <div className="text-gray-600 italic">Ei sijaintitietoja</div>

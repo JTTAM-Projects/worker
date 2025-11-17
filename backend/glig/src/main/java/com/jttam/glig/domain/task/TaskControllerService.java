@@ -51,6 +51,29 @@ public class TaskControllerService {
         this.mapper = mapper;
     }
 
+    /**
+     * Calculate distance between two points using Haversine formula
+     * @param lat1 Latitude of point 1
+     * @param lon1 Longitude of point 1
+     * @param lat2 Latitude of point 2
+     * @param lon2 Longitude of point 2
+     * @return Distance in kilometers
+     */
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final double EARTH_RADIUS_KM = 6371.0;
+        
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        
+        return EARTH_RADIUS_KM * c;
+    }
+
     private Set<Category> resolveCategories(Set<CategoryRequest> categoryRequests) {
         if (categoryRequests == null || categoryRequests.isEmpty()) {
             return new HashSet<>();
@@ -170,6 +193,37 @@ public class TaskControllerService {
             String username) {
         Specification<Task> spec = withTaskFilters(filters, username);
         Page<Task> tasks = taskRepository.findAll(spec, pageable);
+        
+        // Post-filter by exact circular distance if location filter is active
+        if (filters != null && filters.latitude() != null && filters.longitude() != null && filters.radiusKm() != null) {
+            List<Task> filteredTasks = tasks.getContent().stream()
+                    .filter(task -> {
+                        // Check if any of the task's locations are within the radius
+                        return task.getLocations().stream().anyMatch(location -> {
+                            if (location.getLatitude() == null || location.getLongitude() == null) {
+                                return false;
+                            }
+                            double distance = calculateDistance(
+                                    filters.latitude(), 
+                                    filters.longitude(),
+                                    location.getLatitude().doubleValue(), 
+                                    location.getLongitude().doubleValue()
+                            );
+                            boolean withinRadius = distance <= filters.radiusKm();
+                            return withinRadius;
+                        });
+                    })
+                    .collect(Collectors.toList());
+            
+            // Convert filtered list back to Page
+            Page<Task> filteredPage = new org.springframework.data.domain.PageImpl<>(
+                    filteredTasks, 
+                    pageable, 
+                    filteredTasks.size()
+            );
+            return mapper.toTaskListDtoPage(filteredPage);
+        }
+        
         Page<TaskListDTO> pageOfTasks = mapper.toTaskListDtoPage(tasks);
         return pageOfTasks;
     }

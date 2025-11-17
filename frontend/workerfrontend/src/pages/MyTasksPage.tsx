@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useUserTasks } from "../features/task/hooks/useUserTasks";
-import { useDeleteTask } from "../features/task/hooks/useDeleteTask";
+import { useUserTasks, useDeleteTask } from "../features/task/hooks";
 import type { Task } from "../features/task/types";
 
 export default function MyTasksPage() {
@@ -242,7 +241,7 @@ function TaskCard({ task, onView, onEdit, onDelete, isDeleting }: TaskCardProps)
               <span className="material-icons text-base text-green-500">
                 place
               </span>
-              <span>{task.location?.city ?? "Ei sijaintia"}</span>
+              <span>{task.locations?.[0]?.city ?? "Ei sijaintia"}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="material-icons text-base text-green-500">

@@ -7,7 +7,7 @@ import {
   useGetUserDetails,
   useUpdateUser,
 } from "../features/Profile/hooks/userHooks";
-import { useCreateTask } from "../features/task/hooks/useCreateTask";
+import { useCreateTask } from "../features/task/hooks";
 import type { TaskWizardPayload } from "../features/task/components/TaskWizardForm";
 
 export default function CreateTaskPage() {

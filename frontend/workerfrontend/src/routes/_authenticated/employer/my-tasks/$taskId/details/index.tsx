@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { taskQueries } from "../../../../../../features/task/queries/taskQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useDeleteTask } from "../../../../../../features/task/hooks/useDeleteTask";
+import { useDeleteTask } from "../../../../../../features/task/hooks";
 import { useState } from "react";
 import TaskDetails from "../../../../../../features/task/components/TaskDetails";
 import { getCategoryIcon } from "../../../../../../features/task/utils/categoryUtils";
