@@ -1,6 +1,5 @@
-/**
- * Custom hooks for task feature
- */
+// Query keys
+export { taskQueryKeys } from './taskQueryKeys';
 
 // Filter management
 export { useFilterState } from './useFilterState';
@@ -9,15 +8,18 @@ export type { FilterState, UseFilterStateReturn } from './useFilterState';
 // Location services
 export { useGeocoding } from './useGeocoding';
 export type { GeocodingResult, UseGeocodingReturn } from './useGeocoding';
-
 export { useGeolocation } from './useGeolocation';
 export type { GeolocationResult, UseGeolocationReturn } from './useGeolocation';
 
 // Task queries
-export { useTasks } from './useTasks';
-export { useTaskById } from './useTaskById';
-export { useCreateTask } from './useCreateTask';
-export { useUserTasks } from './useUserTasks';
-export { useTaskApplications } from '../../application/hooks/useTaskApplications';
-export { useUpdateApplicationStatus } from '../hooks/useUpdateApplicationStatus';
-export { useDeleteTask } from './useDeleteTask';
+export { useTasks, useUserTasks, useTaskById, useTaskApplications, useAllFilteredTasks } from './useTasks';
+
+// Task mutations
+export { 
+  useTask, 
+  useCreateTask, 
+  useUpdateTask, 
+  useDeleteTask, 
+  useUpdateApplicationStatus 
+} from './useTask';
+export type { DeleteTaskInput } from './useTask';

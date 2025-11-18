@@ -6,6 +6,15 @@ import LogoutButton from "../authentication/logout";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "@tanstack/react-router";
 
+function getSavedTasksSearch() {
+  try {
+    const saved = sessionStorage.getItem('worker-tasks-search');
+    return saved ? JSON.parse(saved) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -20,7 +29,8 @@ export default function Header() {
         <div className="flex items-center space-x-10">
           {/* Logo/Nimi */}
           <Link
-            to="/"
+            to="/worker/tasks"
+            search={getSavedTasksSearch()}
             className="text-white font-bold text-2xl tracking-wide hover:scale-105 transition-transform duration-200"
           >
             LOGO
@@ -30,7 +40,8 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-6">
             {/* Etusivu -linkki */}
             <Link
-              to="/"
+              to="/worker/tasks"
+              search={getSavedTasksSearch()}
               className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
             >
               Etusivu
@@ -59,7 +70,8 @@ export default function Header() {
                     <MenuItem>
                       {({ focus }) => (
                         <Link
-                          to="/"
+                          to="/worker/tasks"
+                          search={getSavedTasksSearch()}
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
                             "block px-4 py-3 text-sm font-medium transition-colors duration-150"

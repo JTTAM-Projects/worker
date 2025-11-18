@@ -93,10 +93,10 @@ export default function EditTaskPage() {
     price: taskData.price?.toString() ?? "",
     startDate: new Date(taskData.startDate).toISOString().slice(0, 16),
     endDate: new Date(taskData.endDate).toISOString().slice(0, 16),
-    streetAddress: taskData.location?.streetAddress ?? "",
-    postalCode: taskData.location?.postalCode ?? "",
-    city: taskData.location?.city ?? "",
-    country: taskData.location?.country ?? "Suomi",
+    streetAddress: taskData.locations?.[0]?.streetAddress ?? "",
+    postalCode: taskData.locations?.[0]?.postalCode ?? "",
+    city: taskData.locations?.[0]?.city ?? "",
+    country: taskData.locations?.[0]?.country ?? "Suomi",
   };
 
   const toLocalDateTime = (value: string) => {

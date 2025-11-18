@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { taskQueries } from "../../../../features/task/queries/taskQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -28,6 +28,16 @@ function TaskDetailPage() {
   const { data: task } = useSuspenseQuery(taskQueries.detail(taskId));
   const { data: applications } = useSuspenseQuery(taskQueries.applications(parseInt(taskId)));
 
+  // Get saved search params for back navigation
+  const getSavedTasksSearch = () => {
+    try {
+      const saved = sessionStorage.getItem('worker-tasks-search');
+      return saved ? JSON.parse(saved) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
   const showFeedback = (type: "success" | "error", message: string) => {
     setFeedback({ type, message });
     window.setTimeout(() => setFeedback(null), 8000);
@@ -35,6 +45,16 @@ function TaskDetailPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
+      {/* Back Button */}
+      <Link
+        to="/worker/tasks"
+        search={getSavedTasksSearch()}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+      >
+        <span className="material-icons">arrow_back</span>
+        <span className="font-medium">Takaisin työilmoituksiin</span>
+      </Link>
+
       {feedback && (
         <div
           className={`mb-6 rounded-lg border px-4 py-4 text-sm ${

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Route } from "../routes/_authenticated/employer/my-tasks/index";
-import { useUserTasks } from "../features/task/hooks/useUserTasks";
-import { useDeleteTask } from "../features/task/hooks/useDeleteTask";
+import { useUserTasks, useDeleteTask } from "../features/task/hooks";
 import type { Task } from "../features/task/types";
-import TaskCard from "../features/task/components/TaskCard";
+import EmployerTaskCard from "../features/task/components/EmployerTaskCard";
 
 export default function MyTasksPage() {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ export default function MyTasksPage() {
       : tab === "in-progress"
         ? "IN_PROGRESS"
         : tab === "done" // Waiting for employers acceptance
-          ? "IN_PROGRESS"
+          ? "PENDING_APPROVAL"
           : tab === "completed"
             ? "COMPLETED"
             : "ACTIVE";
@@ -108,6 +107,7 @@ export default function MyTasksPage() {
         </div>
       )}
 
+      {/* Tab navigation */}
       <div className="mb-6 border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -165,6 +165,43 @@ export default function MyTasksPage() {
           </button>
         </nav>
       </div>
+
+      {/* Tab description */}
+      <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+        <div className="flex items-start gap-2">
+          <span className="material-icons text-base">info</span>
+          <div>
+            {tab === "active" && (
+              <p>
+                <strong>Aktiiviset työilmoitukset:</strong> Ilmoitukset joihin
+                työntekijät voivat hakea. Voit muokata tai poistaa näitä
+                ilmoituksia.
+              </p>
+            )}
+            {tab === "in-progress" && (
+              <p>
+                <strong>Käynnissä olevat työt:</strong> Työt joissa työntekijä
+                on aloittanut työn tekemisen. Et voi muokata tai poistaa näitä
+                ilmoituksia.
+              </p>
+            )}
+            {tab === "done" && (
+              <p>
+                <strong>Hyväksyttävät työt:</strong> Työt jotka työntekijä on
+                merkinnyt valmiiksi. Tarkista työn laatu ja hyväksy tai hylkää
+                työ.
+              </p>
+            )}
+            {tab === "completed" && (
+              <p>
+                <strong>Valmiit työt:</strong> Työt jotka olet hyväksynyt
+                valmiiksi. Nämä työt ovat suoritettu loppuun.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {isLoading && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 text-center text-gray-600 shadow-sm">
           Ladataan ilmoituksia...
@@ -183,12 +220,12 @@ export default function MyTasksPage() {
       )}
       {!isLoading && !isError && tasks.length > 0 && (
         <div className="space-y-4">
-          {tasks.map((task) => {
+          {tasks.map((task: Task) => {
             const isDeleting =
               deleteTaskMutation.isPending &&
               deleteTaskMutation.variables?.taskId === task.id;
             return (
-              <TaskCard
+              <EmployerTaskCard
                 key={task.id}
                 task={task}
                 showActions={showActions}

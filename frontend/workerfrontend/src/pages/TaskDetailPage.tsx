@@ -1,9 +1,8 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useTaskById } from "../features/task/hooks/useTaskById";
+import { useTaskById } from "../features/task/hooks";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import TaskDetails from "../features/task/components/TaskDetails";
-import ApplicationsList from "../features/application/components/ApplicationsList";
 import UserApplicationSection from "../features/application/components/UserApplicationSection";
 
 export default function TaskDetailPage() {
@@ -99,10 +98,6 @@ export default function TaskDetailPage() {
 
           <UserApplicationSection task={task} onFeedback={showFeedback} />
         </div>
-      </div>
-
-      <div className="mt-8">
-        <ApplicationsList taskId={task.id} />
       </div>
     </main>
   );

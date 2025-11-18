@@ -8,6 +8,10 @@ interface PaginationProps {
   pageNumbers?: (number | string)[];
   /** Whether pagination is 0-indexed (default: false, uses 1-indexed) */
   zeroIndexed?: boolean;
+  /** Whether current page is first page (from server data, optional) */
+  isFirstPage?: boolean;
+  /** Whether current page is last page (from server data, optional) */
+  isLastPage?: boolean;
 }
 
 export default function Pagination({
@@ -19,10 +23,12 @@ export default function Pagination({
   showPageNumbers = false,
   pageNumbers = [],
   zeroIndexed = false,
+  isFirstPage: serverIsFirstPage,
+  isLastPage: serverIsLastPage,
 }: PaginationProps) {
-  // Calculate if we're on first/last page based on indexing
-  const isFirstPage = zeroIndexed ? currentPage === 0 : currentPage === 1;
-  const isLastPage = zeroIndexed ? currentPage >= totalPages - 1 : currentPage >= totalPages;
+  // Use server data if available, otherwise calculate based on indexing
+  const isFirstPage = serverIsFirstPage ?? (zeroIndexed ? currentPage === 0 : currentPage === 1);
+  const isLastPage = serverIsLastPage ?? (zeroIndexed ? currentPage >= totalPages - 1 : currentPage >= totalPages);
   
   return (
     <div className="flex items-center justify-center gap-2 flex-wrap">

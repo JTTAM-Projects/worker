@@ -1,143 +1,265 @@
-import type { Task } from "../types";
+import type { Task, LocationResponse } from "../types";
+import { useNavigate } from "@tanstack/react-router";
+import { useMemo, useCallback, type KeyboardEvent } from "react";
+
+// --- Helper Functions & Constants (Moved Outside Component) ---
+
+/**
+ * A map to store category icons.
+ */
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  GARDEN: "yard",
+  CLEANING: "cleaning_services",
+  MOVING: "local_shipping",
+  HOUSEHOLD: "home",
+  REPAIR: "build",
+  PAINTING: "format_paint",
+  "SNOW REMOVAL": "ac_unit",
+  "FOREST WORK": "park",
+  YARD: "grass",
+  OTHER: "handyman",
+};
+const DEFAULT_ICON = "work";
+
+/**
+ * A map to store category background colors.
+ */
+const CATEGORY_BG_MAP: Record<string, string> = {
+  GARDEN: "bg-green-100",
+  YARD: "bg-green-100",
+  "FOREST WORK": "bg-green-100",
+  CLEANING: "bg-blue-100",
+  HOUSEHOLD: "bg-blue-100",
+  MOVING: "bg-purple-100",
+  REPAIR: "bg-orange-100",
+  PAINTING: "bg-orange-100",
+  "SNOW REMOVAL": "bg-cyan-100",
+  OTHER: "bg-gray-100",
+};
+const DEFAULT_BG = "bg-gray-100";
+
+/**
+ * Gets the corresponding Material Icon name for a category.
+ */
+const getCategoryIcon = (categoryTitle?: string): string => {
+  const key = (categoryTitle || "").toUpperCase();
+  return CATEGORY_ICON_MAP[key] || DEFAULT_ICON;
+};
+
+/**
+ * Gets the corresponding Tailwind background class for a category.
+ */
+const getCategoryColor = (categoryTitle?: string): string => {
+  const key = (categoryTitle || "").toUpperCase();
+  return CATEGORY_BG_MAP[key] || DEFAULT_BG;
+};
+
+/**
+ * Date formatter instance.
+ */
+const DATE_FORMATTER = new Intl.DateTimeFormat("fi-FI", {
+  day: "numeric",
+  month: "long",
+});
+
+/**
+ * Formats an ISO date string.
+ */
+const formatDate = (isoString: string): string => {
+  try {
+    return DATE_FORMATTER.format(new Date(isoString));
+  } catch (e) {
+    return "Ei päivämäärää";
+  }
+};
+
+/**
+ * Creates a display string from a location object or string.
+ */
+const getLocationString = (
+  location: LocationResponse | string | null | undefined
+): string => {
+  if (!location) return "Ei sijaintia";
+  if (typeof location === "string") return location;
+
+  const parts: string[] = [];
+  if (location.streetAddress) parts.push(location.streetAddress);
+  if (location.city) parts.push(location.city);
+
+  return parts.length > 0 ? parts.join(", ") : "Ei sijaintia";
+};
+
+/**
+ * Generates user initials from a user name.
+ */
+const getUserInitials = (userName?: string | null): string => {
+  if (!userName) return "?";
+  const parts = userName.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  if (parts.length === 1 && parts[0].length > 0) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return "?";
+};
+
+// --- Component Props ---
 
 interface TaskCardProps {
   task: Task;
-  showActions?: boolean;
-  onView: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  isDeleting: boolean;
 }
 
-export default function TaskCard({
-  task,
-  showActions = true,
-  onView,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: TaskCardProps) {
-  const status = getStatusDisplay(task.status);
+// --- Optimized TaskCard Component ---
 
-  const formatDate = (value: string) => {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return value;
-    }
-    return date.toLocaleDateString("fi-FI", {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
+export default function TaskCard({ task }: TaskCardProps) {
+  const navigate = useNavigate();
+
+  /**
+   * `useMemo` calculates derived values.
+   * This logic only re-runs if the `task` prop changes.
+   */
+  const {
+    categoryIcon,
+    categoryBg,
+    locationString,
+    locationCount,
+    userInitials,
+    formattedDate,
+    hasLocation,
+  } = useMemo(() => {
+    const catTitle = task.categories?.[0]?.title || "OTHER";
+    const locs = task.locations || [];
+    const firstLoc = locs[0];
+    const locationStr = getLocationString(firstLoc);
+
+    return {
+      categoryIcon: getCategoryIcon(catTitle),
+      categoryBg: getCategoryColor(catTitle), // Re-added color logic
+      locationString: locationStr,
+      locationCount: locs.length,
+      userInitials: getUserInitials(task.user?.userName),
+      formattedDate: task.startDate
+        ? formatDate(task.startDate)
+        : "Ei päivämäärää",
+      hasLocation: locs.length > 0 && locationStr !== "Ei sijaintia",
+    };
+  }, [task]);
+
+  /**
+   * `useCallback` for stable function identity.
+   */
+  const handleClick = useCallback(() => {
+    navigate({
+      to: "/worker/tasks/$taskId",
+      params: { taskId: task.id.toString() },
     });
-  };
+  }, [navigate, task.id]);
 
+  /**
+   * Accessibility handler for keyboard navigation.
+   */
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick]
+  );
+
+  // This JSX implements your requested layout:
+  // [Image] | [Heading/Location/User] | [Description] | [Price/Time]
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              {task.title}
-            </h2>
+    <div
+      className="bg-white rounded-lg border border-gray-200 hover:shadow-lg hover:border-green-400 transition-all duration-200 cursor-pointer overflow-hidden p-4 flex items-start gap-4"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Näytä tehtävä: ${task.title}`}
+    >
+      {/* Column 1: Image (Color-coded Icon Block) */}
+      <div
+        className={`w-24 h-24 md:w-28 md:h-28 flex-shrink-0 ${categoryBg} flex items-center justify-center rounded-lg`}
+        aria-hidden="true"
+      >
+        <span className="material-icons text-gray-600 text-5xl">
+          {categoryIcon}
+        </span>
+      </div>
+
+      {/* Column 2: Heading, Location(s), User */}
+      <div className="flex-1 min-w-0 flex flex-col gap-2">
+        {/* Heading */}
+        <h3 className="font-semibold text-gray-800 text-lg leading-tight">
+          {task.title}
+        </h3>
+
+        {/* Location(s) */}
+        {hasLocation && (
+          <div className="flex items-center gap-2">
             <span
-              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${status.className}`}
+              className="material-icons text-green-500 text-base"
+              aria-hidden="true"
             >
-              {status.label}
+              place
             </span>
-          </div>
-
-          <div className="mt-3 grid gap-4 text-sm text-gray-600 md:grid-cols-3">
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                event
-              </span>
-              <span>
-                {formatDate(task.startDate)} – {formatDate(task.endDate)}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                place
-              </span>
-              <span>{task.location?.city ?? "Ei sijaintia"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                euro
-              </span>
-              <span>{task.price} €</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm text-gray-700">{locationString}</span>
+              {locationCount > 1 && (
+                <span className="ml-2 text-sm text-blue-600 font-medium">
+                  +{locationCount - 1}
+                </span>
+              )}
             </div>
           </div>
+        )}
 
-          {task.description && (
-            <p className="mt-3 line-clamp-2 text-gray-700">
-              {task.description}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-shrink-0 flex-col gap-2">
-          <button
-            onClick={onView}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        {/* User */}
+        <div className="flex items-center gap-2 min-w-0">
+          <div
+            className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white font-medium text-xs flex-shrink-0"
+            aria-hidden="true"
           >
-            Näytä
-          </button>
+            {userInitials}
+          </div>
+          <span className="text-sm text-gray-700 font-medium truncate">
+            {task.user?.userName || "Nimetön käyttäjä"}
+          </span>
+        </div>
+      </div>
 
-          {showActions && (
-            <>
-              <button
-                onClick={onEdit}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Muokkaa
-              </button>
-              <button
-                onClick={onDelete}
-                disabled={isDeleting}
-                className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isDeleting ? "Poistetaan..." : "Poista"}
-              </button>
-            </>
-          )}
+      {/* Column 3: Description Block */}
+      {/* 'flex-1' makes it flexible. 'hidden md:block' hides it on small screens. */}
+      {task.description && (
+        <div className="flex-1 min-w-0 hidden md:block">
+          <p className="text-sm text-gray-600 line-clamp-3">
+            {task.description}
+          </p>
+        </div>
+      )}
+
+      {/* Column 4: Price, Time */}
+      <div className="flex flex-col items-end justify-start gap-2 flex-shrink-0 pl-2">
+        {/* Price */}
+        <span className="text-green-600 font-bold text-xl whitespace-nowrap">
+          {task.price} €
+        </span>
+
+        {/* Date */}
+        <div className="flex items-center gap-1.5 text-sm text-gray-600">
+          <span
+            className="material-icons text-green-500 text-base"
+            aria-hidden="true"
+          >
+            event
+          </span>
+          <span className="whitespace-nowrap">{formattedDate}</span>
         </div>
       </div>
     </div>
   );
-}
-
-function getStatusDisplay(status: Task["status"]) {
-  switch (status) {
-    case "ACTIVE":
-      return {
-        label: "Aktiivinen",
-        className: "border-grey-300 bg-grey-100 text-green-700",
-      };
-    case "IN_PROGRESS":
-      return {
-        label: "Käynnissä",
-        className: "border-blue-300 bg-blue-100 text-blue-700",
-      };
-    case "COMPLETED":
-      return {
-        label: "Valmistunut!",
-        className: "border-green-300 bg-green-100 text-green-700",
-      };
-    case "CANCELLED":
-      return {
-        label: "Peruttu",
-        className: "border-red-300 bg-red-100 text-red-700",
-      };
-    case "EXPIRED":
-      return {
-        label: "Vanhentunut",
-        className: "border-yellow-300 bg-yellow-100 text-yellow-700",
-      };
-    default:
-      return {
-        label: status,
-        className: "border-gray-300 bg-gray-100 text-gray-700",
-      };
-  }
 }

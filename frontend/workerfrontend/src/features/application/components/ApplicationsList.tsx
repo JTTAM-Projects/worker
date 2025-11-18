@@ -12,7 +12,7 @@ interface ApplicationsListProps {
 
 // Displays paginated list of PENDING applications for a task owner to review.
 // Fetches applications via useTaskApplications hook and allows selection to view details in a modal.
-export default function ApplicationsList({ applications, taskId, pageSize = 4, onSelect }: ApplicationsListProps) {
+export default function ApplicationsList({ applications, taskId, onSelect }: ApplicationsListProps) {
   const { getAccessTokenSilently } = useAuth0();
   const [page, setPage] = useState(0);
 

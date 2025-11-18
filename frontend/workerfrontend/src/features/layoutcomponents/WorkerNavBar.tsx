@@ -5,6 +5,16 @@ import { Link } from "@tanstack/react-router";
 
 export default function WorkerNavBar() {
   const { isAuthenticated } = useAuth0();
+  
+  // Get saved search params from sessionStorage
+  const getSavedTasksSearch = () => {
+    try {
+      const saved = sessionStorage.getItem('worker-tasks-search');
+      return saved ? JSON.parse(saved) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
   return (
     <header className="bg-gradient-to-r from-green-600 to-green-500 shadow-lg sticky top-0 z-50 border-b-2 border-green-700">
       {/* navigaatio */}
@@ -13,7 +23,8 @@ export default function WorkerNavBar() {
         <div className="flex items-center space-x-10">
           {/* Logo/Nimi */}
           <Link
-            to="/worker"
+            to="/worker/tasks"
+            search={getSavedTasksSearch()}
             className="text-white font-bold text-2xl tracking-wide hover:scale-105 transition-transform duration-200"
           >
             LOGO
@@ -23,6 +34,7 @@ export default function WorkerNavBar() {
           <div className="hidden md:flex items-center space-x-6">
             <Link
               to="/worker/tasks"
+              search={getSavedTasksSearch()}
               className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
             >
               Työilmoitukset

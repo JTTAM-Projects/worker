@@ -1,7 +1,7 @@
 // Backend categories 
 export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
-export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "EXPIRED";
+export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "PENDING_APPROVAL" | "COMPLETED" | "CANCELLED" | "EXPIRED";
 
 export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
 
@@ -18,6 +18,7 @@ export interface TaskFilters {
   latitude?: number;
   longitude?: number;
   radiusKm?: number;
+  locationText?: string; // User-entered location text for display
   status?: TaskStatus;
   sortBy?: SortOption;
 }
@@ -56,7 +57,7 @@ export interface Task {
   price: number;
   startDate: string; // ISO string from LocalDateTime
   endDate: string; // ISO string from LocalDateTime
-  location: LocationResponse; // Changed from string to LocationResponse
+  locations: LocationResponse[]; // Changed from singular to array to match backend Set<LocationResponse>
   status: TaskStatus;
   description: string;
 }
