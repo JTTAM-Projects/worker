@@ -31,13 +31,13 @@ public class TaskTestData {
     private final List<TaskTemplate> gardenTasks = Arrays.asList(
             new TaskTemplate("Leikkaa nurmikko", "Nurmikon leikkuu ja reunojen siistiminen.", 40, 60, 2, 4),
             new TaskTemplate("Istuta kukkia", "Kesäkukkien istutus parvekelaatikoihin tai puutarhaan.", 25, 35, 1, 3),
-            new TaskTemplate("Kitke rikkaruohot", "Rikkaruohojen kitkeminen kasvimaalta tai kukkapenkeistä.", 30, 50, 2, 3),
+            new TaskTemplate("Kitke rikkaruohot", "Rikkaruohojen kitkeminen kasvimaalta tai kukkapenkeistä.", 30, 50, 2,
+                    3),
             new TaskTemplate("Haravoi lehdet", "Pihan lehtien haravointi ja poisvienti.", 35, 55, 2, 4),
             new TaskTemplate("Kastele kasvit", "Puutarhan ja parvekekasvien kastelu.", 15, 25, 1, 2),
             new TaskTemplate("Leikkaa pensas", "Pensaiden ja pensasaidan leikkuu.", 40, 70, 2, 4),
             new TaskTemplate("Lannoita nurmikko", "Nurmikon kevät- tai kesälannoitus.", 30, 50, 2, 3),
-            new TaskTemplate("Kylvä siemeniä", "Kukkien tai vihannesten siementen kylvö.", 20, 40, 1, 3)
-    );
+            new TaskTemplate("Kylvä siemeniä", "Kukkien tai vihannesten siementen kylvö.", 20, 40, 1, 3));
 
     private final List<TaskTemplate> yardTasks = Arrays.asList(
             new TaskTemplate("Lakaitse piha", "Pihan lakaiseminen ja siistiminen.", 25, 45, 1, 3),
@@ -46,8 +46,7 @@ public class TaskTestData {
             new TaskTemplate("Korjaa aita", "Rikkinäisen puuaidan korjaus.", 80, 120, 4, 6),
             new TaskTemplate("Siisti pihavarastopiha", "Pihavaraston järjestely ja siistiminen.", 40, 70, 2, 4),
             new TaskTemplate("Puhdista sadevesikaivot", "Pihan sadevesikaivojen puhdistus.", 30, 50, 1, 2),
-            new TaskTemplate("Rakenna kompostori", "Kompostorin rakentaminen takapihalle.", 60, 100, 3, 5)
-    );
+            new TaskTemplate("Rakenna kompostori", "Kompostorin rakentaminen takapihalle.", 60, 100, 3, 5));
 
     private final List<TaskTemplate> forestWorkTasks = Arrays.asList(
             new TaskTemplate("Kaada puita", "Puiden kaato ja pilkkominen.", 100, 200, 4, 8),
@@ -55,8 +54,7 @@ public class TaskTestData {
             new TaskTemplate("Pilko polttopuita", "Polttopuiden pilkkominen ja pinominen.", 60, 120, 3, 6),
             new TaskTemplate("Kuljeta hakkeet", "Hakekuorman kuljetus ja levitys.", 70, 130, 3, 5),
             new TaskTemplate("Merkitse puut", "Kaadettavien puiden merkitseminen.", 40, 80, 2, 4),
-            new TaskTemplate("Raivaa oksia", "Kaatuneiden oksien raivaus metsästä.", 50, 100, 2, 5)
-    );
+            new TaskTemplate("Raivaa oksia", "Kaatuneiden oksien raivaus metsästä.", 50, 100, 2, 5));
 
     private final List<TaskTemplate> householdTasks = Arrays.asList(
             new TaskTemplate("Kokoa huonekalut", "IKEA-huonekalujen kokoaminen.", 40, 80, 2, 4),
@@ -65,8 +63,7 @@ public class TaskTestData {
             new TaskTemplate("Kokoa säilytyskalusteet", "Säilytyskaapiston kokoaminen makuuhuoneeseen.", 35, 65, 2, 3),
             new TaskTemplate("Asenna hyllyt", "Seinähyllyjen asennus ja kiinnitys.", 40, 70, 2, 3),
             new TaskTemplate("Ripusta taulut", "Taulujen ja kehysten ripustus seinille.", 25, 45, 1, 2),
-            new TaskTemplate("Järjestä varastokomero", "Varastokaapin siivous ja organisointi.", 35, 60, 2, 3)
-    );
+            new TaskTemplate("Järjestä varastokomero", "Varastokaapin siivous ja organisointi.", 35, 60, 2, 3));
 
     private final List<TaskTemplate> cleaningTasks = Arrays.asList(
             new TaskTemplate("Siivoa keittiö", "Keittiön perusteellinen siivous.", 40, 70, 2, 3),
@@ -78,8 +75,7 @@ public class TaskTestData {
             new TaskTemplate("Siivoa autotalli", "Autotallin siivous ja järjestely.", 60, 120, 3, 5),
             new TaskTemplate("Pese sauna", "Saunan lauteiden ja lattian pesu.", 35, 60, 2, 3),
             new TaskTemplate("Puhdista uuni", "Uunin sisäpuolen puhdistus.", 30, 50, 1, 2),
-            new TaskTemplate("Siivoa parvi", "Parven tai ullakontilan siivous.", 50, 100, 2, 5)
-    );
+            new TaskTemplate("Siivoa parvi", "Parven tai ullakontilan siivous.", 50, 100, 2, 5));
 
     private final List<TaskTemplate> movingTasks = Arrays.asList(
             new TaskTemplate("Kanna laatikot", "Muuttolaatikoiden kantaminen portaissa.", 60, 120, 2, 5),
@@ -89,8 +85,7 @@ public class TaskTestData {
             new TaskTemplate("Pura huonekalut", "Huonekalujen purkaminen muuttoa varten.", 40, 70, 2, 3),
             new TaskTemplate("Pakkaustöitä", "Tavaroiden pakkaaminen muuttolaatikoihin.", 50, 90, 2, 4),
             new TaskTemplate("Kokoa sänky", "Sängyn kokoaminen uudessa asunnossa.", 40, 70, 2, 3),
-            new TaskTemplate("Kuljeta pakettiauto", "Pakettiauton kuljetus muutossa.", 60, 100, 3, 5)
-    );
+            new TaskTemplate("Kuljeta pakettiauto", "Pakettiauton kuljetus muutossa.", 60, 100, 3, 5));
 
     private final List<TaskTemplate> repairTasks = Arrays.asList(
             new TaskTemplate("Korjaa hana", "Vuotavan hanan korjaus.", 40, 70, 1, 2),
@@ -100,8 +95,7 @@ public class TaskTestData {
             new TaskTemplate("Korjaa kaluste", "Rikkinäisen huonekalun korjaus.", 40, 80, 2, 4),
             new TaskTemplate("Vaihda pistorasia", "Seinäpistorasian vaihto.", 30, 60, 1, 2),
             new TaskTemplate("Korjaa ikkuna", "Ikkunan mekanismin korjaus.", 50, 100, 2, 3),
-            new TaskTemplate("Asenna lukko", "Oven lukon asennus tai vaihto.", 40, 70, 1, 3)
-    );
+            new TaskTemplate("Asenna lukko", "Oven lukon asennus tai vaihto.", 40, 70, 1, 3));
 
     private final List<TaskTemplate> paintingTasks = Arrays.asList(
             new TaskTemplate("Maalaa huone", "Yhden huoneen maalaus.", 100, 180, 4, 8),
@@ -110,8 +104,7 @@ public class TaskTestData {
             new TaskTemplate("Maalaa ikkunanpokat", "Ikkunanpokauksien maalaus.", 60, 100, 3, 5),
             new TaskTemplate("Maalaa katto", "Katon maalaus sisätilassa.", 80, 150, 4, 6),
             new TaskTemplate("Tapetointi", "Seinän tapetointi.", 70, 130, 3, 6),
-            new TaskTemplate("Maalaa listat", "Jalkalistojen maalaus.", 40, 70, 2, 3)
-    );
+            new TaskTemplate("Maalaa listat", "Jalkalistojen maalaus.", 40, 70, 2, 3));
 
     private final List<TaskTemplate> snowRemovalTasks = Arrays.asList(
             new TaskTemplate("Kolaa lunta", "Pihan ja käytävien lumien kolaus.", 30, 60, 1, 3),
@@ -119,8 +112,7 @@ public class TaskTestData {
             new TaskTemplate("Hiekoita liukkaat", "Käytävien ja portaiden hiekoitus.", 20, 40, 1, 2),
             new TaskTemplate("Puhdista katto lumesta", "Katon lumen pudotus.", 60, 120, 2, 4),
             new TaskTemplate("Auraa piha", "Pihan auraus traktorilla.", 50, 100, 2, 3),
-            new TaskTemplate("Poista jääpuikot", "Räystäiden jääpuikkojen poisto.", 40, 80, 2, 3)
-    );
+            new TaskTemplate("Poista jääpuikot", "Räystäiden jääpuikkojen poisto.", 40, 80, 2, 3));
 
     private final List<TaskTemplate> otherTasks = Arrays.asList(
             new TaskTemplate("Ulkoiluta koira", "Koiran ulkoilutus tunnin ajan.", 15, 30, 1, 2),
@@ -130,11 +122,10 @@ public class TaskTestData {
             new TaskTemplate("Ostosapua", "Avustus kauppaostoksilla.", 30, 50, 1, 2),
             new TaskTemplate("Vie kierrätys", "Kierrätettävien materiaalien vienti keräyspisteeseen.", 20, 40, 1, 2),
             new TaskTemplate("Kokoa polkupyörä", "Polkupyörän kokoaminen.", 30, 60, 1, 3),
-            new TaskTemplate("Asennus- ja säätötyöt", "Erilaisten laitteiden asennus ja säätö.", 40, 80, 2, 4)
-    );
+            new TaskTemplate("Asennus- ja säätötyöt", "Erilaisten laitteiden asennus ja säätö.", 40, 80, 2, 4));
 
-    public TaskTestData(TaskRepository taskRepository, LocationTestData locationTestData, 
-                        LocationRepository locationRepository) {
+    public TaskTestData(TaskRepository taskRepository, LocationTestData locationTestData,
+            LocationRepository locationRepository) {
         this.taskRepository = taskRepository;
         this.locationTestData = locationTestData;
         this.locationRepository = locationRepository;
@@ -167,7 +158,7 @@ public class TaskTestData {
 
         // Get locations - now we have many real Finnish locations
         List<Location> locationList = new ArrayList<>(locations.values());
-        Location firstLocation = locationList.get(0);  // Use first location for specific test cases
+        Location firstLocation = locationList.get(0); // Use first location for specific test cases
         Location secondLocation = locationList.size() > 1 ? locationList.get(1) : firstLocation;
 
         Category gardenCategory = categories.get("GARDEN");
@@ -177,8 +168,9 @@ public class TaskTestData {
 
         Map<String, Task> tasks = new HashMap<>();
 
-        // Keep a few hand-crafted tasks for specific test cases (auth0 user, multi-location, etc.)
-        
+        // Keep a few hand-crafted tasks for specific test cases (auth0 user,
+        // multi-location, etc.)
+
         // ACTIVE task for auth0 user
         Task auth0ActiveTask = new Task(
                 "Kitke rikkaruohot",
@@ -222,6 +214,20 @@ public class TaskTestData {
         tasks.put("inProgressTask", inProgressTask);
         taskRepository.save(inProgressTask);
 
+        // PENDING_APPROVAL task for testing employer approval flow
+        Task pendingApprovalTask = new Task(
+                "Pese ikkunat",
+                80,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(3),
+                TaskStatus.PENDING_APPROVAL,
+                "Ikkunoiden pesu tehty, odottaa työnantajan hyväksyntää.",
+                auth0);
+        pendingApprovalTask.getCategories().add(cleaningCategory);
+        pendingApprovalTask.getLocations().add(firstLocation);
+        tasks.put("pendingApprovalTask", pendingApprovalTask);
+        taskRepository.save(pendingApprovalTask);
+
         // Multi-location Rovaniemi reindeer task (for UI testing)
         Task reindeerTask = new Task(
                 "Porotallin siivous ja porojen ruokinta 🦌",
@@ -232,19 +238,33 @@ public class TaskTestData {
                 "Apua porotallin siivoukseen ja porojen ruokintaan Rovaniemellä. Heinän jako, veden vaihto ja porojen hoito. Noin 50 kesyä poroa eri paikoissa. Lämpimät vaatteet!",
                 user1);
         reindeerTask.getCategories().add(otherCategory);
-        
+
         // Add 10 reindeer-related locations in Rovaniemi
-        reindeerTask.getLocations().add(createReindeerLocation("Porokatu 1", "96200", "Rovaniemi", 66.503050, 25.726760)); // City center
-        reindeerTask.getLocations().add(createReindeerLocation("Joulupukin Pajakylä", "96930", "Rovaniemi", 66.543760, 25.847410)); // Santa Claus Village
-        reindeerTask.getLocations().add(createReindeerLocation("Ounasvaara", "96400", "Rovaniemi", 66.495900, 25.693200)); // Ounasvaara
-        reindeerTask.getLocations().add(createReindeerLocation("Saarenkyläntie 15", "96900", "Rovaniemi", 66.557800, 25.835600)); // North
-        reindeerTask.getLocations().add(createReindeerLocation("Napapiirintie 33", "96900", "Rovaniemi", 66.543330, 25.845000)); // Arctic Circle
-        reindeerTask.getLocations().add(createReindeerLocation("Koskikatu 25", "96200", "Rovaniemi", 66.502700, 25.728900)); // Near Kemijoki
-        reindeerTask.getLocations().add(createReindeerLocation("Metsäkatu 7", "96300", "Rovaniemi", 66.510200, 25.715400)); // Forest area
-        reindeerTask.getLocations().add(createReindeerLocation("Pohjolankatu 45", "96100", "Rovaniemi", 66.506500, 25.732100)); // Residential
-        reindeerTask.getLocations().add(createReindeerLocation("Rovakatu 18", "96200", "Rovaniemi", 66.501100, 25.724800)); // Downtown
-        reindeerTask.getLocations().add(createReindeerLocation("Valtatie 4", "96910", "Rovaniemi", 66.548900, 25.855300)); // Highway area
-        
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Porokatu 1", "96200", "Rovaniemi", 66.503050, 25.726760)); // City center
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Joulupukin Pajakylä", "96930", "Rovaniemi", 66.543760, 25.847410)); // Santa
+                                                                                                                 // Claus
+                                                                                                                 // Village
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Ounasvaara", "96400", "Rovaniemi", 66.495900, 25.693200)); // Ounasvaara
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Saarenkyläntie 15", "96900", "Rovaniemi", 66.557800, 25.835600)); // North
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Napapiirintie 33", "96900", "Rovaniemi", 66.543330, 25.845000)); // Arctic
+                                                                                                              // Circle
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Koskikatu 25", "96200", "Rovaniemi", 66.502700, 25.728900)); // Near
+                                                                                                          // Kemijoki
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Metsäkatu 7", "96300", "Rovaniemi", 66.510200, 25.715400)); // Forest area
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Pohjolankatu 45", "96100", "Rovaniemi", 66.506500, 25.732100)); // Residential
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Rovakatu 18", "96200", "Rovaniemi", 66.501100, 25.724800)); // Downtown
+        reindeerTask.getLocations()
+                .add(createReindeerLocation("Valtatie 4", "96910", "Rovaniemi", 66.548900, 25.855300)); // Highway area
+
         tasks.put("reindeerTask", reindeerTask);
         taskRepository.save(reindeerTask);
 
@@ -252,8 +272,8 @@ public class TaskTestData {
     }
 
     // Helper method to create reindeer locations
-    private Location createReindeerLocation(String streetAddress, String postalCode, String city, 
-                                           double latitude, double longitude) {
+    private Location createReindeerLocation(String streetAddress, String postalCode, String city,
+            double latitude, double longitude) {
         Location location = new Location();
         location.setStreetAddress(streetAddress);
         location.setPostalCode(postalCode);
@@ -261,21 +281,22 @@ public class TaskTestData {
         location.setCountry("Finland");
         location.setLatitude(BigDecimal.valueOf(latitude));
         location.setLongitude(BigDecimal.valueOf(longitude));
-        return locationRepository.save(location);  // Save and return the persisted location
+        return locationRepository.save(location); // Save and return the persisted location
     }
 
     /**
-     * Generates additional bulk test tasks with realistic variety across all categories.
+     * Generates additional bulk test tasks with realistic variety across all
+     * categories.
      * This method creates tasks using templates for each category with randomized:
      * - Task status distribution (majority ACTIVE for testing)
      * - Payment amounts within realistic ranges
      * - Start/end times spread across dates
      * - Locations and users
      * 
-     * @param users Map of test users
-     * @param locations Map of test locations
+     * @param users      Map of test users
+     * @param locations  Map of test locations
      * @param categories Map of test categories
-     * @param count Number of additional tasks to generate
+     * @param count      Number of additional tasks to generate
      * @return Map of generated tasks
      */
     public Map<String, Task> generateBulkTestTasks(
@@ -317,6 +338,7 @@ public class TaskTestData {
         TaskStatus[] statuses = {
                 TaskStatus.ACTIVE, TaskStatus.ACTIVE, TaskStatus.ACTIVE, TaskStatus.ACTIVE, TaskStatus.ACTIVE,
                 TaskStatus.IN_PROGRESS, TaskStatus.IN_PROGRESS,
+                TaskStatus.PENDING_APPROVAL, TaskStatus.PENDING_APPROVAL,
                 TaskStatus.COMPLETED,
                 TaskStatus.CANCELLED,
                 TaskStatus.EXPIRED
@@ -328,12 +350,14 @@ public class TaskTestData {
             TaskTemplate template = templateWithCategory.template;
             Category category = templateWithCategory.category;
 
-            // Random user and weighted random location (60% Helsinki, 20% Espoo, 10% Vantaa, 10% other)
+            // Random user and weighted random location (60% Helsinki, 20% Espoo, 10%
+            // Vantaa, 10% other)
             User randomUser = userList.get(random.nextInt(userList.size()));
             Location randomLocation1 = locationTestData.getRandomLocation(locationList);
-            
+
             // 20% chance of having a second location (for moving tasks, etc.)
-            Location randomLocation2 = random.nextDouble() < 0.2 ? locationTestData.getRandomLocation(locationList) : null;
+            Location randomLocation2 = random.nextDouble() < 0.2 ? locationTestData.getRandomLocation(locationList)
+                    : null;
 
             // Random status
             TaskStatus status = statuses[random.nextInt(statuses.length)];
@@ -354,6 +378,12 @@ public class TaskTestData {
                     // Started today or recently
                     startTime = LocalDateTime.now().minusHours(random.nextInt(6));
                     endTime = startTime.plusHours(duration);
+                    break;
+                case PENDING_APPROVAL:
+                    // Recently finished, waiting for approval (end time in past few hours/days)
+                    int hoursAgo = random.nextInt(48); // 0-48 hours ago
+                    endTime = LocalDateTime.now().minusHours(hoursAgo);
+                    startTime = endTime.minusHours(duration);
                     break;
                 case COMPLETED:
                     // Past dates (1-60 days ago)

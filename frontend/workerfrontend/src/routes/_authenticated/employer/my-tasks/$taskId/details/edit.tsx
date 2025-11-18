@@ -1,8 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 import { taskQueries } from "../../../../../../features/task/queries/taskQueries";
-import { useUpdateTask } from "../../../../../../features/task/hooks/useTask";
-import { useGetUserDetails, useUpdateUser } from "../../../../../../features/Profile/hooks/userHooks";
+import { useUpdateTask } from "../../../../../../features/task/hooks/taskMutations";
+import {
+  useGetUserDetails,
+  useUpdateUser,
+} from "../../../../../../features/Profile/hooks/userHooks";
 import { useMemo, useState } from "react";
 import {
   TaskWizardForm,
@@ -10,10 +17,14 @@ import {
   type TaskWizardPayload,
 } from "../../../../../../features/task/components/TaskWizardForm";
 
-export const Route = createFileRoute("/_authenticated/employer/my-tasks/$taskId/details/edit")({
+export const Route = createFileRoute(
+  "/_authenticated/employer/my-tasks/$taskId/details/edit"
+)({
   component: EditTaskPage,
   loader: async ({ context, params }) => {
-    return context.queryClient.ensureQueryData(taskQueries.detail(params.taskId));
+    return context.queryClient.ensureQueryData(
+      taskQueries.detail(params.taskId)
+    );
   },
 });
 
@@ -25,19 +36,22 @@ export default function EditTaskPage() {
   const navigate = useNavigate();
 
   const { data: taskData } = useSuspenseQuery(taskQueries.detail(taskId));
-  const { mutateAsync: updateTaskMutation, isPending: isUpdatingTask } = useUpdateTask(parseInt(taskId));
+  const { mutateAsync: updateTaskMutation, isPending: isUpdatingTask } =
+    useUpdateTask(parseInt(taskId));
 
   const { data: userDetails } = useGetUserDetails();
   const { mutateAsync: updateUser } = useUpdateUser();
 
-  const [submissionState, setSubmissionState] = useState<SubmissionState>("idle");
+  const [submissionState, setSubmissionState] =
+    useState<SubmissionState>("idle");
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const initialContact = useMemo(
     () => ({
       firstName: "",
       lastName: "",
-      phoneNumber: userDetails?.phoneNumber ?? taskData?.user?.phoneNumber ?? "",
+      phoneNumber:
+        userDetails?.phoneNumber ?? taskData?.user?.phoneNumber ?? "",
       email: userDetails?.mail ?? taskData?.user?.mail ?? "",
     }),
     [taskData?.user?.mail, taskData?.user?.phoneNumber, userDetails]
@@ -97,11 +111,20 @@ export default function EditTaskPage() {
         location,
       });
       setSubmissionState("success");
-      setTimeout(() => navigate({ to: "/employer/my-tasks/$taskId/details", params: { taskId: taskId } }), 1500);
+      setTimeout(
+        () =>
+          navigate({
+            to: "/employer/my-tasks/$taskId/details",
+            params: { taskId: taskId },
+          }),
+        1500
+      );
     } catch (error) {
       console.error(error);
       setSubmissionState("error");
-      setSubmissionError("Ilmoituksen päivittäminen epäonnistui. Tarkista tiedot ja yritä uudelleen.");
+      setSubmissionError(
+        "Ilmoituksen päivittäminen epäonnistui. Tarkista tiedot ja yritä uudelleen."
+      );
     }
   };
 

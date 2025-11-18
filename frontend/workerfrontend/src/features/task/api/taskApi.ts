@@ -438,3 +438,26 @@ export async function completeTaskExecution(
     throw new Error(text || `Työn päättäminen epäonnistui (${response.status})`);
   }
 }
+
+/** Update task status (approve/reject work) */
+export async function updateTaskStatus(
+  getAccessTokenSilently: () => Promise<string>,
+  taskId: number,
+  status: string
+): Promise<void> {
+  const token = await getAccessTokenSilently();
+
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ taskStatus: status }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `Statuksen päivittäminen epäonnistui (${response.status})`);
+  }
+}

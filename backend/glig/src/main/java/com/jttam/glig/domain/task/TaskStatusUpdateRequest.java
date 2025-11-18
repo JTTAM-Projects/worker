@@ -1,7 +1,7 @@
 package com.jttam.glig.domain.task;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record TaskStatusUpdateRequest(@NotBlank TaskStatus taskStatus) {
+public record TaskStatusUpdateRequest(@NotNull TaskStatus taskStatus) {
 
 }
