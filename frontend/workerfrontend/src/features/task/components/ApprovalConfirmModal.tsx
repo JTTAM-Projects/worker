@@ -106,13 +106,7 @@ export default function ApprovalConfirmModal({
                       <span className="material-icons mt-0.5 text-base text-orange-600">
                         info
                       </span>
-                      <span>Työntekijä voi korjata työn</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="material-icons mt-0.5 text-base text-orange-600">
-                        info
-                      </span>
-                      <span>Työntekijä merkitsee työn uudelleen valmiiksi</span>
+                      <span>Työ asetetaan takaisin keskeneräiseksi</span>
                     </li>
                   </ul>
                 </>
