@@ -3,18 +3,24 @@ import type { Task } from "../types";
 interface EmployerTaskCardProps {
   task: Task;
   showActions?: boolean;
+  showApprovalActions?: boolean;
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onApprove?: () => void;
+  onReject?: () => void;
   isDeleting: boolean;
 }
 
 export default function EmployerTaskCard({
   task,
   showActions = true,
+  showApprovalActions = false,
   onView,
   onEdit,
   onDelete,
+  onApprove,
+  onReject,
   isDeleting,
 }: EmployerTaskCardProps) {
   const status = getStatusDisplay(task.status);
@@ -92,7 +98,7 @@ export default function EmployerTaskCard({
         <div className="flex flex-shrink-0 flex-col gap-2">
           <button
             onClick={onView}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="whitespace-nowrap rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             Näytä
           </button>
@@ -101,16 +107,35 @@ export default function EmployerTaskCard({
             <>
               <button
                 onClick={onEdit}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="whitespace-nowrap rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Muokkaa
               </button>
+
               <button
                 onClick={onDelete}
                 disabled={isDeleting}
-                className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="whitespace-nowrap rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isDeleting ? "Poistetaan..." : "Poista"}
+              </button>
+            </>
+          )}
+
+          {showApprovalActions && onApprove && onReject && (
+            <>
+              <button
+                onClick={onApprove}
+                className="whitespace-nowrap rounded-lg border border-green-300 bg-green-200 px-4 py-2 text-sm font-medium text-g-700 hover:bg-green-100"
+              >
+                Hyväksy
+              </button>
+
+              <button
+                onClick={onReject}
+                className="whitespace-nowrap rounded-lg border border-red-300 bg-red-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-red-50"
+              >
+                Hylkää
               </button>
             </>
           )}

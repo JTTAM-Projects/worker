@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Route } from "../routes/_authenticated/employer/my-tasks/index";
-import { useUserTasks, useDeleteTask } from "../features/task/hooks";
+import { useDeleteTask, useUpdateTaskStatus } from "../features/task/hooks";
+import { taskQueries } from "../features/task/queries/taskQueries";
 import type { Task } from "../features/task/types";
 import EmployerTaskCard from "../features/task/components/EmployerTaskCard";
+import ApprovalConfirmModal from "../features/task/components/ApprovalConfirmModal";
 
 export default function MyTasksPage() {
   const navigate = useNavigate();
@@ -23,17 +27,27 @@ export default function MyTasksPage() {
             ? "COMPLETED"
             : "ACTIVE";
   const showActions = tab === "active";
+  const showApprovalActions = tab === "done";
   const deleteTaskMutation = useDeleteTask();
+  const updateStatusMutation = useUpdateTaskStatus();
   const [banner, setBanner] = useState<null | {
     type: "success" | "error";
     message: string;
   }>(null);
 
-  const { data, isLoading, isError } = useUserTasks({
-    page,
-    size: pageSize,
-    status,
-  });
+  const [confirmModal, setConfirmModal] = useState<null | {
+    task: Task;
+    action: "approve" | "reject";
+  }>(null);
+
+  const { getAccessTokenSilently } = useAuth0();
+  const { data, isLoading, isError } = useSuspenseQuery(
+    taskQueries.own(getAccessTokenSilently, {
+      page,
+      size: pageSize,
+      status,
+    })
+  );
 
   const tasks = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
@@ -73,6 +87,42 @@ export default function MyTasksPage() {
           ? error.message
           : "Työilmoituksen poistaminen epäonnistui.";
       showBanner("error", message);
+    }
+  };
+
+  const handleApprove = (task: Task) => {
+    setConfirmModal({ task, action: "approve" });
+  };
+
+  const handleReject = (task: Task) => {
+    setConfirmModal({ task, action: "reject" });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!confirmModal) return;
+
+    const newStatus =
+      confirmModal.action === "approve" ? "COMPLETED" : "IN_PROGRESS";
+
+    try {
+      await updateStatusMutation.mutateAsync({
+        taskId: confirmModal.task.id,
+        status: newStatus,
+      });
+      showBanner(
+        "success",
+        confirmModal.action === "approve"
+          ? "Työ hyväksyttiin onnistuneesti!"
+          : "Työ palautettiin työntekijälle korjattavaksi."
+      );
+      setConfirmModal(null);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Statuksen päivittäminen epäonnistui.";
+      showBanner("error", message);
+      setConfirmModal(null);
     }
   };
 
@@ -229,6 +279,7 @@ export default function MyTasksPage() {
                 key={task.id}
                 task={task}
                 showActions={showActions}
+                showApprovalActions={showApprovalActions}
                 onView={() =>
                   navigate({
                     to: "/employer/my-tasks/$taskId/details",
@@ -242,6 +293,8 @@ export default function MyTasksPage() {
                   })
                 }
                 onDelete={() => handleDelete(task)}
+                onApprove={() => handleApprove(task)}
+                onReject={() => handleReject(task)}
                 isDeleting={isDeleting}
               />
             );
@@ -274,6 +327,17 @@ export default function MyTasksPage() {
             <span className="material-icons text-sm">chevron_right</span>
           </button>
         </div>
+      )}
+
+      {confirmModal && (
+        <ApprovalConfirmModal
+          isOpen={!!confirmModal}
+          onClose={() => setConfirmModal(null)}
+          onConfirm={handleConfirmStatusChange}
+          task={confirmModal.task}
+          action={confirmModal.action}
+          isLoading={updateStatusMutation.isPending}
+        />
       )}
     </div>
   );

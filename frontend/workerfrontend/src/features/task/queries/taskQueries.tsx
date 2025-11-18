@@ -8,6 +8,7 @@ import {
 } from "../api/taskApi";
 
 export const taskQueries = {
+  /** Fetch paginated tasks with filters (public, no auth) */
   all: (params: FetchTasksParams = { status: "ACTIVE", sortBy: "newest" }) =>
     queryOptions({
       queryKey: ["tasks", "all", params],
@@ -15,12 +16,22 @@ export const taskQueries = {
       staleTime: 5 * 60 * 1000, // 5 minuuttia
     }),
 
+  /** Fetch ALL filtered tasks for map view (up to 1000, no pagination) */
+  allFiltered: (filters: Omit<FetchTasksParams, "page" | "size"> = {}) =>
+    queryOptions({
+      queryKey: ["tasks", "allFiltered", filters],
+      queryFn: () => fetchTasks({ ...filters, page: 0, size: 1000 }),
+      staleTime: 5 * 60 * 1000,
+    }),
+
+  /** Fetch single task by ID */
   detail: (taskId: string) =>
     queryOptions({
       queryKey: ["tasks", "detail", taskId],
       queryFn: () => fetchTaskById(parseInt(taskId)),
     }),
 
+  /** Fetch applications for a task */
   applications: (taskId: number, page = 0, size = 10) =>
     queryOptions({
       queryKey: ["taskApplications", taskId, page, size],
@@ -29,7 +40,11 @@ export const taskQueries = {
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
 
-  own: (getAccessTokenSilently: () => Promise<string>, params: FetchTasksParams = {}) =>
+  /** Fetch authenticated user's own tasks */
+  own: (
+    getAccessTokenSilently: () => Promise<string>,
+    params: FetchTasksParams = {}
+  ) =>
     queryOptions({
       queryKey: ["tasks", "own", params],
       queryFn: () => fetchUserTasks(getAccessTokenSilently, params),
