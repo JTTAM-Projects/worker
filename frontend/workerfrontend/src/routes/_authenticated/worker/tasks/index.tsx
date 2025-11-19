@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/worker/tasks/")({
     // If URL has no search params, try to restore from sessionStorage
     if (Object.keys(search).length === 0) {
       try {
-        const saved = sessionStorage.getItem('worker-tasks-search');
+        const saved = sessionStorage.getItem("worker-tasks-search");
         if (saved) {
           const parsed = JSON.parse(saved);
           // Redirect to the same route with saved search params
@@ -36,11 +36,10 @@ export const Route = createFileRoute("/_authenticated/worker/tasks/")({
         }
       } catch (error) {
         // If it's not a redirect, ignore the error
-        if (error instanceof Error && error.message === 'REACT_ROUTER_REDIRECT') {
+        if (error instanceof Error && error.message === "REACT_ROUTER_REDIRECT") {
           throw error;
         }
       }
     }
   },
 });
-
