@@ -8,7 +8,7 @@ import { Link } from "@tanstack/react-router";
 
 function getSavedTasksSearch() {
   try {
-    const saved = sessionStorage.getItem('worker-tasks-search');
+    const saved = sessionStorage.getItem("worker-tasks-search");
     return saved ? JSON.parse(saved) : undefined;
   } catch {
     return undefined;
@@ -29,7 +29,7 @@ export default function Header() {
         <div className="flex items-center space-x-10">
           {/* Logo/Nimi */}
           <Link
-            to="/worker/tasks"
+            to="/"
             search={getSavedTasksSearch()}
             className="text-white font-bold text-2xl tracking-wide hover:scale-105 transition-transform duration-200"
           >
@@ -40,7 +40,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-6">
             {/* Etusivu -linkki */}
             <Link
-              to="/worker/tasks"
+              to="/"
               search={getSavedTasksSearch()}
               className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
             >

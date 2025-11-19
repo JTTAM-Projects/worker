@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExampleExampleRouteImport } from './routes/example/example'
 import { Route as PublicPricingRouteImport } from './routes/_public/pricing'
 import { Route as PublicFaqRouteImport } from './routes/_public/faq'
 import { Route as PublicAboutServiceRouteImport } from './routes/_public/about-service'
@@ -70,6 +71,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExampleExampleRoute = ExampleExampleRouteImport.update({
+  id: '/example/example',
+  path: '/example/example',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicPricingRoute = PublicPricingRouteImport.update({
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/about-service': typeof PublicAboutServiceRoute
   '/faq': typeof PublicFaqRoute
   '/pricing': typeof PublicPricingRoute
+  '/example/example': typeof ExampleExampleRoute
   '/employer/': typeof AuthenticatedEmployerIndexRoute
   '/worker/': typeof AuthenticatedWorkerIndexRoute
   '/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -398,6 +405,7 @@ export interface FileRoutesByTo {
   '/about-service': typeof PublicAboutServiceRoute
   '/faq': typeof PublicFaqRoute
   '/pricing': typeof PublicPricingRoute
+  '/example/example': typeof ExampleExampleRoute
   '/employer': typeof AuthenticatedEmployerIndexRoute
   '/worker': typeof AuthenticatedWorkerIndexRoute
   '/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -450,6 +458,7 @@ export interface FileRoutesById {
   '/_public/about-service': typeof PublicAboutServiceRoute
   '/_public/faq': typeof PublicFaqRoute
   '/_public/pricing': typeof PublicPricingRoute
+  '/example/example': typeof ExampleExampleRoute
   '/_authenticated/employer/': typeof AuthenticatedEmployerIndexRoute
   '/_authenticated/worker/': typeof AuthenticatedWorkerIndexRoute
   '/_authenticated/employer/create-task/job-offer': typeof AuthenticatedEmployerCreateTaskJobOfferRoute
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/about-service'
     | '/faq'
     | '/pricing'
+    | '/example/example'
     | '/employer/'
     | '/worker/'
     | '/employer/create-task/job-offer'
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
     | '/about-service'
     | '/faq'
     | '/pricing'
+    | '/example/example'
     | '/employer'
     | '/worker'
     | '/employer/create-task/job-offer'
@@ -599,6 +610,7 @@ export interface FileRouteTypes {
     | '/_public/about-service'
     | '/_public/faq'
     | '/_public/pricing'
+    | '/example/example'
     | '/_authenticated/employer/'
     | '/_authenticated/worker/'
     | '/_authenticated/employer/create-task/job-offer'
@@ -646,6 +658,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
+  ExampleExampleRoute: typeof ExampleExampleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -669,6 +682,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/example/example': {
+      id: '/example/example'
+      path: '/example/example'
+      fullPath: '/example/example'
+      preLoaderRoute: typeof ExampleExampleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/pricing': {
@@ -1167,6 +1187,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
+  ExampleExampleRoute: ExampleExampleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
