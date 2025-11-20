@@ -2,8 +2,8 @@ import { Tabs } from "expo-router";
 import "../../../global.css";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { ProfileButton } from "@/src/features/profile/ProfileButton";
 import { Entypo, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import Login from "@/src/components/ui/Login";
 
 export default function RootLayout() {
   return (
@@ -11,8 +11,9 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Tabs
         screenOptions={{
-          headerRight: () => <ProfileButton />,
+          headerRight: () => <Login />,
           tabBarActiveTintColor: "#22c55e",
+          headerTitleAlign: "center",
         }}
       >
         <Tabs.Screen

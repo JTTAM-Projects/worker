@@ -1,197 +1,99 @@
-# Gig-Based Job Platform
+# Worker - Mobiilisovellus
 
-This project is a desktop-first (mobile-optimized) application designed to connect individuals seeking help ("Employers") with skilled individuals looking for work ("Taskers"). The platform facilitates the entire process from posting a job to secure payment and feedback.
+## 📱 Yleiskuvaus
 
-## Core Features
+Worker app:n mobiiliversio, joka on ajettavissa Android emulaattorilla, jonka asennusohjeet löytyvät tästä tiedostosta. **Projektia ei voi ajaa Expo Go -sovelluksella**, koska käytän projektin autentikoinnin toteutuksena Auth0 palveluntarjoajaa, joka mainitsee [dokumentaatiossaan](https://auth0.com/docs/quickstart/native/react-native-expo/interactive) että Expo Go **ei ole yhteensopiva**. Helpoiten pääsee kun asentaa ohjeiden mukaan Android emulaattorin. Proktin tavoitteena on rakentaa worker -käyttäjälle käyttöliittymä, jonka avulla käyttäjä pystyy kirjautumaan, listata olemassa olevia työilmoituksia, hakemaan niihin, sekä tarkastella omia työhakemuksia. Projektin api-funktiot ja tyypit löydät [freatures](../worker/packages/shared/features/)-kansiosta, joita sekä web- että mobiilisovellus käyttää. Projektissa pakettien jakamiseen käytetään mpm Workspaces.
 
-The application is built around two primary user roles: the Employer and the Tasker.
+## 🚀 Aloitus
 
-### For Employers
-* **Post & Manage Gigs:** Easily create new job listings with detailed descriptions, categories (e.g., yard work, cleaning, small repairs), a fixed price, and location. Employers can view and manage their active and archived job posts.
-* **Review & Hire Applicants:** Receive notifications for new applicants. Browse applicant profiles, which include star ratings and written feedback from previous jobs, and hire the best candidate for the task.
-* **Secure Payment System:** When a Tasker is hired, the payment is held in escrow. This assures the Tasker that the funds are available. The payment is released with a single click once the Employer confirms the job is completed.
-* **Rate & Review Taskers:** After a job is complete, employers can leave a 1-5 star rating and public feedback, which is added to the Tasker's profile.
+### Esivaatimukset
 
-### For Taskers
-* **Build Your Profile:** Create and maintain a public profile to showcase skills and expertise. The profile automatically builds a work history with all completed jobs and reviews from Employers.
-* **Find & Apply for Gigs:** Browse all available jobs in a list or map view. Use powerful search and filter functions based on keywords, category, distance, and price to find suitable work.
-* **Track Applications:** Keep track of all job applications and their status (Pending, Approved, Rejected) in a personal dashboard.
-* **Track Your Earnings:** Receive payments instantly to your in-app balance after a job is marked as complete. View a comprehensive history of all earnings.
+Ennen asennusta varmista, että sinulla on asennettuna:
 
-## Technology Stack
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+- Node.js (versio 16.x tai uudempi)
+- npm tai yarn
+- [Android Studio](https://developer.android.com/studio) (Android-kehitykseen)
 
+Ohjeet
 
-## Entity-Relationship Diagram (ERD)
+### Asennus
 
-The following ERD shows the current database design structure and the logical relationships between entities.
-```mermaid
-erDiagram
-    User {
-        string user_id PK "unique, managed by Auth0"
-        string email "unique"
-        string first_name
-        string last_name
-        string phone_number
-        string status "e.g., active, suspended"
-        datetime created_at
-    }
-
-    Tasker_Profile {
-        int tasker_profile_id PK
-        string user_id FK "unique"
-        string first_name
-        string last_name
-        text bio "optional"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        decimal average_rating
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
-    }
-
-    Employer_Profile {
-        long employer_profile_id PK
-        string user_id FK "unique"
-        string first_name
-        string last_name
-        string employer_type "e.g., INDIVIDUAL, COMPANY"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        text bio "optional"
-        string company_name "optional"
-        string business_id "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED, SUSPENDED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
-    }
-
-    Job_Category {
-        int job_category_id PK
-        string category_name
-    }
-
-    Location {
-        int location_id PK
-        string street_address
-        string postal_code
-        string city
-        string country
-        decimal latitude
-        decimal longitude
-    }
-
-    Task {
-        int task_id PK
-        string employer_id FK
-        int job_category_id FK
-        string title
-        text description
-        decimal price
-        datetime start_date
-        datetime end_date
-        string status "e.g., open, assigned, completed"
-    }
-
-    Task_Location {
-        int task_id PK, FK
-        int location_id PK, FK
-    }
-
-    Application {
-        int application_id PK
-        int task_id FK
-        string tasker_id FK
-        decimal price_suggestion
-        text description
-        string status "e.g., pending, accepted, rejected"
-    }
-
-    Review {
-        int review_id PK
-        int task_id FK
-        string reviewer_id FK "User (Employer)"
-        string reviewee_id FK "User (Tasker)"
-        int rating "1-5"
-        text comment
-        datetime created_at
-    }
-
-    Conversation {
-        int conversation_id PK
-        int application_id FK
-        datetime created_at
-    }
-
-    Message {
-        int message_id PK
-        int conversation_id FK
-        string sender_id FK
-        text content
-        datetime sent_at
-        boolean is_read
-    }
-
-    %% --- Relationships ---
-    User |o--|| Tasker_Profile : "has one"
-    User |o--|| Employer_Profile : "has one"
-    User }o--|| Task : "posts"
-    User }o--o| Application : "applies with"
-    User }o--o| Message : "sends"
-    User }o--o| Review : "as reviewer/reviewee"
-
-    Job_Category ||--o{ Task : "categorizes"
-
-    Task ||--o{ Application : "has"
-    Task ||--o{ Review : "is reviewed in"
-    Task }o--o{ Location : "has (via Task_Location)"
-
-    Task ||--|{ Task_Location : "links to"
-    Location ||--|{ Task_Location : "links to"
-
-    Application ||--o| Conversation : "can lead to"
-    Conversation ||--o{ Message : "contains"
-```
-## Swagger-UI
-
-When you run Java-application on localhost, you can find api-documentation in this address:
-[Swagger-ui](http://localhost:8080/swagger-ui/index.html#/)
-
-## Backend
-
-Java version 17.0.12
-
-**MacOS & Windows**  
-Terminal commands:
+1. Kloonaa repositorio:
 
 ```bash
-cd glig
+git clone https://github.com/JTTAM-Projects/worker.git
+cd ohjelmistoprojekti2/worker
 ```
+
+2. Asenna riippuvuudet:
+
+Asentaa riippuvuudet sekä mobiili että web käyttöliittymälle.
+
+Aja projektin juurihakemistossa:
 
 ```bash
-./mvnw spring-boot:run
+npm install
+# tai
+yarn install
 ```
 
-## Authors
-* Aku Ihamuotila
-* Tuomas Jaakkola
-* Jani Könönen
-* Tuomas Leinonen
-* Markus Mäntylä
+3. Luo .env-tiedosto ja määrittele Auth0-asetukset:
+
+```bash
+cd apps/mobiili
+```
+
+Luo `.env` tiedosto `apps/mobiili` -hakemistoon seuraavalla sisällöllä:
+
+```env
+AUTH0_DOMAIN=your-domain.eu.auth0.com
+AUTH0_CLIENT_ID=your_client_id_here
+AUTH0_CLIENT_SECRET=your_client_secret_here
+```
+
+Korvaa arvot omilla Auth0-tunnuksillasi, jotka löydät [Auth0 Dashboard](https://manage.auth0.com/) -sivulta, kohdasta applications -> mobiili -> setting
+
+### Kehitysympäristö
+
+#### Android
+
+Ohjeet Android emulaattorin asennukseen sekä konfigurointiin [täältä](https://docs.expo.dev/workflow/android-studio-emulator/). Muista valita oikeat ohjeet tab -valikoista, esimerkiksi Windows.
+
+```bash
+
+# Käynnistä Android-emulaattorissa tai laitteessa
+npx expo run:android
+```
+
+## 🏗️ Projektin rakenne
+
+```
+
+```
+
+## 🔧 Konfiguraatio
+
+### Ympäristömuuttujat
+
+Luo `.env` tiedosto `apps/mobiili` -hakemistoon:
+
+```env
+AUTH0_DOMAIN=your-domain.eu.auth0.com
+AUTH0_CLIENT_ID=your_client_id_here
+AUTH0_CLIENT_SECRET=your_client_secret_here
+```
+
+**Huom:** Älä koskaan committaa `.env` tiedostoa versionhallintaan!
+
+## 🛠️ Kehitystyökalut
+
+- **Debugging:** React Native Debugger
+- **Linting:** ESLint - `npm run lint`
+- **Formatting:** Prettier - `npm run format`
+
+## 📱 Tuki ja yhteensopivuus
+
+- **Android:** 6.0 (API level 23) tai uudempi
+- **iOS:** iOS 12.0 tai uudempi
+
+huom. tämä ohje ei sisällä ios asennuksia
