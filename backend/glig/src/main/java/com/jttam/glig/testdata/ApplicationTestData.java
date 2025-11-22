@@ -32,6 +32,7 @@ public class ApplicationTestData {
         Task auth0ActiveTask = tasks.get("auth0ActiveTask");
         Task multiLocationTask = tasks.get("multiLocationTask");
         Task inProgressTask = tasks.get("inProgressTask");
+        Task completedTask = tasks.get("auth0CompletedTask");
 
         Map<String, Application> applications = new HashMap<>();
 
@@ -55,6 +56,13 @@ public class ApplicationTestData {
                     .save(new Application(user2, inProgressTask, 90, LocalDateTime.now(),
                             "Minulle tuli este.", ApplicationStatus.CANCELLED));
             applications.put("cancelled1", cancelled1);
+        }
+
+        if (completedTask != null) {
+            Application completedApp = applicationRepository
+                    .save(new Application(user2, completedTask, 45, LocalDateTime.now(),
+                            "Valmis hakemus completed-taskille.", ApplicationStatus.ACCEPTED));
+            applications.put("completedApp", completedApp);
         }
 
         // Create some applications on bulk tasks for auth0 user (for testing)
