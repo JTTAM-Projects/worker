@@ -54,6 +54,7 @@ import { Route as AuthenticatedWorkerDashboardPaymentsPaymentTransactionIdRouteI
 import { Route as AuthenticatedEmployerMyProflieReviewsReviewIdRouteImport } from './routes/_authenticated/employer/my-proflie/reviews/$reviewId'
 import { Route as AuthenticatedEmployerMyProfliePaymentsPaymentIdRouteImport } from './routes/_authenticated/employer/my-proflie/payments/$paymentId'
 import { Route as AuthenticatedEmployerMyProflieDetailsEditRouteImport } from './routes/_authenticated/employer/my-proflie/details/edit'
+import { Route as AuthenticatedEmployerMyTasksTaskIdReviewIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/review/index'
 import { Route as AuthenticatedEmployerMyTasksTaskIdDetailsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/details/index'
 import { Route as AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/applications/index'
 import { Route as AuthenticatedEmployerMyTasksTaskIdDetailsEditRouteImport } from './routes/_authenticated/employer/my-tasks/$taskId/details/edit'
@@ -319,6 +320,12 @@ const AuthenticatedEmployerMyProflieDetailsEditRoute =
     path: '/my-proflie/details/edit',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
+const AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute =
+  AuthenticatedEmployerMyTasksTaskIdReviewIndexRouteImport.update({
+    id: '/my-tasks/$taskId/review/',
+    path: '/my-tasks/$taskId/review/',
+    getParentRoute: () => AuthenticatedEmployerRoute,
+  } as any)
 const AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute =
   AuthenticatedEmployerMyTasksTaskIdDetailsIndexRouteImport.update({
     id: '/my-tasks/$taskId/details/',
@@ -392,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
   '/employer/my-tasks/$taskId/applications': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
   '/employer/my-tasks/$taskId/details': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
+  '/employer/my-tasks/$taskId/review': typeof AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -439,6 +447,7 @@ export interface FileRoutesByTo {
   '/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
   '/employer/my-tasks/$taskId/applications': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
   '/employer/my-tasks/$taskId/details': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
+  '/employer/my-tasks/$taskId/review': typeof AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -491,6 +500,7 @@ export interface FileRoutesById {
   '/_authenticated/employer/my-tasks/$taskId/details/edit': typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
   '/_authenticated/employer/my-tasks/$taskId/applications/': typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
   '/_authenticated/employer/my-tasks/$taskId/details/': typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
+  '/_authenticated/employer/my-tasks/$taskId/review/': typeof AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/employer/my-tasks/$taskId/details/edit'
     | '/employer/my-tasks/$taskId/applications'
     | '/employer/my-tasks/$taskId/details'
+    | '/employer/my-tasks/$taskId/review'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -589,6 +600,7 @@ export interface FileRouteTypes {
     | '/employer/my-tasks/$taskId/details/edit'
     | '/employer/my-tasks/$taskId/applications'
     | '/employer/my-tasks/$taskId/details'
+    | '/employer/my-tasks/$taskId/review'
   id:
     | '__root__'
     | '/'
@@ -640,6 +652,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employer/my-tasks/$taskId/details/edit'
     | '/_authenticated/employer/my-tasks/$taskId/applications/'
     | '/_authenticated/employer/my-tasks/$taskId/details/'
+    | '/_authenticated/employer/my-tasks/$taskId/review/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -965,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEmployerMyProflieDetailsEditRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
+    '/_authenticated/employer/my-tasks/$taskId/review/': {
+      id: '/_authenticated/employer/my-tasks/$taskId/review/'
+      path: '/my-tasks/$taskId/review'
+      fullPath: '/employer/my-tasks/$taskId/review'
+      preLoaderRoute: typeof AuthenticatedEmployerMyTasksTaskIdReviewIndexRouteImport
+      parentRoute: typeof AuthenticatedEmployerRoute
+    }
     '/_authenticated/employer/my-tasks/$taskId/details/': {
       id: '/_authenticated/employer/my-tasks/$taskId/details/'
       path: '/my-tasks/$taskId/details'
@@ -1014,6 +1034,7 @@ interface AuthenticatedEmployerRouteChildren {
   AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsEditRoute
   AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute
   AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute
+  AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute: typeof AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute
 }
 
 const AuthenticatedEmployerRouteChildren: AuthenticatedEmployerRouteChildren = {
@@ -1050,6 +1071,8 @@ const AuthenticatedEmployerRouteChildren: AuthenticatedEmployerRouteChildren = {
     AuthenticatedEmployerMyTasksTaskIdApplicationsIndexRoute,
   AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute:
     AuthenticatedEmployerMyTasksTaskIdDetailsIndexRoute,
+  AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute:
+    AuthenticatedEmployerMyTasksTaskIdReviewIndexRoute,
 }
 
 const AuthenticatedEmployerRouteWithChildren =
