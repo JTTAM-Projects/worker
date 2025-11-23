@@ -60,6 +60,7 @@ export interface Task {
   locations: LocationResponse[]; // Changed from singular to array to match backend Set<LocationResponse>
   status: TaskStatus;
   description: string;
+  worker?: UserDto;
 }
 
 // Matches backend TaskApplicantDto

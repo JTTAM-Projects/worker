@@ -7,6 +7,7 @@ import java.util.Set;
 import com.jttam.glig.domain.category.dto.CategoryResponse;
 import com.jttam.glig.domain.location.dto.LocationResponse;
 import com.jttam.glig.domain.task.TaskStatus;
+import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.dto.UserResponse;
 
 public record TaskResponse(Long id,
@@ -19,6 +20,7 @@ public record TaskResponse(Long id,
         Set<LocationResponse> locations,
         TaskStatus status,
         String description,
+        User worker,
         Instant createdAt,
         Instant updatedAt) {
 }
