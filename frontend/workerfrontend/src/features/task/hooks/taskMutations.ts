@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus, type CreateTaskInput } from "../api/taskApi";
+import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus, updateTaskStatus, type CreateTaskInput } from "../api/taskApi";
 import { useAuth0 } from "@auth0/auth0-react";
-import { taskQueryKeys } from "./taskQueryKeys";
+import type { TaskStatus } from "../types";
 
 /**
- * @deprecated Use useTaskById from useTasks.ts instead
+ * @deprecated Use taskQueries.detail() with useQuery instead
  */
 export function useTask(taskId: number | undefined) {
   return useQuery({
-    queryKey: taskId !== undefined ? taskQueryKeys.detail(taskId) : ["task", taskId],
+    queryKey: taskId !== undefined ? ["tasks", "detail", taskId.toString()] : ["task", taskId],
     queryFn: () => {
       if (taskId === undefined) {
         throw new Error("taskId puuttuu");
@@ -28,8 +28,8 @@ export function useCreateTask() {
     mutationFn: (input: CreateTaskInput) =>
       createTask(getAccessTokenSilently, input),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: taskQueryKeys.lists() });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.userLists() });
+      // Invalidate all task queries
+      qc.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 }
@@ -43,9 +43,8 @@ export function useUpdateTask(taskId: number) {
     mutationFn: (input: CreateTaskInput) =>
       updateTask(getAccessTokenSilently, taskId, input),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: taskQueryKeys.detail(taskId) });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.lists() });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.userLists() });
+      qc.invalidateQueries({ queryKey: ["tasks", "detail", taskId.toString()] });
+      qc.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 }
@@ -64,13 +63,10 @@ export function useDeleteTask() {
       deleteTask(getAccessTokenSilently, taskId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: taskQueryKeys.detail(variables.taskId),
+        queryKey: ["tasks", "detail", variables.taskId.toString()],
       });
-      queryClient.invalidateQueries({ queryKey: taskQueryKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: taskQueryKeys.userLists() });
-      queryClient.invalidateQueries({
-        queryKey: taskQueryKeys.applicationLists(),
-      });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["taskApplications"] });
     },
   });
 }
@@ -88,10 +84,30 @@ export function useUpdateApplicationStatus() {
     }) =>
       updateApplicationStatus(getAccessTokenSilently, taskId, applicantUsername, status),
     onSuccess: (_, { taskId }) => {
-      qc.invalidateQueries({ queryKey: taskQueryKeys.applicationLists() });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.detail(taskId) });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.lists() });
-      qc.invalidateQueries({ queryKey: taskQueryKeys.userLists() });
+      qc.invalidateQueries({ queryKey: ["taskApplications"] });
+      qc.invalidateQueries({ queryKey: ["tasks", "detail", taskId.toString()] });
+      qc.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export interface UpdateTaskStatusInput {
+  taskId: number;
+  status: TaskStatus;
+}
+
+/** Update task status (e.g., approve/reject work, change to COMPLETED or IN_PROGRESS) */
+export function useUpdateTaskStatus() {
+  const { getAccessTokenSilently } = useAuth0();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ taskId, status }: UpdateTaskStatusInput) =>
+      updateTaskStatus(getAccessTokenSilently, taskId, status),
+    onSuccess: (_, { taskId }) => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", "detail", taskId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["taskApplications"] });
     },
   });
 }

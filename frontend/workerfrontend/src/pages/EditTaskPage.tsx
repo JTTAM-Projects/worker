@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { TaskWizardForm, type SubmissionState } from "../features/task/components/TaskWizardForm";
+import {
+  TaskWizardForm,
+  type SubmissionState,
+} from "../features/task/components/TaskWizardForm";
 import type { TaskWizardPayload } from "../features/task/components/TaskWizardForm";
-import { useTask, useUpdateTask } from "../features/task/hooks/useTask";
+import { useTask, useUpdateTask } from "../features/task/hooks/taskMutations";
 import {
   useCreateUser,
   useGetUserDetails,
@@ -22,9 +25,11 @@ export default function EditTaskPage() {
   } = useAuth0();
   const loginAttemptedRef = useRef(false);
 
-  const { data: taskData, isLoading: taskLoading, error: taskError } = useTask(
-    Number.isNaN(numericId) ? undefined : numericId
-  );
+  const {
+    data: taskData,
+    isLoading: taskLoading,
+    error: taskError,
+  } = useTask(Number.isNaN(numericId) ? undefined : numericId);
   const { mutateAsync: updateTaskMutation, isPending: isUpdatingTask } =
     useUpdateTask(Number.isNaN(numericId) ? 0 : numericId);
 
@@ -66,11 +71,11 @@ export default function EditTaskPage() {
         <div className="rounded-lg border border-gray-200 bg-white px-6 py-4 shadow-sm text-gray-600">
           {Number.isNaN(numericId)
             ? "Virheellinen tehtävän tunniste."
-            : (authLoading || taskLoading)
-            ? "Ladataan työilmoitusta..."
-            : !isAuthenticated
-            ? "Uudelleenohjataan kirjautumiseen..."
-            : "Ladataan..."}
+            : authLoading || taskLoading
+              ? "Ladataan työilmoitusta..."
+              : !isAuthenticated
+                ? "Uudelleenohjataan kirjautumiseen..."
+                : "Ladataan..."}
         </div>
       </div>
     );
@@ -105,12 +110,7 @@ export default function EditTaskPage() {
   };
 
   const handleSubmit = async (payload: TaskWizardPayload) => {
-    const {
-      task,
-      contact,
-      categories,
-      location,
-    } = payload;
+    const { task, contact, categories, location } = payload;
 
     setSubmissionState("loading");
     setSubmissionError(null);

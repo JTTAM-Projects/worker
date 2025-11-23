@@ -8,16 +8,16 @@ import { useMemo, useCallback, type KeyboardEvent } from "react";
  * A map to store category icons.
  */
 const CATEGORY_ICON_MAP: Record<string, string> = {
-  "GARDEN": "yard",
-  "CLEANING": "cleaning_services",
-  "MOVING": "local_shipping",
-  "HOUSEHOLD": "home",
-  "REPAIR": "build",
-  "PAINTING": "format_paint",
+  GARDEN: "yard",
+  CLEANING: "cleaning_services",
+  MOVING: "local_shipping",
+  HOUSEHOLD: "home",
+  REPAIR: "build",
+  PAINTING: "format_paint",
   "SNOW REMOVAL": "ac_unit",
   "FOREST WORK": "park",
-  "YARD": "grass",
-  "OTHER": "handyman",
+  YARD: "grass",
+  OTHER: "handyman",
 };
 const DEFAULT_ICON = "work";
 
@@ -25,16 +25,16 @@ const DEFAULT_ICON = "work";
  * A map to store category background colors.
  */
 const CATEGORY_BG_MAP: Record<string, string> = {
-  "GARDEN": "bg-green-100",
-  "YARD": "bg-green-100",
+  GARDEN: "bg-green-100",
+  YARD: "bg-green-100",
   "FOREST WORK": "bg-green-100",
-  "CLEANING": "bg-blue-100",
-  "HOUSEHOLD": "bg-blue-100",
-  "MOVING": "bg-purple-100",
-  "REPAIR": "bg-orange-100",
-  "PAINTING": "bg-orange-100",
+  CLEANING: "bg-blue-100",
+  HOUSEHOLD: "bg-blue-100",
+  MOVING: "bg-purple-100",
+  REPAIR: "bg-orange-100",
+  PAINTING: "bg-orange-100",
   "SNOW REMOVAL": "bg-cyan-100",
-  "OTHER": "bg-gray-100",
+  OTHER: "bg-gray-100",
 };
 const DEFAULT_BG = "bg-gray-100";
 
@@ -76,7 +76,9 @@ const formatDate = (isoString: string): string => {
 /**
  * Creates a display string from a location object or string.
  */
-const getLocationString = (location: LocationResponse | string | null | undefined): string => {
+const getLocationString = (
+  location: LocationResponse | string | null | undefined
+): string => {
   if (!location) return "Ei sijaintia";
   if (typeof location === "string") return location;
 
@@ -93,7 +95,7 @@ const getLocationString = (location: LocationResponse | string | null | undefine
 const getUserInitials = (userName?: string | null): string => {
   if (!userName) return "?";
   const parts = userName.trim().split(/\s+/).filter(Boolean);
-  
+
   if (parts.length >= 2) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
@@ -138,7 +140,9 @@ export default function TaskCard({ task }: TaskCardProps) {
       locationString: locationStr,
       locationCount: locs.length,
       userInitials: getUserInitials(task.user?.userName),
-      formattedDate: task.startDate ? formatDate(task.startDate) : "Ei päivämäärää",
+      formattedDate: task.startDate
+        ? formatDate(task.startDate)
+        : "Ei päivämäärää",
       hasLocation: locs.length > 0 && locationStr !== "Ei sijaintia",
     };
   }, [task]);
@@ -147,18 +151,24 @@ export default function TaskCard({ task }: TaskCardProps) {
    * `useCallback` for stable function identity.
    */
   const handleClick = useCallback(() => {
-    navigate({ to: "/worker/tasks/$taskId", params: { taskId: task.id.toString() } });
+    navigate({
+      to: "/worker/tasks/$taskId",
+      params: { taskId: task.id.toString() },
+    });
   }, [navigate, task.id]);
 
   /**
    * Accessibility handler for keyboard navigation.
    */
-  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleClick();
-    }
-  }, [handleClick]);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick]
+  );
 
   // This JSX implements your requested layout:
   // [Image] | [Heading/Location/User] | [Description] | [Price/Time]
@@ -172,7 +182,7 @@ export default function TaskCard({ task }: TaskCardProps) {
       aria-label={`Näytä tehtävä: ${task.title}`}
     >
       {/* Column 1: Image (Color-coded Icon Block) */}
-      <div 
+      <div
         className={`w-24 h-24 md:w-28 md:h-28 flex-shrink-0 ${categoryBg} flex items-center justify-center rounded-lg`}
         aria-hidden="true"
       >
@@ -191,13 +201,14 @@ export default function TaskCard({ task }: TaskCardProps) {
         {/* Location(s) */}
         {hasLocation && (
           <div className="flex items-center gap-2">
-            <span className="material-icons text-green-500 text-base" aria-hidden="true">
+            <span
+              className="material-icons text-green-500 text-base"
+              aria-hidden="true"
+            >
               place
             </span>
             <div className="flex-1 min-w-0">
-              <span className="text-sm text-gray-700">
-                {locationString}
-              </span>
+              <span className="text-sm text-gray-700">{locationString}</span>
               {locationCount > 1 && (
                 <span className="ml-2 text-sm text-blue-600 font-medium">
                   +{locationCount - 1}
@@ -209,7 +220,10 @@ export default function TaskCard({ task }: TaskCardProps) {
 
         {/* User */}
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white font-medium text-xs flex-shrink-0" aria-hidden="true">
+          <div
+            className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white font-medium text-xs flex-shrink-0"
+            aria-hidden="true"
+          >
             {userInitials}
           </div>
           <span className="text-sm text-gray-700 font-medium truncate">
@@ -237,7 +251,10 @@ export default function TaskCard({ task }: TaskCardProps) {
 
         {/* Date */}
         <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <span className="material-icons text-green-500 text-base" aria-hidden="true">
+          <span
+            className="material-icons text-green-500 text-base"
+            aria-hidden="true"
+          >
             event
           </span>
           <span className="whitespace-nowrap">{formattedDate}</span>

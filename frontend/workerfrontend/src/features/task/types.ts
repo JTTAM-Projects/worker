@@ -1,7 +1,7 @@
 // Backend categories 
 export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
-export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "EXPIRED";
+export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "PENDING_APPROVAL" | "COMPLETED" | "CANCELLED" | "EXPIRED";
 
 export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
 
@@ -60,6 +60,7 @@ export interface Task {
   locations: LocationResponse[]; // Changed from singular to array to match backend Set<LocationResponse>
   status: TaskStatus;
   description: string;
+  worker?: UserDto;
 }
 
 // Matches backend TaskApplicantDto

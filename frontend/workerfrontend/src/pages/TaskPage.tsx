@@ -1,11 +1,12 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import TaskList from "../features/task/components/TaskList";
 import { TaskFilterPanel } from "../features/task/components/TaskFilterPanel";
 import { ResultsControlBar } from "../features/task/components/ResultsControlBar";
 import { TaskMap } from "../features/task/components/TaskMap";
 import type { TaskFilters, ViewMode } from "../features/task/types";
-import { useTasks, useAllFilteredTasks } from "../features/task/hooks";
+import { taskQueries } from "../features/task/queries/taskQueries";
 import { Pagination } from "../ui-library";
 
 export default function TaskPage() {
@@ -15,14 +16,14 @@ export default function TaskPage() {
   // Save search params to sessionStorage whenever they change
   useEffect(() => {
     if (Object.keys(search).length > 0) {
-      sessionStorage.setItem('worker-tasks-search', JSON.stringify(search));
+      sessionStorage.setItem("worker-tasks-search", JSON.stringify(search));
     }
   }, [search]);
 
   // Build filters from search params with defaults
   const filters: TaskFilters = {
-    status: (search.status as TaskFilters['status']) ?? "ACTIVE",
-    sortBy: (search.sortBy as TaskFilters['sortBy']) ?? "newest",
+    status: (search.status as TaskFilters["status"]) ?? "ACTIVE",
+    sortBy: (search.sortBy as TaskFilters["sortBy"]) ?? "newest",
     searchText: search.searchText,
     categories: search.categories,
     minPrice: search.minPrice,
@@ -42,11 +43,13 @@ export default function TaskPage() {
     isLoading: isLoadingList,
     isError: isErrorList,
     error: listError,
-  } = useTasks({
-    page,
-    size: 20,
-    ...filters,
-  });
+  } = useQuery(
+    taskQueries.all({
+      page,
+      size: 20,
+      ...filters,
+    })
+  );
 
   // Fetch all filtered tasks for map view (up to 1000)
   const {
@@ -54,7 +57,8 @@ export default function TaskPage() {
     isLoading: isLoadingMap,
     isError: isErrorMap,
     error: mapError,
-  } = useAllFilteredTasks(filters, {
+  } = useQuery({
+    ...taskQueries.allFiltered(filters),
     enabled: viewMode === "map", // Only fetch when in map view
   });
 
@@ -96,18 +100,18 @@ export default function TaskPage() {
 
   const handleRemoveFilter = (filterKey: keyof TaskFilters, value?: string) => {
     const newSearch = { ...search };
-    
-    if (filterKey === 'categories' && value) {
+
+    if (filterKey === "categories" && value) {
       // Remove specific category
-      newSearch.categories = search.categories?.filter(c => c !== value);
+      newSearch.categories = search.categories?.filter((c) => c !== value);
       if (newSearch.categories?.length === 0) {
         delete newSearch.categories;
       }
-    } else if (filterKey === 'minPrice' || filterKey === 'maxPrice') {
+    } else if (filterKey === "minPrice" || filterKey === "maxPrice") {
       // Remove both price filters
       delete newSearch.minPrice;
       delete newSearch.maxPrice;
-    } else if (filterKey === 'latitude' || filterKey === 'longitude') {
+    } else if (filterKey === "latitude" || filterKey === "longitude") {
       // Remove location filters
       delete newSearch.latitude;
       delete newSearch.longitude;
@@ -117,7 +121,7 @@ export default function TaskPage() {
       // Remove single filter
       delete newSearch[filterKey as keyof typeof newSearch];
     }
-    
+
     navigate({
       search: {
         ...newSearch,
@@ -161,7 +165,7 @@ export default function TaskPage() {
     <main className="container mx-auto px-6 py-12 grid gap-12 pt-10 pb-20">
       <section className="grid gap-6">
         <h1 className="text-4xl font-bold text-gray-800">Selaa tehtäviä</h1>
-        
+
         <TaskFilterPanel
           filters={filters}
           onFiltersChange={(newFilters) => updateFilters(newFilters, true)}
@@ -173,9 +177,11 @@ export default function TaskPage() {
           <ResultsControlBar
             totalResults={data.totalElements}
             filters={filters}
-            sortBy={filters.sortBy || 'newest'}
+            sortBy={filters.sortBy || "newest"}
             viewMode={viewMode}
-            onSortChange={(sort) => updateFilters({ ...filters, sortBy: sort }, true)}
+            onSortChange={(sort) =>
+              updateFilters({ ...filters, sortBy: sort }, true)
+            }
             onViewModeChange={updateViewMode}
             onRemoveFilter={handleRemoveFilter}
           />
@@ -185,7 +191,9 @@ export default function TaskPage() {
       {hasNoResults ? (
         <section className="bg-white rounded-lg shadow-lg p-6 md:p-8">
           <div className="text-center text-gray-600 py-12 max-w-4xl mx-auto">
-            <span className="material-icons text-gray-400 text-6xl mb-4">search_off</span>
+            <span className="material-icons text-gray-400 text-6xl mb-4">
+              search_off
+            </span>
             <p className="text-xl font-semibold mb-2">Ei tuloksia</p>
             <p>Yhtään tehtävää ei löytynyt valituilla suodattimilla.</p>
             <button
@@ -196,7 +204,7 @@ export default function TaskPage() {
             </button>
           </div>
         </section>
-      ) : viewMode === 'list' ? (
+      ) : viewMode === "list" ? (
         <TaskList tasks={data?.content || []} />
       ) : (
         <TaskMap
@@ -207,7 +215,7 @@ export default function TaskPage() {
         />
       )}
 
-      {viewMode === 'list' && data && data.totalPages > 1 && (
+      {viewMode === "list" && data && data.totalPages > 1 && (
         <Pagination
           currentPage={page}
           totalPages={data.totalPages}
