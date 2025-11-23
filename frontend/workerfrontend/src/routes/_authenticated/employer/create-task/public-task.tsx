@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../auth/useAuth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useGetUserDetails } from "../../../../features/Profile/hooks/userHooks";
 import { useCreateTask } from "../../../../features/task/hooks";
@@ -22,7 +22,7 @@ function CreateTaskPage() {
     loginWithRedirect,
     user: authUser,
     getAccessTokenSilently,
-  } = useAuth0();
+  } = useAuth();
 
   const { data: userDetails } = useGetUserDetails();
   const { mutateAsync: createTask, isPending: isCreatingTask } = useCreateTask();

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { useGetApplication } from "../hooks/useGetApplication";
 import { useCreateApplication } from "../hooks/useCreateApplication";
 import { useUpdateApplication } from "../hooks/useUpdateApplication";
@@ -20,7 +20,7 @@ export default function UserApplicationSection({
   task,
   onFeedback,
 }: UserApplicationSectionProps) {
-  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth();
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
 

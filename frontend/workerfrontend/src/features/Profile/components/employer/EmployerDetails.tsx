@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../auth/useAuth";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { profileStyles, buttonStyles, formStyles } from "../../../../ui-library/stylesConfig";
@@ -6,7 +6,7 @@ import { useGetEmployerProfile, useUpdateEmployer, useCreateEmployerProfile } fr
 import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/userHooks";
 
 export default function EmployerDetails(){
-    const { user } = useAuth0();
+  const { user } = useAuth();
     const { data: userDetails } = useGetUserDetails();
     const { data: employerDetails } = useGetEmployerProfile();    
     const { mutateAsync: updateEmployer } = useUpdateEmployer();

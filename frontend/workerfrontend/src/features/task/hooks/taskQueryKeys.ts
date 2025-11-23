@@ -1,4 +1,4 @@
-import type { FetchTasksParams } from '../api/taskApi';
+import type { FetchTasksParams } from '../api/taskApi.types';
 
 /**
  * Query key factory for task-related queries.

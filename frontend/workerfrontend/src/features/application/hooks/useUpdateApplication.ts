@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
-import {
-  updateApplication,
-  type ApplicationPayload,
-} from "../api/applicationApi";
+import { useAuth } from "../../../auth/useAuth";
+import { updateApplication } from "../api/applicationApi";
+import type { ApplicationPayload } from "../api/applicationApi.types";
 
 export interface UpdateApplicationInput {
   taskId: number;
@@ -11,7 +9,7 @@ export interface UpdateApplicationInput {
 }
 
 export function useUpdateApplication() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({

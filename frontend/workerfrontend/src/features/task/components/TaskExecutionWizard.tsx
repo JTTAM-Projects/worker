@@ -5,13 +5,12 @@ type ExecutionPhase = "ready" | "running" | "paused" | "confirm" | "finished";
 type TaskExecutionWizardProps = {
   taskTitle: string;
   onBack?: () => void;
-  onFinish?: () => void;
   onComplete?: () => Promise<void>;
 };
 
 const STEP_LABELS = ["Aloita työ", "Työ käynnissä", "Lopeta työ"];
 
-export default function TaskExecutionWizard({ taskTitle, onBack, onFinish, onComplete }: TaskExecutionWizardProps) {
+export default function TaskExecutionWizard({ taskTitle, onBack, onComplete }: TaskExecutionWizardProps) {
   const [phase, setPhase] = useState<ExecutionPhase>("ready");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const timerRef = useRef<number | null>(null);
@@ -35,12 +34,6 @@ export default function TaskExecutionWizard({ taskTitle, onBack, onFinish, onCom
       }
     };
   }, [phase]);
-
-  useEffect(() => {
-    if (phase === "finished" && onFinish) {
-      onFinish();
-    }
-  }, [phase, onFinish]);
 
   const handleComplete = async () => {
     if (isCompleting) {

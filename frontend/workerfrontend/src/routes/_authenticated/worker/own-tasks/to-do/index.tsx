@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { applicationQueries } from "../../../../../features/application/queries/applicationQueries";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../../auth/useAuth";
 import type { ApplicationWithDetails } from "../../../../../features/application/types";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/to-do/")({
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/to-do/")(
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const { data } = useSuspenseQuery(
     applicationQueries.ownApplications(getAccessTokenSilently, { page: 0, size: 10, applicationStatus: "ACCEPTED" })
   );

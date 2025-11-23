@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../auth/useAuth";
 import UserProfileCard from "../features/Profile/components/shared/UserProfileCard";
 import TaskList from "../features/task/components/TaskList";
 import { useUserTasks } from "../features/task/hooks";
@@ -9,7 +9,7 @@ import type { Category } from "../features/task/types";
 
 
 export default function ProfilePage() {
-  const { user } = useAuth0();
+  const { user } = useAuth();
   const [category] = useState<Category | "all">("all");
   const { data: userTasksData, isLoading, error } = useUserTasks({
     page: 0,

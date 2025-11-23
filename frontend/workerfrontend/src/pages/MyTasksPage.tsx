@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../auth/useAuth";
 import { useUserTasks, useDeleteTask } from "../features/task/hooks";
 import type { Task } from "../features/task/types";
 
 export default function MyTasksPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, loginWithRedirect } =
-    useAuth0();
+  const { isAuthenticated, isLoading: authLoading, loginWithRedirect } = useAuth();
   const [page, setPage] = useState(0);
   const pageSize = 6;
   const deleteTaskMutation = useDeleteTask();

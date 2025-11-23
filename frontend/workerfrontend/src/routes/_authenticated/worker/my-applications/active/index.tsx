@@ -5,7 +5,7 @@ import { ApplicationFilterPanel } from "../../../../../features/application/comp
 import ApplicationToList from "../../../../../features/application/components/applicationsToList";
 import { applicationQueries } from "../../../../../features/application/queries/applicationQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../../auth/useAuth";
 
 export const Route = createFileRoute("/_authenticated/worker/my-applications/active/")({
   component: ActiveApplicationsPage,
@@ -30,7 +30,7 @@ export default function ActiveApplicationsPage() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "PENDING",
   });

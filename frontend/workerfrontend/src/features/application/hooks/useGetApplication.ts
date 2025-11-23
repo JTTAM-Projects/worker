@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { fetchApplication, type FetchApplicationParams } from "../api/applicationApi";
 import { applicationQueries } from "../queries/applicationQueries";
 
 export function useGetApplication(taskId: number) {
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth();
 
   return useQuery({
     queryKey: applicationQueries.ownApplication(taskId).queryKey,
@@ -14,8 +14,7 @@ export function useGetApplication(taskId: number) {
 }
 
 export function useGetUserApplications(params: FetchApplicationParams){
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
 
   return useQuery(applicationQueries.ownApplications(getAccessTokenSilently, params))
 }
-

@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react"; //TODO remove
+import { useAuth } from "../../../../auth/useAuth"; //TODO remove
 import { useState } from "react";
 
 import { useGetEmployerProfile, useUpdateEmployer, useCreateEmployerProfile } from "../../hooks/EmployerHooks"
@@ -6,7 +6,7 @@ import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/use
 import { FormField } from "../shared/FormField";
 
 export default function EmployerDetails(){
-    const { user } = useAuth0(); //TODO use props
+  const { user } = useAuth(); //TODO use props
     const { data: employerDetails } = useGetEmployerProfile();
     const { data: userDetails } = useGetUserDetails();
     const { mutate: updateEmployer } = useUpdateEmployer();

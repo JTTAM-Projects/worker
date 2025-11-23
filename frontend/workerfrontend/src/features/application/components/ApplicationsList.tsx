@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { fetchApplicationDetails, type TaskApplicationDetails } from "../../task/api/taskApi";
 import type { PaginatedResponse, TaskApplicant } from "../../task/types";
 
@@ -13,7 +13,7 @@ interface ApplicationsListProps {
 // Displays paginated list of PENDING applications for a task owner to review.
 // Fetches applications via useTaskApplications hook and allows selection to view details in a modal.
 export default function ApplicationsList({ applications, taskId, onSelect }: ApplicationsListProps) {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const [page, setPage] = useState(0);
 
   const formatDate = (isoString: string) => {
@@ -62,9 +62,9 @@ export default function ApplicationsList({ applications, taskId, onSelect }: App
       </h2>
 
       <div className="space-y-3">
-        {filteredApplications.map((app: TaskApplicant, index: any) => (
+        {filteredApplications.map((app: TaskApplicant, index: number) => (
           <div
-            key={index}
+            key={`${app.appliedUser.userName}-${index}`}
             onClick={() => handleSelect(app)}
             role="button"
             tabIndex={0}

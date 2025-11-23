@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus, type CreateTaskInput } from "../api/taskApi";
-import { useAuth0 } from "@auth0/auth0-react";
+import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus } from "../api/taskApi";
+import type { CreateTaskInput } from "../api/taskApi.types";
+import { useAuth } from "../../../auth/useAuth";
 import { taskQueryKeys } from "./taskQueryKeys";
 
 /**
@@ -21,7 +22,7 @@ export function useTask(taskId: number | undefined) {
 
 /** Create a new task */
 export function useCreateTask() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const qc = useQueryClient();
 
   return useMutation({
@@ -36,7 +37,7 @@ export function useCreateTask() {
 
 /** Update an existing task */
 export function useUpdateTask(taskId: number) {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const qc = useQueryClient();
 
   return useMutation({
@@ -56,7 +57,7 @@ export interface DeleteTaskInput {
 
 /** Delete a task and clean up related cache entries */
 export function useDeleteTask() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -77,7 +78,7 @@ export function useDeleteTask() {
 
 /** Update application status (accept/reject) */
 export function useUpdateApplicationStatus() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const qc = useQueryClient();
 
   return useMutation({

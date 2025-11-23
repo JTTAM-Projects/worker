@@ -1,14 +1,6 @@
-import type {
-  Task,
-  PaginatedResponse,
-  Category,
-  TaskStatus,
-  TaskApplicant,
-  TaskFilters,
-  CategoryResponse,
-  LocationResponse,
-  UserDto,
-} from "../types";
+import type { Task, PaginatedResponse, TaskApplicant, CategoryResponse, LocationResponse, UserDto } from "../types";
+import type { CreateTaskInput, FetchTasksParams } from "./taskApi.types";
+import { mockApi, isMockMode } from "../../../mocks/mockApi";
 
 // This is a file for interacting with the backend task API.
 // It uses the Fetch API to make HTTP requests.
@@ -28,11 +20,6 @@ export type TaskApplicationDetails = TaskApplicant & {
     locations?: LocationResponse[];
   };
 };
-
-export interface FetchTasksParams extends TaskFilters {
-  page?: number;
-  size?: number;
-}
 
 /**
  * Convert frontend sortBy to Spring Pageable sort parameter
@@ -60,6 +47,9 @@ function getSortParam(sortBy?: string): string | undefined {
 export async function fetchTasks(
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
+  if (isMockMode) {
+    return mockApi.fetchTasks(params);
+  }
   const { 
     page = 0, 
     size = 10, 
@@ -136,6 +126,9 @@ export async function fetchUserTasks(
   getAccessToken: () => Promise<string>,
   params: FetchTasksParams = {}
 ): Promise<PaginatedResponse<Task>> {
+  if (isMockMode) {
+    return mockApi.fetchUserTasks(params);
+  }
   const { 
     page = 0, 
     size = 10, 
@@ -208,36 +201,14 @@ export async function fetchUserTasks(
   return response.json();
 }
 
-export interface TaskCategoryInput {
-  title: Category | string;
-  categoryId?: number;
-}
-
-export interface TaskLocationInput {
-  streetAddress: string;
-  postalCode: string;
-  city: string;
-  country: string;
-  latitude?: number;
-  longitude?: number;
-}
-
-export interface CreateTaskInput {
-  categories: TaskCategoryInput[];
-  title: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  location: TaskLocationInput;
-  description?: string;
-  status?: TaskStatus;
-}
-
 // Create a new task (requires authentication)
 export async function createTask(
   getAccessTokenSilently: () => Promise<string>,
   payload: CreateTaskInput
 ): Promise<Task> {
+  if (isMockMode) {
+    return mockApi.createTask(payload);
+  }
   const token = await getAccessTokenSilently();
   const { location, ...rest } = payload;
 
@@ -270,6 +241,9 @@ export async function createTask(
 
 // Fetch task details by ID
 export async function fetchTaskById(taskId: number): Promise<Task> {
+  if (isMockMode) {
+    return mockApi.fetchTaskById(taskId);
+  }
   const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -295,6 +269,9 @@ export async function fetchTaskApplications(
   taskId: number,
   params: { page?: number; size?: number } = {}
 ): Promise<PaginatedResponse<TaskApplicant>> {
+  if (isMockMode) {
+    return mockApi.fetchTaskApplications(taskId, params);
+  }
   const { page = 0, size = 10 } = params;
 
   const queryParams = new URLSearchParams({
@@ -324,6 +301,9 @@ export async function updateTask(
   taskId: number,
   payload: CreateTaskInput
 ): Promise<Task> {
+  if (isMockMode) {
+    return mockApi.updateTask(taskId, payload);
+  }
   const token = await getAccessTokenSilently();
   const { location, ...rest } = payload;
 
@@ -359,6 +339,9 @@ export async function deleteTask(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number
 ): Promise<void> {
+  if (isMockMode) {
+    return mockApi.deleteTask(taskId);
+  }
   const token = await getAccessTokenSilently();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
@@ -380,6 +363,9 @@ export async function fetchApplicationDetails(
   username: string,
   accessToken: string
 ): Promise<TaskApplicationDetails> {
+  if (isMockMode) {
+    return mockApi.fetchApplicationDetails(taskId, username);
+  }
   const res = await fetch(`${API_BASE_URL}/task/${taskId}/user/${encodeURIComponent(username)}/application`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -401,6 +387,9 @@ export async function updateApplicationStatus(
   applicantUsername: string,
   status: 'ACCEPTED' | 'REJECTED'
 ): Promise<void> {
+  if (isMockMode) {
+    return mockApi.updateApplicationStatus(taskId, applicantUsername, status);
+  }
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/applications/${encodeURIComponent(applicantUsername)}/status`, {
@@ -423,6 +412,9 @@ export async function completeTaskExecution(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number
 ): Promise<void> {
+  if (isMockMode) {
+    return mockApi.completeTaskExecution(taskId);
+  }
   const token = await getAccessTokenSilently();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application/complete`, {

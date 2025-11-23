@@ -7,6 +7,7 @@ import { TaskMap } from "../features/task/components/TaskMap";
 import type { TaskFilters, ViewMode } from "../features/task/types";
 import { useTasks, useAllFilteredTasks } from "../features/task/hooks";
 import { Pagination } from "../ui-library";
+import { isMockMode } from "../mocks/mockApi";
 
 export default function TaskPage() {
   const navigate = useNavigate({ from: "/worker/tasks" });
@@ -37,6 +38,8 @@ export default function TaskPage() {
   const page = search.page ?? 0;
 
   // Fetch paginated tasks for list view
+  const listPageSize = isMockMode ? 2 : 20;
+
   const {
     data: taskPage,
     isLoading: isLoadingList,
@@ -44,7 +47,7 @@ export default function TaskPage() {
     error: listError,
   } = useTasks({
     page,
-    size: 20,
+    size: listPageSize,
     ...filters,
   });
 

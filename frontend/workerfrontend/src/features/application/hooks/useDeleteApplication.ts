@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { deleteApplication } from "../api/applicationApi";
 
 export interface DeleteApplicationInput {
@@ -7,7 +7,7 @@ export interface DeleteApplicationInput {
 }
 
 export function useDeleteApplication() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({

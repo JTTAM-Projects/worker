@@ -68,7 +68,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("fi-FI", {
 const formatDate = (isoString: string): string => {
   try {
     return DATE_FORMATTER.format(new Date(isoString));
-  } catch (e) {
+  } catch {
     return "Ei päivämäärää";
   }
 };

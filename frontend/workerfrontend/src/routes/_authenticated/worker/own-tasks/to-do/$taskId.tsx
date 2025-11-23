@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { taskQueries } from "../../../../../features/task/queries/taskQueries";
 import TaskExecutionWizard from "../../../../../features/task/components/TaskExecutionWizard";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../../auth/useAuth";
 import { completeTaskExecution } from "../../../../../features/task/api/taskApi";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/to-do/$taskId")({
@@ -14,7 +14,7 @@ function TaskExecutionPage() {
   const { taskId } = Route.useParams();
   const navigate = useNavigate();
   const { data: task } = useSuspenseQuery(taskQueries.detail(taskId));
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const queryClient = useQueryClient();
 
   const completeTaskMutation = useMutation({
@@ -31,12 +31,6 @@ function TaskExecutionPage() {
       <TaskExecutionWizard
         taskTitle={task.title}
         onComplete={() => completeTaskMutation.mutateAsync()}
-        onFinish={() => {
-          navigate({
-            to: "/worker/own-tasks/to-do",
-            replace: true,
-          });
-        }}
         onBack={() => {
           navigate({ to: "/worker/own-tasks/to-do" });
         }}

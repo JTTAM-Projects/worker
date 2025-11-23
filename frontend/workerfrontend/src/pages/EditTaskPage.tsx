@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../auth/useAuth";
 import { TaskWizardForm, type SubmissionState } from "../features/task/components/TaskWizardForm";
 import type { TaskWizardPayload } from "../features/task/components/TaskWizardForm";
 import { useTask, useUpdateTask } from "../features/task/hooks/useTask";
@@ -19,7 +19,7 @@ export default function EditTaskPage() {
     isAuthenticated,
     isLoading: authLoading,
     loginWithRedirect,
-  } = useAuth0();
+  } = useAuth();
   const loginAttemptedRef = useRef(false);
 
   const { data: taskData, isLoading: taskLoading, error: taskError } = useTask(

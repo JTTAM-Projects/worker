@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { createUser, getUser, updateUser} from "../api/profileApi";
 import type { User } from "../types";
 
 export function useGetUserDetails() {
-    const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
+    const { user, getAccessTokenSilently, isAuthenticated } = useAuth();
 
     return useQuery({
         queryKey: ['userDetails', user?.sub],
@@ -15,7 +15,7 @@ export function useGetUserDetails() {
 }
 
 export function useUpdateUser() {
-    const { user, getAccessTokenSilently } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -35,7 +35,7 @@ export function useUpdateUser() {
 }
 
 export function useCreateUser() {
-    const { user, getAccessTokenSilently } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({

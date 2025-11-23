@@ -1,10 +1,10 @@
 import LoginButton from "../authentication/login";
 import LogoutButton from "../authentication/logout";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../auth/useAuth";
 import { Link } from "@tanstack/react-router";
 
 export default function WorkerNavBar() {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth();
   
   // Get saved search params from sessionStorage
   const getSavedTasksSearch = () => {

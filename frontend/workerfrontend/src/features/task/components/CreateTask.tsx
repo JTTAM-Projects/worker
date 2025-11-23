@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../auth/useAuth";
 import { useCreateTask } from "../hooks";
 import type { Category } from "../types";
-import type { CreateTaskInput } from "../api/taskApi";
+import type { CreateTaskInput } from "../api/taskApi.types";
 
 function toLocalIso(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -25,7 +25,7 @@ export default function CreateTask({ children }: Props) {
   const [location, setLocation] = useState("Helsinki");
   const [description, setDescription] = useState("");
 
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect } = useAuth();
   const { mutate, isPending, isError, error } = useCreateTask();
 
   const onSubmit = (e: React.FormEvent) => {

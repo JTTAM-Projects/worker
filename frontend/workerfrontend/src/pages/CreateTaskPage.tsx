@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../auth/useAuth";
 import { TaskWizardForm, type SubmissionState } from "../features/task/components/TaskWizardForm";
 import {
   useCreateUser,
@@ -17,7 +17,7 @@ export default function CreateTaskPage() {
     isLoading: authLoading,
     loginWithRedirect,
     user: authUser,
-  } = useAuth0();
+  } = useAuth();
 
   const { data: userDetails } = useGetUserDetails();
   const { mutateAsync: createUser } = useCreateUser();

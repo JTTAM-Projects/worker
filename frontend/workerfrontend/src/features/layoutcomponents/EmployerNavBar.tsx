@@ -1,10 +1,10 @@
 import LoginButton from "../authentication/login";
 import LogoutButton from "../authentication/logout";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../auth/useAuth";
 import { Link } from "@tanstack/react-router";
 
 export default function EmployerNavBar() {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth();
   return (
     <header className="bg-gradient-to-r from-green-600 to-green-500 shadow-lg sticky top-0 z-50 border-b-2 border-green-700">
       {/* navigaatio */}

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
+import { mockApi, isMockMode } from "../../../mocks/mockApi";
 import type { CategoryResponse } from "../../task/types";
-import type { TaskCategoryInput, TaskLocationInput } from "../api/taskApi";
+import type { TaskCategoryInput, TaskLocationInput } from "../api/taskApi.types";
 
 type Step = 0 | 1 | 2;
 
@@ -89,7 +90,7 @@ export function TaskWizardForm({
   initialTask,
   initialContact,
 }: TaskWizardFormProps) {
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth();
   const [step, setStep] = useState<Step>(0);
   const [taskForm, setTaskForm] = useState<TaskFormState>(defaultTaskValues);
   const [contactForm, setContactForm] = useState<ContactFormState>(defaultContactValues);
@@ -173,6 +174,9 @@ export function TaskWizardForm({
   >({
     queryKey: ["categories"],
     queryFn: async () => {
+      if (isMockMode) {
+        return mockApi.fetchCategories();
+      }
       const token = await getAccessTokenSilently();
       const res = await fetch("http://localhost:8080/api/categories", {
         headers: {
@@ -184,7 +188,7 @@ export function TaskWizardForm({
       }
       return res.json();
     },
-    enabled: isAuthenticated,
+    enabled: isMockMode ? true : isAuthenticated,
   });
 
   const selectedCategory = useMemo(() => {

@@ -1,10 +1,4 @@
-import type { UserDto, Category } from '../task/types';
-
-export type ApplicationStatus = 
-  | 'PENDING' 
-  | 'ACCEPTED' 
-  | 'REJECTED' 
-  | 'WITHDRAWN';
+import type { UserDto, Category, ApplicationStatus } from '../task/types';
 
 export interface ApplicationFilters {
   searchText?: string;

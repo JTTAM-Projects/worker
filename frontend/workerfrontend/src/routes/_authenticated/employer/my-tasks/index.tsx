@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useDeleteTask } from "../../../../features/task/hooks";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../../auth/useAuth";
 import { taskQueries } from "../../../../features/task/queries/taskQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { Task } from "../../../../features/task/types";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/employer/my-tasks/")({
 
 function MyTasksPage() {
   const navigate = useNavigate();
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const [page, setPage] = useState(0);
   const pageSize = 5;
   const deleteTaskMutation = useDeleteTask();

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuth0 } from '@auth0/auth0-react';
 import { fetchTasks, fetchUserTasks, fetchTaskById, fetchTaskApplications } from '../api/taskApi';
-import type { FetchTasksParams } from '../api/taskApi';
+import type { FetchTasksParams } from '../api/taskApi.types';
 import { taskQueryKeys } from './taskQueryKeys';
+import { useAuth } from '../../../auth/useAuth';
 
 /** Fetch paginated tasks with optional filters */
 export function useTasks(params: FetchTasksParams = {}) {
@@ -15,7 +15,7 @@ export function useTasks(params: FetchTasksParams = {}) {
 
 /** Fetch authenticated user's tasks with optional filters */
 export function useUserTasks(params: FetchTasksParams = {}) {
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth();
 
   return useQuery({
     queryKey: taskQueryKeys.userList(params),

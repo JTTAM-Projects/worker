@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '../../../../auth/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
 import { profileStyles, buttonStyles, formStyles } from "../../../../ui-library/stylesConfig";
 import { useCreateUser, useGetUserDetails, useUpdateUser } from "../../hooks/userHooks";
@@ -7,7 +7,7 @@ import { useCreateTasker, useGetTaskerDetails, useUpdateTaskerDetails } from '..
 import ProfileSkillsSection from "../UserSkillsSection";
 
 export default function TaskerDetails() {
-    const { user } = useAuth0();
+    const { user } = useAuth();
     const { data: userDetails } = useGetUserDetails();
     const { data: taskerDetails } = useGetTaskerDetails();
     const { mutateAsync: createTasker } = useCreateTasker();

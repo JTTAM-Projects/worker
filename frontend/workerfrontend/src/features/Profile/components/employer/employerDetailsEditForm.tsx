@@ -2,7 +2,7 @@ import { useForm } from '@tanstack/react-form';
 import { useUpdateUser } from '../../hooks/userHooks';
 import { useCreateEmployerProfile, useGetEmployerProfile, useUpdateEmployer } from '../../hooks/EmployerHooks'
 import type { User, EmployerProfile } from '../../types';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '../../../../auth/useAuth';
 
 
 export default function EmployerDetailsEditForm({ 
@@ -14,7 +14,7 @@ export default function EmployerDetailsEditForm({
   onSuccess?: () => void;
   onClose?: () => void;
 }) {
-  const { user } = useAuth0();
+  const { user } = useAuth();
   const { mutate: updateUser } = useUpdateUser();
   const { mutate: updateEmployer} = useUpdateEmployer();
   const { mutate: createEmployer } = useCreateEmployerProfile();

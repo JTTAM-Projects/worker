@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth0 } from "@auth0/auth0-react";
-import {
-  createApplication,
-  type ApplicationPayload,
-} from "../api/applicationApi";
+import { useAuth } from "../../../auth/useAuth";
+import { createApplication } from "../api/applicationApi";
+import type { ApplicationPayload } from "../api/applicationApi.types";
 
 export interface CreateApplicationInput {
   taskId: number;
@@ -11,7 +9,7 @@ export interface CreateApplicationInput {
 }
 
 export function useCreateApplication() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({

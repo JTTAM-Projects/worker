@@ -1,28 +1,16 @@
-import type {
-  ApplicationFilters,
-  ApplicationStatus,
-  ApplicationWithDetails,
-  PaginatedResponse,
-} from "../types";
+import type { ApplicationWithDetails, PaginatedResponse } from "../types";
+import type { ApplicationPayload, FetchApplicationParams } from "./applicationApi.types";
+import { mockApi, isMockMode } from "../../../mocks/mockApi";
 
 const API_BASE_URL = 'http://localhost:8080/api'
-
-export interface ApplicationPayload {
-  priceSuggestion: number;
-  timeSuggestion: string;
-  description?: string;
-}
-
-export interface FetchApplicationParams extends ApplicationFilters {
-  page: number;
-  size: number;
-  applicationStatus: ApplicationStatus;
-}
 
 export async function fetchApplication(
   getAccessToken: () => Promise<string>, 
   taskId: number
 ): Promise<ApplicationWithDetails | null>{
+  if (isMockMode) {
+    return mockApi.fetchApplication(taskId);
+  }
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
@@ -51,6 +39,9 @@ export async function createApplication(
   taskId: number,
   payload: ApplicationPayload
 ): Promise<ApplicationWithDetails> {
+  if (isMockMode) {
+    return mockApi.createApplication(taskId, payload);
+  }
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
@@ -92,6 +83,9 @@ export async function updateApplication(
   taskId: number,
   payload: ApplicationPayload
 ): Promise<ApplicationWithDetails> {
+  if (isMockMode) {
+    return mockApi.updateApplication(taskId, payload);
+  }
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
@@ -115,6 +109,9 @@ export async function deleteApplication(
   getAccessToken: () => Promise<string>,
   taskId: number
 ): Promise<void> {
+  if (isMockMode) {
+    return mockApi.deleteApplication(taskId);
+  }
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
@@ -134,6 +131,9 @@ export async function fetchAllApplications(
   getAccessToken: () => Promise<string>,
   params: Partial<FetchApplicationParams> = {}
 ): Promise<PaginatedResponse<ApplicationWithDetails>> {
+  if (isMockMode) {
+    return mockApi.fetchAllApplications(params);
+  }
   const { 
     page = 0, 
     size = 10, 

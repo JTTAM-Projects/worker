@@ -1,10 +1,10 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../../../auth/useAuth";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { getTaskerProfile, createTaskerProfile, updateTasker } from "../api/profileApi";
 import type { TaskerProfile } from "../types";
 
 export function useGetTaskerDetails(){
-    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+    const { getAccessTokenSilently, isAuthenticated } = useAuth();
 
     return useQuery({
         queryKey: ['taskerDetails'],
@@ -15,7 +15,7 @@ export function useGetTaskerDetails(){
 }
 
 export function useCreateTasker(){
-    const { user, getAccessTokenSilently } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -36,7 +36,7 @@ export function useCreateTasker(){
 }
 
 export function useUpdateTaskerDetails(){ 
-    const { user, getAccessTokenSilently } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../auth/useAuth";
 import { useTaskById, useTaskApplications } from "../features/task/hooks";
 import { getCategoryIcon } from "../features/task/utils/categoryUtils";
 import ApplicationsList from "../features/application/components/ApplicationsList";
@@ -44,7 +44,7 @@ export default function OwnTaskDetailPage() {
     isAuthenticated,
     loginWithRedirect,
     isLoading: authLoading,
-  } = useAuth0();
+  } = useAuth();
 
   // Close modal and show success message when application status is updated successfully
   useEffect(() => {

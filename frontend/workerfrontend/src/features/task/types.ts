@@ -3,7 +3,7 @@ export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Fo
 
 export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "EXPIRED";
 
-export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED" | "WITHDRAWN";
 
 export type SortOption = "newest" | "oldest" | "priceAsc" | "priceDesc" | "nearest";
 
