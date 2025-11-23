@@ -1,6 +1,6 @@
 import { expect, test as base } from "@playwright/test";
 
-// Laajennetaan Playwrightin oletusfixture palauttamaan mock-tilaan ja stubbaamaan kartat
+// Laajennetaan Playwrightin oletusfixture: resetoi mock-backend init-skriptillä ja stubbaa Mapsin
 export const test = base.extend({
   page: async ({ page }, runWithPage) => {
     // Merkitään init-skriptissä mock API resetoitavaksi ennen jokaista testiä

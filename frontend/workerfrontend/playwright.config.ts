@@ -1,9 +1,10 @@
+// Playwright peruskonfiguraatio: ajaa testit Vite-dev-palvelinta vasten mock-tilassa
 type EnvRecord = Record<string, string | undefined>;
 declare const process: { env: EnvRecord; CI?: string };
 
 import { defineConfig, devices } from "@playwright/test";
 
-process.env.VITE_AUTH_MODE = "mock";
+process.env.VITE_AUTH_MODE = "mock"; // pakotetaan mock-auth ja mock-backend testien ajaksi
 
 const sharedEnv = {
   ...process.env,

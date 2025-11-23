@@ -1,6 +1,7 @@
 import type { Task, PaginatedResponse, TaskApplicant, CategoryResponse, LocationResponse, UserDto } from "../types";
 import type { CreateTaskInput, FetchTasksParams } from "./taskApi.types";
-import { mockApi, isMockMode } from "../../../mocks/mockApi";
+import { mockApi, isMockMode } from "../../../mocks/mockApi"; // mock-tilassa API-kutsut ohjataan in-memory backendille
+// Jokainen funktio tarkistaa isMockMode:n ja käyttää mockApi:a ilman verkkoa testitilassa
 
 // This is a file for interacting with the backend task API.
 // It uses the Fetch API to make HTTP requests.

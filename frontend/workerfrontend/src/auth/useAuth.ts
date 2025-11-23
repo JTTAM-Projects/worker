@@ -20,10 +20,11 @@ export type AuthInfo = {
   getAccessToken: () => Promise<string>;
 };
 
-const isMock = import.meta.env.VITE_AUTH_MODE === "mock";
+const isMock = import.meta.env.VITE_AUTH_MODE === "mock"; // mock-tila ohittaa Auth0:n testeissä ja lokissa
 
 export function useAuth(): AuthInfo {
   if (isMock) {
+    // Testeissä palautetaan aina sama käyttäjä ilman Auth0-redirecttejä
     return {
       isAuthenticated: true,
       isLoading: false,

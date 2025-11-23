@@ -1,3 +1,4 @@
+// In-memory mock-backend: simuloi REST-API:a ilman verkkoa testejä varten
 import type {
   PaginatedResponse,
   Task,
@@ -22,8 +23,9 @@ import {
   type StoredTaskApplicant,
 } from "./mockData";
 
-const isMockMode = import.meta.env.VITE_AUTH_MODE === "mock";
+const isMockMode = import.meta.env.VITE_AUTH_MODE === "mock"; // ohjaa kaikki kutsut in-memory backendille testissä
 
+// In-memory backend: simuloi REST-API:a ja pitää datan muistissa testisession ajan
 class MockApi {
   private tasks: Task[] = structuredClone(initialTasks);
   private applications: StoredApplication[] = structuredClone(initialApplications);
@@ -31,6 +33,7 @@ class MockApi {
   private nextTaskId = this.tasks.length + 1;
 
   reset() {
+    // Palauttaa kaikki listat alkuperäiseen siemendataan
     this.tasks = structuredClone(initialTasks);
     this.applications = structuredClone(initialApplications);
     this.taskApplicants = structuredClone(initialTaskApplicants);
@@ -38,14 +41,17 @@ class MockApi {
   }
 
   fetchTasks(params: FetchTasksParams = {}): PaginatedResponse<Task> {
+    // Julkinen tehtävälista mockattuna
     return this.filterTasks(params);
   }
 
   fetchUserTasks(params: FetchTasksParams = {}): PaginatedResponse<Task> {
+    // Omien tehtävien lista mockattuna
     return this.filterTasks(params);
   }
 
   fetchTaskById(taskId: number): Task {
+    // Yksittäisen tehtävän haku mock-datasta
     const task = this.tasks.find((t) => t.id === taskId);
     if (!task) {
       throw new Error(`Task ${taskId} not found`);
@@ -54,6 +60,7 @@ class MockApi {
   }
 
   fetchTaskApplications(taskId: number, params: { page?: number; size?: number } = {}): PaginatedResponse<TaskApplicant> {
+    // Tehtävän hakijoiden listaus
     const applicants = this.taskApplicants
       .filter((app) => app.taskId === taskId)
       .map((app) => ({ ...app, appliedUser: { ...app.appliedUser } }));
@@ -61,6 +68,7 @@ class MockApi {
   }
 
   createTask(payload: CreateTaskInput): Task {
+    // Lisää uusi tehtävä mock-listaan
     const newTask: Task = {
       id: this.nextTaskId++,
       user: mockUser,
@@ -78,6 +86,7 @@ class MockApi {
   }
 
   updateTask(taskId: number, payload: CreateTaskInput): Task {
+    // Päivitä olemassa oleva tehtävä
     const index = this.tasks.findIndex((task) => task.id === taskId);
     if (index === -1) {
       throw new Error("Task not found");
@@ -91,17 +100,20 @@ class MockApi {
   }
 
   deleteTask(taskId: number): void {
+    // Poista tehtävä ja siihen liittyvät hakemukset
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
     this.applications = this.applications.filter((app) => app.taskId !== taskId);
     this.taskApplicants = this.taskApplicants.filter((app) => app.taskId !== taskId);
   }
 
   fetchApplication(taskId: number): ApplicationWithDetails | null {
+    // Palauta yhden käyttäjän hakemus tehtävään
     const application = this.applications.find((app) => app.taskId === taskId);
     return application ? structuredClone(application) : null;
   }
 
   createApplication(taskId: number, payload: ApplicationPayload): ApplicationWithDetails {
+    // Luo uusi hakemus ja liitä tehtävän tietoihin
     const existing = this.applications.find((app) => app.taskId === taskId);
     if (existing) {
       throw new Error("Olet jo hakenut tähän tehtävään");
@@ -131,6 +143,7 @@ class MockApi {
   }
 
   updateApplication(taskId: number, payload: ApplicationPayload): ApplicationWithDetails {
+    // Päivitä olemassa oleva hakemus
     const index = this.applications.findIndex((app) => app.taskId === taskId);
     if (index === -1) {
       throw new Error("Hakemusta ei löytynyt");
@@ -143,10 +156,12 @@ class MockApi {
   }
 
   deleteApplication(taskId: number): void {
+    // Poista hakemus
     this.applications = this.applications.filter((app) => app.taskId !== taskId);
   }
 
   fetchAllApplications(params: Partial<FetchApplicationParams> = {}): PaginatedResponse<ApplicationWithDetails> {
+    // Lista kaikkia hakemuksia suodattimilla
     const { applicationStatus, searchText, categories, minPrice, maxPrice, page = 0, size = 10 } = params;
 
     let list = [...this.applications];
@@ -179,6 +194,7 @@ class MockApi {
   }
 
   fetchApplicationDetails(taskId: number, username: string): TaskApplicationDetails {
+    // Yksittäisen hakijan hakemuksen yksityiskohdat
     const applicant = this.taskApplicants.find(
       (app) => app.taskId === taskId && app.appliedUser.userName === username
     );
@@ -201,18 +217,21 @@ class MockApi {
   }
 
   updateApplicationStatus(taskId: number, username: string, status: TaskApplicationStatus): void {
+    // Päivitä hakemuksen status
     this.taskApplicants = this.taskApplicants.map((app) =>
       app.taskId === taskId && app.appliedUser.userName === username ? { ...app, applicationStatus: status } : app
     );
   }
 
   completeTaskExecution(taskId: number): void {
+    // Merkitse työ valmiiksi mock-datassa
     this.tasks = this.tasks.map((task) =>
       task.id === taskId ? { ...task, status: "COMPLETED" as TaskStatus } : task
     );
   }
 
   fetchCategories(): CategoryResponse[] {
+    // Palauta kaikki tunnetut kategoriat mock-datasta
     const categoryMap = new Map<string, CategoryResponse>(mockCategories.map((cat) => [cat.title, { ...cat }]));
     this.tasks.forEach((task) => {
       task.categories?.forEach((category) => {
@@ -275,7 +294,7 @@ declare global {
 }
 
 if (typeof window !== "undefined") {
-  window.__resetMockApi = () => mockApi.reset();
+  window.__resetMockApi = () => mockApi.reset(); // fixture kutsuu tätä init-skriptin kautta
   if (window.__PLAYWRIGHT_RESET_MOCK_API__) {
     mockApi.reset();
     delete window.__PLAYWRIGHT_RESET_MOCK_API__;

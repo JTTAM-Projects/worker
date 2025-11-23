@@ -1,3 +1,4 @@
+// Siemendata in-memory mock-backendille: käyttäjä, tehtävät, hakemukset ja kategoriat
 import type { PaginatedResponse, Task, TaskApplicant, UserDto, Category, CategoryResponse } from "../features/task/types";
 import type { ApplicationWithDetails } from "../features/application/types";
 
@@ -85,7 +86,7 @@ export const initialTasks: Task[] = [
   },
 ];
 
-export const mockCategories: CategoryResponse[] = [
+export const mockCategories: CategoryResponse[] = [ // mock-backendissa käytettävä kategoriavalikko
   "Cleaning",
   "Garden",
   "Moving",

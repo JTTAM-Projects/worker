@@ -1,6 +1,8 @@
 import type { ApplicationWithDetails, PaginatedResponse } from "../types";
 import type { ApplicationPayload, FetchApplicationParams } from "./applicationApi.types";
-import { mockApi, isMockMode } from "../../../mocks/mockApi";
+import { mockApi, isMockMode } from "../../../mocks/mockApi"; // mock-tilassa hakemus-API käyttää in-memory dataa
+// Kaikki funktiot ohjaavat mockApi:n kautta, kun VITE_AUTH_MODE=mock
+//isMockMode -logiikka ohjaa kaikki kutsut mockApi:lle, joka käyttää in-memory dataa
 
 const API_BASE_URL = 'http://localhost:8080/api'
 
