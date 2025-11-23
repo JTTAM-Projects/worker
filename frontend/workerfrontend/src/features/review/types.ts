@@ -8,6 +8,6 @@ export type ReviewRequest = {
 export type CreateReviewProps = {
   taskId: number,
   revieweeUsername: string,
-  submitRoute: string,
-  cancelRoute: string,
+  submitRoute: () => void,
+  cancelRoute: () => void,
 }

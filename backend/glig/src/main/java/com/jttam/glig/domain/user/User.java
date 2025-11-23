@@ -3,6 +3,7 @@ package com.jttam.glig.domain.user;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jttam.glig.domain.application.Application;
 import com.jttam.glig.domain.task.Task;
 
@@ -33,9 +34,11 @@ public class User {
     @Column(name = "mail", nullable = false)
     String mail;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
     private Set<Application> applies = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = false)
     private Set<Task> tasks = new HashSet<>();
 
