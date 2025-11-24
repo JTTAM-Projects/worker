@@ -16,7 +16,6 @@ import { Route as PublicPricingRouteImport } from './routes/_public/pricing'
 import { Route as PublicFaqRouteImport } from './routes/_public/faq'
 import { Route as PublicAboutServiceRouteImport } from './routes/_public/about-service'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
-import { Route as AuthenticatedTestReviewsRouteImport } from './routes/_authenticated/test-reviews'
 import { Route as AuthenticatedEmployerRouteImport } from './routes/_authenticated/employer'
 import { Route as AuthenticatedWorkerIndexRouteImport } from './routes/_authenticated/worker/index'
 import { Route as AuthenticatedEmployerIndexRouteImport } from './routes/_authenticated/employer/index'
@@ -97,12 +96,6 @@ const AuthenticatedWorkerRoute = AuthenticatedWorkerRouteImport.update({
   path: '/worker',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedTestReviewsRoute =
-  AuthenticatedTestReviewsRouteImport.update({
-    id: '/test-reviews',
-    path: '/test-reviews',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedEmployerRoute = AuthenticatedEmployerRouteImport.update({
   id: '/employer',
   path: '/employer',
@@ -382,7 +375,6 @@ const AuthenticatedEmployerMyTasksTaskIdApplicationsUsernameRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/employer': typeof AuthenticatedEmployerRouteWithChildren
-  '/test-reviews': typeof AuthenticatedTestReviewsRoute
   '/worker': typeof AuthenticatedWorkerRouteWithChildren
   '/about-service': typeof PublicAboutServiceRoute
   '/faq': typeof PublicFaqRoute
@@ -435,7 +427,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/test-reviews': typeof AuthenticatedTestReviewsRoute
   '/about-service': typeof PublicAboutServiceRoute
   '/faq': typeof PublicFaqRoute
   '/pricing': typeof PublicPricingRoute
@@ -491,7 +482,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_authenticated/employer': typeof AuthenticatedEmployerRouteWithChildren
-  '/_authenticated/test-reviews': typeof AuthenticatedTestReviewsRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRouteWithChildren
   '/_public/about-service': typeof PublicAboutServiceRoute
   '/_public/faq': typeof PublicFaqRoute
@@ -547,7 +537,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/employer'
-    | '/test-reviews'
     | '/worker'
     | '/about-service'
     | '/faq'
@@ -600,7 +589,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/test-reviews'
     | '/about-service'
     | '/faq'
     | '/pricing'
@@ -655,7 +643,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/_public'
     | '/_authenticated/employer'
-    | '/_authenticated/test-reviews'
     | '/_authenticated/worker'
     | '/_public/about-service'
     | '/_public/faq'
@@ -762,13 +749,6 @@ declare module '@tanstack/react-router' {
       path: '/worker'
       fullPath: '/worker'
       preLoaderRoute: typeof AuthenticatedWorkerRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/test-reviews': {
-      id: '/_authenticated/test-reviews'
-      path: '/test-reviews'
-      fullPath: '/test-reviews'
-      preLoaderRoute: typeof AuthenticatedTestReviewsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/employer': {
@@ -1248,13 +1228,11 @@ const AuthenticatedWorkerRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedEmployerRoute: typeof AuthenticatedEmployerRouteWithChildren
-  AuthenticatedTestReviewsRoute: typeof AuthenticatedTestReviewsRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedEmployerRoute: AuthenticatedEmployerRouteWithChildren,
-  AuthenticatedTestReviewsRoute: AuthenticatedTestReviewsRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRouteWithChildren,
 }
 
