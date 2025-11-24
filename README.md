@@ -31,143 +31,152 @@ The application is built around two primary user roles: the Employer and the Tas
 The following ERD shows the current database design structure and the logical relationships between entities.
 ```mermaid
 erDiagram
+    %% ========== BASE CLASSES (MappedSuperclass - not actual tables) ==========
+    baseClass {
+        instant created_at "CreationTimestamp, not null, updatable=false"
+        instant updated_at "UpdateTimestamp, not null"
+    }
+    
+    BaseProfile {
+        string first_name "not blank, max 100"
+        string last_name "not blank, max 100"
+        text bio "max 5000, optional"
+        string street_address "max 255, optional"
+        string postal_code "max 40, optional"
+        string city "max 100, optional"
+        string country "max 100, optional"
+        string website_link "URL, max 2048, optional"
+        string profile_image_url "URL, max 2048, optional"
+        boolean is_verified "default false"
+        string status "ProfileStatus ENUM: ACTIVE|DELETED|SUSPENDED"
+        instant created_at "CreationTimestamp"
+        instant updated_at "UpdateTimestamp"
+        instant deleted_at "optional"
+    }
+
+    %% ========== CONCRETE ENTITIES ==========
     User {
-        string user_id PK "unique, managed by Auth0"
-        string email "unique"
-        string first_name
-        string last_name
-        string phone_number
-        string status "e.g., active, suspended"
-        datetime created_at
+        string user_name PK "Auth0 user ID"
+        string mail "not null"
+        string business_id "default empty"
+        string address "default empty"
+        string phone_number "default empty"
     }
 
     Tasker_Profile {
-        int tasker_profile_id PK
-        string user_id FK "unique"
-        string first_name
-        string last_name
-        text bio "optional"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        decimal average_rating
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
+        long tasker_profile_id PK "auto-generated"
+        string user_id FK "OneToOne with User, unique, not null"
+        decimal average_rating "precision 3 scale 2, optional"
     }
 
     Employer_Profile {
-        long employer_profile_id PK
-        string user_id FK "unique"
-        string first_name
-        string last_name
-        string employer_type "e.g., INDIVIDUAL, COMPANY"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        text bio "optional"
+        long employer_profile_id PK "auto-generated"
+        string user_id FK "OneToOne with User, unique, not null"
+        string employer_type "ENUM: INDIVIDUAL|COMPANY, not null"
         string company_name "optional"
         string business_id "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED, SUSPENDED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
-    }
-
-    Job_Category {
-        int job_category_id PK
-        string category_name
-    }
-
-    Location {
-        int location_id PK
-        string street_address
-        string postal_code
-        string city
-        string country
-        decimal latitude
-        decimal longitude
     }
 
     Task {
-        int task_id PK
-        string employer_id FK
-        int job_category_id FK
-        string title
-        text description
-        decimal price
-        datetime start_date
-        datetime end_date
-        string status "e.g., open, assigned, completed"
+        long id PK "auto-generated"
+        string user_name FK "ManyToOne with User"
+        string title "not null"
+        int price "default 0"
+        datetime start_date "default now"
+        datetime end_date "default now"
+        text description "default empty"
+        string status "TaskStatus ENUM: ACTIVE|IN_PROGRESS|COMPLETED|DELETED"
+        instant created_at "from baseClass"
+        instant updated_at "from baseClass"
     }
 
-    Task_Location {
-        int task_id PK, FK
-        int location_id PK, FK
+    Category {
+        long category_id PK "auto-generated"
+        string title "not null, unique"
+        instant created_at "from baseClass"
+        instant updated_at "from baseClass"
+    }
+
+    Location {
+        long location_id PK "auto-generated"
+        string street_address "optional"
+        string postal_code "optional"
+        string city "not null"
+        string country "not null"
+        decimal latitude "precision 9 scale 6, optional"
+        decimal longitude "precision 9 scale 7, optional"
     }
 
     Application {
-        int application_id PK
-        int task_id FK
-        string tasker_id FK
-        decimal price_suggestion
-        text description
-        string status "e.g., pending, accepted, rejected"
+        string user_name PK_FK "composite key, ManyToOne with User"
+        long task_id PK_FK "composite key, ManyToOne with Task"
+        int price_suggestion "default 0"
+        datetime time_suggestion "default now"
+        text description "default empty"
+        string apply_status "ApplicationStatus ENUM: PENDING|ACCEPTED|REJECTED"
+        instant created_at "from baseClass"
+        instant updated_at "from baseClass"
     }
 
     Review {
-        int review_id PK
-        int task_id FK
-        string reviewer_id FK "User (Employer)"
-        string reviewee_id FK "User (Tasker)"
-        int rating "1-5"
-        text comment
-        datetime created_at
+        long id PK "auto-generated"
+        long task_id FK "ManyToOne with Task, not null"
+        string reviewer_id FK "ManyToOne with User, not null"
+        string reviewee_id FK "ManyToOne with User, not null"
+        int rating "1-5, not null, CHECK constraint"
+        text comment "max 1000, optional"
+        instant created_at "from baseClass"
+        instant updated_at "from baseClass"
     }
 
-    Conversation {
-        int conversation_id PK
-        int application_id FK
-        datetime created_at
+    %% ========== JOIN TABLES (Many-to-Many relationships) ==========
+    Task_Category {
+        long task_id PK_FK
+        long category_id PK_FK
     }
 
-    Message {
-        int message_id PK
-        int conversation_id FK
-        string sender_id FK
-        text content
-        datetime sent_at
-        boolean is_read
+    Task_Location {
+        long task_id PK_FK
+        long location_id PK_FK
     }
 
-    %% --- Relationships ---
-    User |o--|| Tasker_Profile : "has one"
-    User |o--|| Employer_Profile : "has one"
-    User }o--|| Task : "posts"
-    User }o--o| Application : "applies with"
-    User }o--o| Message : "sends"
-    User }o--o| Review : "as reviewer/reviewee"
+    %% ========== RELATIONSHIPS ==========
+    
+    %% User relationships
+    User ||--o| Tasker_Profile : "has one (OneToOne, user_id unique)"
+    User ||--o| Employer_Profile : "has one (OneToOne, user_id unique)"
+    User ||--o{ Task : "posts (OneToMany via user_name)"
+    User ||--o{ Application : "applies to tasks (OneToMany as user)"
+    User ||--o{ Review : "gives reviews (OneToMany as reviewer)"
+    User ||--o{ Review : "receives reviews (OneToMany as reviewee)"
 
-    Job_Category ||--o{ Task : "categorizes"
+    %% Task relationships
+    Task ||--o{ Application : "has applications (OneToMany)"
+    Task ||--o{ Review : "has reviews (OneToMany)"
+    Task }o--o{ Category : "categorized by (ManyToMany via Task_Category)"
+    Task }o--o{ Location : "located at (ManyToMany via Task_Location)"
 
-    Task ||--o{ Application : "has"
-    Task ||--o{ Review : "is reviewed in"
-    Task }o--o{ Location : "has (via Task_Location)"
+    %% Join table relationships
+    Task ||--|{ Task_Category : "links"
+    Category ||--|{ Task_Category : "links"
+    Task ||--|{ Task_Location : "links"
+    Location ||--|{ Task_Location : "links"
 
-    Task ||--|{ Task_Location : "links to"
-    Location ||--|{ Task_Location : "links to"
+    %% Composite key relationships
+    Application }o--|| User : "applicant"
+    Application }o--|| Task : "applied task"
+    
+    Review }o--|| Task : "reviewed task"
+    Review }o--|| User : "reviewer"
+    Review }o--|| User : "reviewee"
 
-    Application ||--o| Conversation : "can lead to"
-    Conversation ||--o{ Message : "contains"
+    %% ========== INHERITANCE NOTES ==========
+    %% Tasker_Profile extends BaseProfile (includes all BaseProfile fields)
+    %% Employer_Profile extends BaseProfile (includes all BaseProfile fields)
+    %% Task extends baseClass (includes created_at, updated_at)
+    %% Category extends baseClass (includes created_at, updated_at)
+    %% Application extends baseClass (includes created_at, updated_at)
+    %% Review extends baseClass (includes created_at, updated_at)
 ```
 ## Swagger-UI
 
