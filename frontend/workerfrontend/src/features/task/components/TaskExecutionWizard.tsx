@@ -195,7 +195,9 @@ export default function TaskExecutionWizard({ taskTitle, onBack, onFinish, onCom
               <span className="material-icons text-3xl">warning</span>
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Haluatko varmasti lopettaa tämän työn?</h2>
-            <p className="text-gray-600 mb-6">Työn tila merkitään valmiiksi, eikä tätä toimintoa voi perua.</p>
+            <p className="text-gray-600 mb-6">
+              Työn tila siirtyy odottamaan työnantajan hyväksyntää, eikä tätä toimintoa voi perua.
+            </p>
             {finishError && (
               <div className="mb-4 w-full rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {finishError}
@@ -229,7 +231,7 @@ export default function TaskExecutionWizard({ taskTitle, onBack, onFinish, onCom
             <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-500 mb-4">
               <span className="material-icons text-3xl">check_circle</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Työ merkitty valmiiksi</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Työ lähetetty hyväksyttäväksi</h2>
             <p className="text-gray-600 mb-6">Kokonaisaika: {formattedTime}</p>
             {onBack && (
               <button

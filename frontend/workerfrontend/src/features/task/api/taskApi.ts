@@ -500,20 +500,7 @@ export async function completeTaskExecution(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number
 ): Promise<void> {
-  const token = await getAccessTokenSilently();
-
-  const response = await fetch(`${API_BASE_URL}/task/${taskId}/application/complete`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => "");
-    throw new Error(text || `Työn päättäminen epäonnistui (${response.status})`);
-  }
+  await updateTaskStatus(getAccessTokenSilently, taskId, "PENDING_APPROVAL");
 }
 
 /** Update task status (approve/reject work) */
