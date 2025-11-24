@@ -42,6 +42,7 @@
  */
 
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ReviewList, AverageRating } from "../../features/review";
 
 export const Route = createFileRoute("/_authenticated/test-reviews")({
   component: TestReviewsPage,
@@ -68,33 +69,18 @@ function TestReviewsPage() {
 
       <div className="space-y-8">
         <section className="border border-gray-300 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Average Rating Display</h2>
+          <AverageRating username="testuser" />
+        </section>
+
+        <section className="border border-gray-300 rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Tasker Reviews</h2>
-          <div className="bg-gray-50 p-4 rounded">
-            <p className="text-gray-500">ReviewList component will be placed here</p>
-            <code className="text-sm">
-              {`<ReviewList username="testuser" profileType="TASKER" />`}
-            </code>
-          </div>
+          <ReviewList username="testuser" profileType="TASKER" limit={10} />
         </section>
 
         <section className="border border-gray-300 rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Employer Reviews</h2>
-          <div className="bg-gray-50 p-4 rounded">
-            <p className="text-gray-500">ReviewList component will be placed here</p>
-            <code className="text-sm">
-              {`<ReviewList username="testuser" profileType="EMPLOYER" />`}
-            </code>
-          </div>
-        </section>
-
-        <section className="border border-gray-300 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Average Rating Display</h2>
-          <div className="bg-gray-50 p-4 rounded">
-            <p className="text-gray-500">AverageRating component will be placed here</p>
-            <code className="text-sm">
-              {`<AverageRating username="testuser" />`}
-            </code>
-          </div>
+          <ReviewList username="testuser" profileType="EMPLOYER" limit={10} />
         </section>
       </div>
 
