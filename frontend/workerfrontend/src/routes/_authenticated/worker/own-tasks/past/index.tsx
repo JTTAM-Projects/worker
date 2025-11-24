@@ -41,7 +41,7 @@ function WorkerPastTasksPage() {
       ...filters,
     })
   );
-  console.log(taskList);
+  // console.log(taskList); DEBUGGING
 
   const handleResetFilters = () => {
     setFilters((prev) => ({

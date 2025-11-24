@@ -64,7 +64,7 @@ function WorkerInProgressTasksPage() {
   });
 
   const data = viewMode === "list" ? taskList : tasksOnMap;
-  console.log(taskList);
+  // console.log(taskList); DEBUGGING
 
   const handleResetFilters = () => {
     setFilters((prev) => ({

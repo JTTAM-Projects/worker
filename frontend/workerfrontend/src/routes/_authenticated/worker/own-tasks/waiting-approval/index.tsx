@@ -41,7 +41,6 @@ function WorkerWaitingApprovalTasksPage() {
       ...filters,
     })
   );
-  console.log(taskList);
 
   const handleResetFilters = () => {
     setFilters((prev) => ({
