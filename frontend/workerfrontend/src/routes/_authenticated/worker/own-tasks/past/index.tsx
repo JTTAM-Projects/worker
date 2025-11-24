@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { taskQueries } from "../../../../../features/task/queries/taskQueries";
 import type { TaskFilters } from "../../../../../features/task";
 import WorkerTasksToList from "../../../../../features/task/components/WorkerTasksToList";
+import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/past/")({
   component: WorkerPastTasksPage,

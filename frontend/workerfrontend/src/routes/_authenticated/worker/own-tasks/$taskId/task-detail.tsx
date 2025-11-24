@@ -40,7 +40,7 @@ function TaskExecutionDetailsPage() {
       <div className="flex mb-6 justify-center">
         <button
           className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
-          onClick={() => navigate({ to: "/worker/own-tasks/$taskId/task-details", params: { taskId } })}
+          onClick={() => navigate({ to: "/worker/own-tasks/$taskId/task-detail", params: { taskId } })}
         >
           Tehtävän tiedot
         </button>

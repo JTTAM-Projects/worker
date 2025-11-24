@@ -47,23 +47,31 @@ const getCategoryIcon = (title: string) => {
 const getCategoryColor = (title: string) => {
   switch (title?.toUpperCase()) {
     case "REPAIR":
-    case "PAINTING": return "bg-orange-100";
+    case "PAINTING": 
+      return "bg-orange-200";
     case "CLEANING":
-    case "HOUSEHOLD": return "bg-blue-100";
-    case "MOVING": return "bg-purple-100";
-    case "SNOW REMOVAL": return "bg-cyan-100";
+    case "HOUSEHOLD": 
+      return "bg-blue-200";
+    case "MOVING": 
+      return "bg-purple-200";
+    case "SNOW REMOVAL": 
+      return "bg-cyan-200";
     case "FOREST WORK":
-    case "YARD": return "bg-green-100";
-    default: return "bg-gray-100";
+    case "GARDEN":
+    case "YARD": 
+      return "bg-green-200";
+    default: return "bg-gray-200";
   }
 };
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "ACTIVE": return "bg-green-600 text-white";
-    case "COMPLETED": return "bg-blue-600 text-white";
-    case "CANCELLED": return "bg-red-600 text-white";
-    default: return "bg-gray-600 text-white";
+    case "ACTIVE": return "bg-yellow-600 text-black";
+    case "COMPLETED": return "bg-green-600 text-black";
+    case "CANCELLED": return "bg-red-600 text-black";
+    case "PENDING_APPROVAL": return "bg-yellow-300 text-black";
+    case "IN_PROGRESS": return "bg-yellow-400 text-black"
+    default: return "bg-red-500 text-black";
   }
 };
 
@@ -72,7 +80,9 @@ const translateStatus = (status: string) => {
     case "ACTIVE": return "Aktiivinen";
     case "COMPLETED": return "Valmis";
     case "CANCELLED": return "Peruttu";
-    default: return status;
+    case "PENDING_APPROVAL": return "Odottaa hyv.";
+    case "IN_PROGRESS": return "Työn alla"
+    default: return "ERROR";
   }
 };
 
@@ -108,7 +118,7 @@ export default function WorkerTasksToList({
         key={task.id ?? index}
         className="bg-white rounded-lg border border-gray-200 transition-all duration-200 hover:shadow-lg hover:border-green-400 cursor-pointer overflow-hidden"
         onClick={() =>
-          navigate({ to: "/worker/own-tasks/to-do/$taskId", params: { taskId: task.id.toString() }})
+          navigate({ to: "/worker/own-tasks/$taskId", params: { taskId: task.id.toString() }})
         }
       >
         <div className="flex items-start justify-between gap-6">
@@ -180,7 +190,6 @@ export default function WorkerTasksToList({
       </div>
       <div className="space-y-4">
         {tasks.map((t, i) => renderTaskCard(t, i))}
-        {totalPages > 1 && (
           <div className="flex items-center justify-center mt-6">
             <div className="flex items-center space-x-2">
               <button
@@ -220,7 +229,6 @@ export default function WorkerTasksToList({
               </button>
             </div>
           </div>
-        )}
       </div>
     </section>
   );
