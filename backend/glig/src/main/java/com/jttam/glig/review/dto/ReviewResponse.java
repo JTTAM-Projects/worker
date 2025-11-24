@@ -1,11 +1,13 @@
 package com.jttam.glig.review.dto;
 
 import java.time.Instant;
+import java.util.Set;
 
 public record ReviewResponse(
     Long id,
     Long taskId,
     String taskTitle,
+    Set<String> taskCategories,
     String reviewerUsername,
     String revieweeUsername,
     int rating,
