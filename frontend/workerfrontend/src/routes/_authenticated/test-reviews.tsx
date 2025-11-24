@@ -1,5 +1,6 @@
-// TEMPORARY: Delete this file before creating PR
-// This page is only for testing review components during development
+// REFERENCE PAGE: Keep this for Jaakkola to verify component behavior
+// This page demonstrates correct usage of ReviewList, ReviewCard, and AverageRating components
+// Use this to compare against your profile page implementation if something doesn't work
 
 /**
  * Backend API Documentation (Verified 2025-11-24)
@@ -176,11 +177,17 @@ function TestReviewsPage() {
         </section>
       </div>
 
-      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
-        <p className="text-sm text-yellow-800">
-          <strong>Note:</strong> This page will be deleted before the PR is merged.
-          Components developed here will be integrated into the profile pages by Jaakkola.
+      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded">
+        <p className="text-sm text-blue-800 mb-2">
+          <strong>Reference Implementation Guide for Jaakkola:</strong>
         </p>
+        <ul className="text-sm text-blue-700 list-disc list-inside space-y-1">
+          <li>ReviewList, ReviewCard, and AverageRating components are fully functional</li>
+          <li>This page shows correct usage patterns for all three components</li>
+          <li>If your profile page implementation doesn't work as shown here, compare your props and component structure</li>
+          <li>Backend test data: User1 (11T+5E), User2 (4T+3E), User3 (2T+0E)</li>
+          <li>Components handle loading states, empty states, and scrolling automatically</li>
+        </ul>
       </div>
       </div>
     </div>
