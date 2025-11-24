@@ -29,6 +29,7 @@ export default function EmployerNavBar() {
               Luo ilmoitus
             </Link>
             <Link
+              search={{ tab: "active" }}
               to="/employer/my-tasks"
               className="text-white/90 hover:text-white hover:underline underline-offset-4 decoration-2 font-medium transition-all duration-200"
             >

@@ -154,21 +154,6 @@ public class ApplicationController {
         return service.tryEditApplication(taskId, applicationRequest, username);
     }
 
-    @Operation(summary = "Mark own application as completed", description = "Allows an authenticated worker to mark their accepted application as completed.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Application completion stored successfully"),
-            @ApiResponse(responseCode = "400", description = "Application is not in a state that can be completed"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Application not found")
-    })
-    @PostMapping("/task/{taskId}/application/complete")
-    public ResponseEntity<ApplicationResponse> completeApplication(@PathVariable Long taskId,
-            @AuthenticationPrincipal Jwt jwt) {
-
-        String username = jwt.getSubject();
-        return service.tryCompleteApplication(taskId, username);
-    }
-
     @Operation(summary = "Update an application's status", description = "Allows a task owner to accept or reject an application. The user must be the owner of the task to which the application belongs.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Application status updated successfully"),

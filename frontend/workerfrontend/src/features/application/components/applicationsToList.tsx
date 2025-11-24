@@ -5,7 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 type ApplicationListRow = ApplicationWithDetails & {
   task?: {
     id: number;
-    title: string;
+    title?: string;
     categories?: Array<{ title: string }>;
     locations?: Array<{
       streetAddress?: string;
@@ -96,20 +96,20 @@ export default function ApplicationToList({
       case "GARDEN":
       case "YARD":
       case "FOREST WORK":
-        return "bg-green-100";
+        return "bg-green-200";
       case "CLEANING":
       case "HOUSEHOLD":
-        return "bg-blue-100";
+        return "bg-blue-200";
       case "MOVING":
-        return "bg-purple-100";
+        return "bg-purple-200";
       case "REPAIR":
       case "PAINTING":
-        return "bg-orange-100";
+        return "bg-orange-200";
       case "SNOW REMOVAL":
-        return "bg-cyan-100";
+        return "bg-cyan-200";
       case "OTHER":
       default:
-        return "bg-gray-100";
+        return "bg-gray-200";
     }
   };
 

@@ -12,8 +12,8 @@ function ReviewPage() {
   return (
     <CreateReviewForm
       taskId={parseInt(taskId)}
-      cancelRoute={() => navigate({ to: "/employer/my-tasks/$taskId/details" })}
-      submitRoute={() => navigate({ to: "/employer/my-tasks/$taskId/details" })}
+      cancelRoute={() => navigate({ to: "/employer/my-tasks/$taskId/details", params: { taskId: taskId.toString() } })}
+      submitRoute={() => navigate({ to: "/employer/my-tasks/$taskId/details", params: { taskId: taskId.toString() } })}
       revieweeUsername={username}
     />
   );

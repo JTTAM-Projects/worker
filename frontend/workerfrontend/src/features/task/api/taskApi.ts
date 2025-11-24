@@ -14,7 +14,7 @@ import type {
 // It uses the Fetch API to make HTTP requests.
 // GET requests are public and don't require authentication.
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 export type TaskApplicationDetails = TaskApplicant & {
   user?: UserDto & {
@@ -194,6 +194,83 @@ export async function fetchUserTasks(
   }
 
   const response = await fetch(`${API_BASE_URL}/task/user-tasks?${queryParams.toString()}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch user tasks: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+}
+
+// Fetch workers own tasks (requires authentication)
+export async function fetchWorkerTasks(
+  getAccessToken: () => Promise<string>,
+  params: FetchTasksParams = {}
+): Promise<PaginatedResponse<Task>> {
+  const { 
+    page = 0, 
+    size = 10, 
+    searchText,
+    categories,
+    minPrice,
+    maxPrice,
+    latitude,
+    longitude,
+    radiusKm,
+    status,
+    sortBy
+  } = params;
+
+  const token = await getAccessToken();
+
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+
+  // Add text search
+  if (searchText && searchText.trim()) {
+    queryParams.append("searchText", searchText.trim());
+  }
+
+  // Add multiple categories
+  if (categories && categories.length > 0) {
+    categories.forEach(cat => queryParams.append("categories", cat));
+  }
+
+  // Add price range
+  if (minPrice !== undefined && minPrice !== null) {
+    queryParams.append("minPrice", minPrice.toString());
+  }
+  if (maxPrice !== undefined && maxPrice !== null) {
+    queryParams.append("maxPrice", maxPrice.toString());
+  }
+
+  // Add location proximity
+  if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
+    queryParams.append("latitude", latitude.toString());
+    queryParams.append("longitude", longitude.toString());
+    queryParams.append("radiusKm", radiusKm.toString());
+  }
+
+  // Add status
+  if (status) {
+    queryParams.append("status", status);
+  }
+
+  // Add sorting
+  const sortParam = getSortParam(sortBy);
+  if (sortParam) {
+    queryParams.append("sort", sortParam);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/task/worker-tasks?${queryParams.toString()}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

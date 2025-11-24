@@ -8,7 +8,7 @@ spring:
     username: sa
     password:
   jpa:
-    show-sql: true
+    show-sql: false
 logging:
   level:
     root: info
