@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Set;
+
 import java.time.Instant;
 import java.util.List;
 
@@ -59,6 +61,7 @@ class ReviewControllerTest {
             1L,
             1L,
             "Test Task",
+            Set.of("CLEANING"),
             REVIEWER_USERNAME,
             REVIEWEE_USERNAME,
             5,
@@ -236,7 +239,7 @@ class ReviewControllerTest {
     void updateReview_shouldReturnUpdatedReview_whenValid() throws Exception {
         ReviewRequest updateRequest = new ReviewRequest(1L, REVIEWEE_USERNAME, 4, "Updated comment");
         ReviewResponse updatedResponse = new ReviewResponse(
-            1L, 1L, "Test Task", REVIEWER_USERNAME, REVIEWEE_USERNAME, 4, "Updated comment",
+            1L, 1L, "Test Task", Set.of("CLEANING"), REVIEWER_USERNAME, REVIEWEE_USERNAME, 4, "Updated comment",
             Instant.now(), Instant.now()
         );
 
