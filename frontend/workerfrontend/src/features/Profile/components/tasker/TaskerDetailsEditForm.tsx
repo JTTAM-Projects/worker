@@ -1,45 +1,42 @@
 import { useForm } from "@tanstack/react-form";
 import { useUpdateUser } from "../../hooks/userHooks";
-import { useCreateEmployerProfile, useGetEmployerProfile, useUpdateEmployer } from "../../hooks/EmployerHooks";
-import type { User, EmployerProfile } from "../../types";
+import { useCreateTasker, useGetTaskerDetails, useUpdateTaskerDetails } from "../../hooks/taskerHooks";
+import type { User, TaskerProfile } from "../../types";
 import { profileStyles, buttonStyles, formStyles } from "../../../../ui-library/stylesConfig";
 import { useNavigate } from "@tanstack/react-router";
 
-export default function EmployerDetailsEditForm({
+export default function TaskerDetailsEditForm({
     initialValues,
     onSuccess,
     onClose,
 }: {
-    initialValues?: Partial<User & EmployerProfile>;
+    initialValues?: Partial<User & TaskerProfile>;
     onSuccess?: () => void;
     onClose?: () => void;
 }) {
     const navigate = useNavigate();
     const { mutate: updateUser } = useUpdateUser();
-    const { mutate: updateEmployer } = useUpdateEmployer();
-    const { mutate: createEmployer } = useCreateEmployerProfile();
-    const { data: employerProfile } = useGetEmployerProfile();
+    const { mutate: updateTasker } = useUpdateTaskerDetails();
+    const { mutate: createTasker } = useCreateTasker();
+    const { data: taskerProfile } = useGetTaskerDetails();
 
     const form = useForm({
         defaultValues: {
             //USER FIELDS
             userName: initialValues?.userName,
             mail: initialValues?.mail,
-            personalBusinessId: initialValues?.businessId || "",
+            businessId: initialValues?.businessId || "",
             phoneNumber: initialValues?.phoneNumber || "",
             address: initialValues?.address || "",
 
-            //EMPLOYER FIELDS
+            //TASKER FIELDS
             firstName: initialValues?.firstName || "",
             lastName: initialValues?.lastName || "",
-            employerType: initialValues?.employerType || "",
             streetAddress: initialValues?.streetAddress || "",
             postalCode: initialValues?.postalCode || "",
             city: initialValues?.city || "",
             country: initialValues?.country || "",
             bio: initialValues?.bio || "",
-            companyName: initialValues?.companyName || "",
-            businessId: initialValues?.businessId || "",
             websiteLink: initialValues?.websiteLink || "",
             profileImageUrl: initialValues?.profileImageUrl || "",
         },
@@ -48,23 +45,19 @@ export default function EmployerDetailsEditForm({
                 const userUpdate = {
                     userName: initialValues?.userName,
                     mail: initialValues?.mail,
-                    businessId: value.personalBusinessId,
+                    businessId: value.businessId,
                     phoneNumber: value.phoneNumber,
                     address: `${value.streetAddress} ${value.postalCode}, ${value.city.toUpperCase()} ${value.country}`,
                 };
 
-                const employerUpdate = {
-                    userId: initialValues?.userName || "",
+                const taskerUpdate = {
                     firstName: value.firstName,
                     lastName: value.lastName,
-                    employerType: value.employerType,
                     streetAddress: value.streetAddress,
                     postalCode: value.postalCode,
                     city: value.city,
                     country: value.country,
                     bio: value.bio,
-                    companyName: value.companyName,
-                    businessId: value.businessId,
                     websiteLink: value.websiteLink,
                     profileImageUrl: value.profileImageUrl,
                 };
@@ -72,26 +65,26 @@ export default function EmployerDetailsEditForm({
                 // Update user
                 updateUser(userUpdate, {
                     onSuccess: () => {
-                        // Update or create employer profile
-                        if (employerProfile) {
-                            updateEmployer(employerUpdate, {
+                        // Update or create tasker profile
+                        if (taskerProfile) {
+                            updateTasker(taskerUpdate, {
                                 onSuccess: () => {
                                     onSuccess?.();
-                                    navigate({ to: "/employer/my-proflie/details" });
+                                    navigate({ to: "/worker/my-profile/details" });
                                 },
                             });
                         } else {
-                            createEmployer(employerUpdate, {
+                            createTasker(taskerUpdate, {
                                 onSuccess: () => {
                                     onSuccess?.();
-                                    navigate({ to: "/employer/my-proflie/details" });
+                                    navigate({ to: "/worker/my-profile/details" });
                                 },
                             });
                         }
                     },
                 });
             } catch (error) {
-                console.error("Failed to update employer profile:", error);
+                console.error("Failed to update tasker profile:", error);
             }
         },
     });
@@ -99,7 +92,7 @@ export default function EmployerDetailsEditForm({
     return (
         <div className={profileStyles.container}>
             <div className={profileStyles.header}>
-                <h2 className={profileStyles.title}>Muokkaa työnantajaprofiilia</h2>
+                <h2 className={profileStyles.title}>Muokkaa työntekijäprofiilia</h2>
             </div>
 
             <form
@@ -148,44 +141,6 @@ export default function EmployerDetailsEditForm({
                         )}
                     </form.Field>
 
-                    <form.Field name="companyName">
-                        {(field) => (
-                            <div className={profileStyles.fieldGroup}>
-                                <label htmlFor={field.name} className={profileStyles.label}>
-                                    Yrityksen nimi
-                                </label>
-                                <input
-                                    id={field.name}
-                                    name={field.name}
-                                    value={field.state.value}
-                                    onBlur={field.handleBlur}
-                                    onChange={(e) => field.handleChange(e.target.value)}
-                                    className={formStyles.input}
-                                    placeholder="Yrityksen nimi"
-                                />
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="businessId">
-                        {(field) => (
-                            <div className={profileStyles.fieldGroup}>
-                                <label htmlFor={field.name} className={profileStyles.label}>
-                                    Yrityksesi Y-tunnus
-                                </label>
-                                <input
-                                    id={field.name}
-                                    name={field.name}
-                                    value={field.state.value}
-                                    onBlur={field.handleBlur}
-                                    onChange={(e) => field.handleChange(e.target.value)}
-                                    className={formStyles.input}
-                                    placeholder="Y-tunnus"
-                                />
-                            </div>
-                        )}
-                    </form.Field>
-
                     <form.Field name="websiteLink">
                         {(field) => (
                             <div className={profileStyles.fieldGroup}>
@@ -204,34 +159,12 @@ export default function EmployerDetailsEditForm({
                             </div>
                         )}
                     </form.Field>
-
-                    <form.Field name="employerType">
-                        {(field) => (
-                            <div className={profileStyles.fieldGroup}>
-                                <label htmlFor={field.name} className={profileStyles.label}>
-                                    Työnantaja tyyppi
-                                </label>
-                                <select
-                                    id={field.name}
-                                    name={field.name}
-                                    value={field.state.value}
-                                    onBlur={field.handleBlur}
-                                    onChange={(e) => field.handleChange(e.target.value)}
-                                    className={formStyles.select}
-                                >
-                                    <option value="">Valitse työnantaja tyyppi</option>
-                                    <option value="INDIVIDUAL">Yksityishenkilö</option>
-                                    <option value="COMPANY">Yritys</option>
-                                </select>
-                            </div>
-                        )}
-                    </form.Field>
                 </div>
 
                 <form.Field name="bio">
                     {(field) => (
                         <div className={profileStyles.fieldGroup}>
-                            <h3 className={profileStyles.subsectionTitle}>Tietoja Yrityksestäsi</h3>
+                            <h3 className={profileStyles.subsectionTitle}>Tietoja sinusta</h3>
                             <textarea
                                 id={field.name}
                                 name={field.name}
@@ -240,7 +173,7 @@ export default function EmployerDetailsEditForm({
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className={formStyles.textarea}
                                 rows={4}
-                                placeholder="Kerro yrityksestäsi"
+                                placeholder="Kerro itsestäsi"
                             />
                         </div>
                     )}
@@ -330,7 +263,7 @@ export default function EmployerDetailsEditForm({
                         </div>
                     </div>
 
-                    <form.Field name="personalBusinessId">
+                    <form.Field name="businessId">
                         {(field) => (
                             <div className={profileStyles.fieldGroup}>
                                 <label htmlFor={field.name} className={profileStyles.label}>
@@ -358,7 +291,7 @@ export default function EmployerDetailsEditForm({
                         type="button"
                         onClick={() => {
                             onClose?.();
-                            navigate({ to: "/employer/my-proflie/details" });
+                            navigate({ to: "/worker/my-profile/details" });
                         }}
                         className={buttonStyles.cancelButton}
                     >
