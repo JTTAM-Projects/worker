@@ -1,86 +1,112 @@
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { applicationQueries } from "../../../../../features/application/queries/applicationQueries";
 import { useAuth0 } from "@auth0/auth0-react";
-import type { ApplicationWithDetails } from "../../../../../features/application/types";
+import { taskQueries } from "../../../../../features/task/queries/taskQueries";
+import type { TaskFilters } from "../../../../../features/task";
+import WorkerTasksToList from "../../../../../features/task/components/WorkerTasksToList";
+import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/to-do/")({
-  component: RouteComponent,
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(
-      applicationQueries.ownApplications(context.auth.getAccessToken, {
-        page: 0,
-        size: 10,
-        applicationStatus: "ACCEPTED",
-      })
-    ),
+  component: WorkerToDoTasksPage,
+  loader: async ({ context }) => {
+    try {
+      return await context.queryClient.ensureQueryData(
+        taskQueries.worker(context.auth.getAccessToken, {
+          page: 0,
+          size: 10,
+          status: "ACTIVE",
+        })
+      );
+    } catch (error) {
+      console.error('Failed to load tasks: ', error);
+      // Return empty data on error to prevent crash    
+      return { context: [], totalPages: 0, number: 0, first: true, last: true };
+    }
+  }
 });
 
-function RouteComponent() {
+function WorkerToDoTasksPage() {
   const navigate = useNavigate();
   const { getAccessTokenSilently } = useAuth0();
-  const { data } = useSuspenseQuery(
-    applicationQueries.ownApplications(getAccessTokenSilently, { page: 0, size: 10, applicationStatus: "ACCEPTED" })
-  );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
+  const [filters, setFilters] = useState<TaskFilters>({})
 
-  const applications: ApplicationWithDetails[] = data?.content ?? [];
+  const { data: taskList } = useSuspenseQuery(
+    taskQueries.worker(getAccessTokenSilently, {
+      status: "ACTIVE",
+      page: currentPage,
+      size: pageSize,
+      ...filters,
+    })
+  );
+  console.log(taskList);
+
+  const handleResetFilters = () => {
+    setFilters((prev) => ({
+      ...prev,
+      searchText: undefined,
+      categories: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+    }));
+  };
+
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
   return (
-    <main className="max-w-5xl mx-auto px-6 py-12 space-y-8">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-gray-500 uppercase tracking-wide">Omat tehtävät</p>
-        <h1 className="text-3xl font-bold text-gray-900">Toteutettavat työt</h1>
-        <p className="text-gray-600">Näet tässä tehtävät, joiden hakemus on hyväksytty. Aloita työ ja etene kolmevaiheisessa prosessissa.</p>
-      </header>
+    <main className="container mx-auto px-6 py-12 gap-10">
+      <div className="flex mt-5 justify-center">
+        <button
+          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
+          onClick={() => navigate({ to: "/worker/own-tasks/to-do" })}
+        >
+          Aktiiviset
+        </button>
+        <button
+          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
+          onClick={() => navigate({ to: "/worker/own-tasks/in-progress" })}
+        >
+          Työn alla
+        </button>
+        <button
+          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
+          onClick={() => navigate({ to: "/worker/own-tasks/waiting-approval" })}
+        >
+          Odottaa hyväksyntää
+        </button>
+        <button
+          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
+          onClick={() => navigate({ to: "/worker/own-tasks/past" })}
+        >
+          Menneet
+        </button>
+      </div>
 
-      <section className="space-y-4">
-        {applications.length === 0 && (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
-            Sinulla ei ole hyväksyttyjä tehtäviä juuri nyt. Hae tehtäviin ja palaa tänne, kun hakemuksesi on hyväksytty.
-          </div>
-        )}
-
-        {applications.map((application) => {
-          const task = application.task;
-          const taskId = task?.id;
-
-          if (!taskId) {
-            return null;
-          }
-
-          return (
-            <article
-              key={`${taskId}-${application.user?.userName ?? "me"}`}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-            >
-              <div>
-                <p className="text-xs uppercase text-gray-500 tracking-wide">Työ #{taskId}</p>
-                <h2 className="text-2xl font-semibold text-gray-900">{task?.title ?? application.taskTitle}</h2>
-                <p className="text-gray-600 mt-2 line-clamp-2">{task?.description || application.description || "Ei kuvausta"}</p>
-              </div>
-
-              <div className="flex flex-col items-start gap-3 md:items-end">
-                <div className="text-gray-500 text-sm">
-                  {task?.startDate ? new Date(task.startDate).toLocaleDateString("fi-FI") : "-"} –{" "}
-                  {task?.endDate ? new Date(task.endDate).toLocaleDateString("fi-FI") : "-"}
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate({
-                      to: "/worker/own-tasks/to-do/$taskId",
-                      params: { taskId: taskId.toString() },
-                    })
-                  }
-                  className="rounded-lg bg-green-500 px-5 py-2 text-sm font-semibold text-white hover:bg-green-600"
-                >
-                  Aloita toteutus
-                </button>
-              </div>
-            </article>
-          );
-        })}
-      </section>
+      <div className="container mx-auto px-6 py-8">    
+          <TaskFilterPanel
+            filters={filters}
+            onFiltersChange={(newFilters) => {
+              setFilters((prev) => ({
+                ...prev,
+                ...newFilters
+              }));
+              setCurrentPage(0);
+            }}
+            onReset={handleResetFilters}
+          />
+        <div className="flex-1">
+          <WorkerTasksToList 
+            tasks={taskList.content}
+            totalPages={taskList.totalPages}
+            currentPage={taskList.number}
+            onPageChange={handlePageChange}
+            isFirst={taskList.first}
+            isLast={taskList.last} 
+          />
+        </div>
+      </div>
     </main>
   );
 }

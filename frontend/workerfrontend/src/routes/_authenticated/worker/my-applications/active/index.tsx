@@ -40,6 +40,7 @@ export default function ActiveApplicationsPage() {
       applicationStatus: "PENDING",
       page: currentPage,
       size: pageSize,
+      ...filters,
     })
   );
 

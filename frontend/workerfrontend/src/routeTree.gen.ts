@@ -33,6 +33,8 @@ import { Route as AuthenticatedEmployerCreateTaskJobOfferRouteImport } from './r
 import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalIndexRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/index'
 import { Route as AuthenticatedWorkerOwnTasksToDoIndexRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/index'
 import { Route as AuthenticatedWorkerOwnTasksPastIndexRouteImport } from './routes/_authenticated/worker/own-tasks/past/index'
+import { Route as AuthenticatedWorkerOwnTasksInProgressIndexRouteImport } from './routes/_authenticated/worker/own-tasks/in-progress/index'
+import { Route as AuthenticatedWorkerOwnTasksTaskIdIndexRouteImport } from './routes/_authenticated/worker/own-tasks/$taskId/index'
 import { Route as AuthenticatedWorkerMyProfileReviewsIndexRouteImport } from './routes/_authenticated/worker/my-profile/reviews/index'
 import { Route as AuthenticatedWorkerMyProfileDetailsIndexRouteImport } from './routes/_authenticated/worker/my-profile/details/index'
 import { Route as AuthenticatedWorkerMyApplicationsPastIndexRouteImport } from './routes/_authenticated/worker/my-applications/past/index'
@@ -43,9 +45,9 @@ import { Route as AuthenticatedEmployerMyTasksTaskIdIndexRouteImport } from './r
 import { Route as AuthenticatedEmployerMyProflieReviewsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/reviews/index'
 import { Route as AuthenticatedEmployerMyProfliePaymentsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/payments/index'
 import { Route as AuthenticatedEmployerMyProflieDetailsIndexRouteImport } from './routes/_authenticated/employer/my-proflie/details/index'
-import { Route as AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/waiting-approval/$taskId'
 import { Route as AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/to-do/$taskId'
-import { Route as AuthenticatedWorkerOwnTasksPastTaskIdRouteImport } from './routes/_authenticated/worker/own-tasks/past/$taskId'
+import { Route as AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRouteImport } from './routes/_authenticated/worker/own-tasks/$taskId/taskExecution'
+import { Route as AuthenticatedWorkerOwnTasksTaskIdTaskDetailRouteImport } from './routes/_authenticated/worker/own-tasks/$taskId/task-detail'
 import { Route as AuthenticatedWorkerMyProfileReviewsReviewIdRouteImport } from './routes/_authenticated/worker/my-profile/reviews/$reviewId'
 import { Route as AuthenticatedWorkerMyProfileDetailsEditRouteImport } from './routes/_authenticated/worker/my-profile/details/edit'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/task-details'
@@ -193,6 +195,18 @@ const AuthenticatedWorkerOwnTasksPastIndexRoute =
     path: '/own-tasks/past/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerOwnTasksInProgressIndexRoute =
+  AuthenticatedWorkerOwnTasksInProgressIndexRouteImport.update({
+    id: '/own-tasks/in-progress/',
+    path: '/own-tasks/in-progress/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksTaskIdIndexRoute =
+  AuthenticatedWorkerOwnTasksTaskIdIndexRouteImport.update({
+    id: '/own-tasks/$taskId/',
+    path: '/own-tasks/$taskId/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 const AuthenticatedWorkerMyProfileReviewsIndexRoute =
   AuthenticatedWorkerMyProfileReviewsIndexRouteImport.update({
     id: '/my-profile/reviews/',
@@ -253,22 +267,22 @@ const AuthenticatedEmployerMyProflieDetailsIndexRoute =
     path: '/my-proflie/details/',
     getParentRoute: () => AuthenticatedEmployerRoute,
   } as any)
-const AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute =
-  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport.update({
-    id: '/own-tasks/waiting-approval/$taskId',
-    path: '/own-tasks/waiting-approval/$taskId',
-    getParentRoute: () => AuthenticatedWorkerRoute,
-  } as any)
 const AuthenticatedWorkerOwnTasksToDoTaskIdRoute =
   AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport.update({
     id: '/own-tasks/to-do/$taskId',
     path: '/own-tasks/to-do/$taskId',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
-const AuthenticatedWorkerOwnTasksPastTaskIdRoute =
-  AuthenticatedWorkerOwnTasksPastTaskIdRouteImport.update({
-    id: '/own-tasks/past/$taskId',
-    path: '/own-tasks/past/$taskId',
+const AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute =
+  AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRouteImport.update({
+    id: '/own-tasks/$taskId/taskExecution',
+    path: '/own-tasks/$taskId/taskExecution',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
+const AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute =
+  AuthenticatedWorkerOwnTasksTaskIdTaskDetailRouteImport.update({
+    id: '/own-tasks/$taskId/task-detail',
+    path: '/own-tasks/$taskId/task-detail',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
 const AuthenticatedWorkerMyProfileReviewsReviewIdRoute =
@@ -372,9 +386,9 @@ export interface FileRoutesByFullPath {
   '/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
   '/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
   '/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
-  '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/worker/own-tasks/$taskId/task-detail': typeof AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute
+  '/worker/own-tasks/$taskId/taskExecution': typeof AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute
   '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
-  '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
   '/employer/my-proflie/details': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/employer/my-proflie/payments': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/employer/my-proflie/reviews': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
@@ -385,6 +399,8 @@ export interface FileRoutesByFullPath {
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
+  '/worker/own-tasks/$taskId': typeof AuthenticatedWorkerOwnTasksTaskIdIndexRoute
+  '/worker/own-tasks/in-progress': typeof AuthenticatedWorkerOwnTasksInProgressIndexRoute
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -419,9 +435,9 @@ export interface FileRoutesByTo {
   '/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
   '/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
   '/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
-  '/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/worker/own-tasks/$taskId/task-detail': typeof AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute
+  '/worker/own-tasks/$taskId/taskExecution': typeof AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute
   '/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
-  '/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
   '/employer/my-proflie/details': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/employer/my-proflie/payments': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/employer/my-proflie/reviews': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
@@ -432,6 +448,8 @@ export interface FileRoutesByTo {
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
+  '/worker/own-tasks/$taskId': typeof AuthenticatedWorkerOwnTasksTaskIdIndexRoute
+  '/worker/own-tasks/in-progress': typeof AuthenticatedWorkerOwnTasksInProgressIndexRoute
   '/worker/own-tasks/past': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/worker/own-tasks/to-do': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/worker/own-tasks/waiting-approval': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -471,9 +489,9 @@ export interface FileRoutesById {
   '/_authenticated/worker/my-applications/$taskId/task-details': typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
   '/_authenticated/worker/my-profile/details/edit': typeof AuthenticatedWorkerMyProfileDetailsEditRoute
   '/_authenticated/worker/my-profile/reviews/$reviewId': typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
-  '/_authenticated/worker/own-tasks/past/$taskId': typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  '/_authenticated/worker/own-tasks/$taskId/task-detail': typeof AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute
+  '/_authenticated/worker/own-tasks/$taskId/taskExecution': typeof AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute
   '/_authenticated/worker/own-tasks/to-do/$taskId': typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
-  '/_authenticated/worker/own-tasks/waiting-approval/$taskId': typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
   '/_authenticated/employer/my-proflie/details/': typeof AuthenticatedEmployerMyProflieDetailsIndexRoute
   '/_authenticated/employer/my-proflie/payments/': typeof AuthenticatedEmployerMyProfliePaymentsIndexRoute
   '/_authenticated/employer/my-proflie/reviews/': typeof AuthenticatedEmployerMyProflieReviewsIndexRoute
@@ -484,6 +502,8 @@ export interface FileRoutesById {
   '/_authenticated/worker/my-applications/past/': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/_authenticated/worker/my-profile/details/': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/_authenticated/worker/my-profile/reviews/': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
+  '/_authenticated/worker/own-tasks/$taskId/': typeof AuthenticatedWorkerOwnTasksTaskIdIndexRoute
+  '/_authenticated/worker/own-tasks/in-progress/': typeof AuthenticatedWorkerOwnTasksInProgressIndexRoute
   '/_authenticated/worker/own-tasks/past/': typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   '/_authenticated/worker/own-tasks/to-do/': typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   '/_authenticated/worker/own-tasks/waiting-approval/': typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -522,9 +542,9 @@ export interface FileRouteTypes {
     | '/worker/my-applications/$taskId/task-details'
     | '/worker/my-profile/details/edit'
     | '/worker/my-profile/reviews/$reviewId'
-    | '/worker/own-tasks/past/$taskId'
+    | '/worker/own-tasks/$taskId/task-detail'
+    | '/worker/own-tasks/$taskId/taskExecution'
     | '/worker/own-tasks/to-do/$taskId'
-    | '/worker/own-tasks/waiting-approval/$taskId'
     | '/employer/my-proflie/details'
     | '/employer/my-proflie/payments'
     | '/employer/my-proflie/reviews'
@@ -535,6 +555,8 @@ export interface FileRouteTypes {
     | '/worker/my-applications/past'
     | '/worker/my-profile/details'
     | '/worker/my-profile/reviews'
+    | '/worker/own-tasks/$taskId'
+    | '/worker/own-tasks/in-progress'
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
@@ -569,9 +591,9 @@ export interface FileRouteTypes {
     | '/worker/my-applications/$taskId/task-details'
     | '/worker/my-profile/details/edit'
     | '/worker/my-profile/reviews/$reviewId'
-    | '/worker/own-tasks/past/$taskId'
+    | '/worker/own-tasks/$taskId/task-detail'
+    | '/worker/own-tasks/$taskId/taskExecution'
     | '/worker/own-tasks/to-do/$taskId'
-    | '/worker/own-tasks/waiting-approval/$taskId'
     | '/employer/my-proflie/details'
     | '/employer/my-proflie/payments'
     | '/employer/my-proflie/reviews'
@@ -582,6 +604,8 @@ export interface FileRouteTypes {
     | '/worker/my-applications/past'
     | '/worker/my-profile/details'
     | '/worker/my-profile/reviews'
+    | '/worker/own-tasks/$taskId'
+    | '/worker/own-tasks/in-progress'
     | '/worker/own-tasks/past'
     | '/worker/own-tasks/to-do'
     | '/worker/own-tasks/waiting-approval'
@@ -620,9 +644,9 @@ export interface FileRouteTypes {
     | '/_authenticated/worker/my-applications/$taskId/task-details'
     | '/_authenticated/worker/my-profile/details/edit'
     | '/_authenticated/worker/my-profile/reviews/$reviewId'
-    | '/_authenticated/worker/own-tasks/past/$taskId'
+    | '/_authenticated/worker/own-tasks/$taskId/task-detail'
+    | '/_authenticated/worker/own-tasks/$taskId/taskExecution'
     | '/_authenticated/worker/own-tasks/to-do/$taskId'
-    | '/_authenticated/worker/own-tasks/waiting-approval/$taskId'
     | '/_authenticated/employer/my-proflie/details/'
     | '/_authenticated/employer/my-proflie/payments/'
     | '/_authenticated/employer/my-proflie/reviews/'
@@ -633,6 +657,8 @@ export interface FileRouteTypes {
     | '/_authenticated/worker/my-applications/past/'
     | '/_authenticated/worker/my-profile/details/'
     | '/_authenticated/worker/my-profile/reviews/'
+    | '/_authenticated/worker/own-tasks/$taskId/'
+    | '/_authenticated/worker/own-tasks/in-progress/'
     | '/_authenticated/worker/own-tasks/past/'
     | '/_authenticated/worker/own-tasks/to-do/'
     | '/_authenticated/worker/own-tasks/waiting-approval/'
@@ -818,6 +844,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
+    '/_authenticated/worker/own-tasks/in-progress/': {
+      id: '/_authenticated/worker/own-tasks/in-progress/'
+      path: '/own-tasks/in-progress'
+      fullPath: '/worker/own-tasks/in-progress'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksInProgressIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/$taskId/': {
+      id: '/_authenticated/worker/own-tasks/$taskId/'
+      path: '/own-tasks/$taskId'
+      fullPath: '/worker/own-tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksTaskIdIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
     '/_authenticated/worker/my-profile/reviews/': {
       id: '/_authenticated/worker/my-profile/reviews/'
       path: '/my-profile/reviews'
@@ -888,13 +928,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEmployerMyProflieDetailsIndexRouteImport
       parentRoute: typeof AuthenticatedEmployerRoute
     }
-    '/_authenticated/worker/own-tasks/waiting-approval/$taskId': {
-      id: '/_authenticated/worker/own-tasks/waiting-approval/$taskId'
-      path: '/own-tasks/waiting-approval/$taskId'
-      fullPath: '/worker/own-tasks/waiting-approval/$taskId'
-      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRouteImport
-      parentRoute: typeof AuthenticatedWorkerRoute
-    }
     '/_authenticated/worker/own-tasks/to-do/$taskId': {
       id: '/_authenticated/worker/own-tasks/to-do/$taskId'
       path: '/own-tasks/to-do/$taskId'
@@ -902,11 +935,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkerOwnTasksToDoTaskIdRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
-    '/_authenticated/worker/own-tasks/past/$taskId': {
-      id: '/_authenticated/worker/own-tasks/past/$taskId'
-      path: '/own-tasks/past/$taskId'
-      fullPath: '/worker/own-tasks/past/$taskId'
-      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRouteImport
+    '/_authenticated/worker/own-tasks/$taskId/taskExecution': {
+      id: '/_authenticated/worker/own-tasks/$taskId/taskExecution'
+      path: '/own-tasks/$taskId/taskExecution'
+      fullPath: '/worker/own-tasks/$taskId/taskExecution'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/own-tasks/$taskId/task-detail': {
+      id: '/_authenticated/worker/own-tasks/$taskId/task-detail'
+      path: '/own-tasks/$taskId/task-detail'
+      fullPath: '/worker/own-tasks/$taskId/task-detail'
+      preLoaderRoute: typeof AuthenticatedWorkerOwnTasksTaskIdTaskDetailRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
     '/_authenticated/worker/my-profile/reviews/$reviewId': {
@@ -1070,15 +1110,17 @@ interface AuthenticatedWorkerRouteChildren {
   AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdTaskDetailsRoute
   AuthenticatedWorkerMyProfileDetailsEditRoute: typeof AuthenticatedWorkerMyProfileDetailsEditRoute
   AuthenticatedWorkerMyProfileReviewsReviewIdRoute: typeof AuthenticatedWorkerMyProfileReviewsReviewIdRoute
-  AuthenticatedWorkerOwnTasksPastTaskIdRoute: typeof AuthenticatedWorkerOwnTasksPastTaskIdRoute
+  AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute: typeof AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute
+  AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute: typeof AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute
   AuthenticatedWorkerOwnTasksToDoTaskIdRoute: typeof AuthenticatedWorkerOwnTasksToDoTaskIdRoute
-  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute
   AuthenticatedWorkerDashboardPaymentsIndexRoute: typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   AuthenticatedWorkerMyApplicationsTaskIdIndexRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   AuthenticatedWorkerMyApplicationsActiveIndexRoute: typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
   AuthenticatedWorkerMyApplicationsPastIndexRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   AuthenticatedWorkerMyProfileDetailsIndexRoute: typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   AuthenticatedWorkerMyProfileReviewsIndexRoute: typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
+  AuthenticatedWorkerOwnTasksTaskIdIndexRoute: typeof AuthenticatedWorkerOwnTasksTaskIdIndexRoute
+  AuthenticatedWorkerOwnTasksInProgressIndexRoute: typeof AuthenticatedWorkerOwnTasksInProgressIndexRoute
   AuthenticatedWorkerOwnTasksPastIndexRoute: typeof AuthenticatedWorkerOwnTasksPastIndexRoute
   AuthenticatedWorkerOwnTasksToDoIndexRoute: typeof AuthenticatedWorkerOwnTasksToDoIndexRoute
   AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute: typeof AuthenticatedWorkerOwnTasksWaitingApprovalIndexRoute
@@ -1105,12 +1147,12 @@ const AuthenticatedWorkerRouteChildren: AuthenticatedWorkerRouteChildren = {
     AuthenticatedWorkerMyProfileDetailsEditRoute,
   AuthenticatedWorkerMyProfileReviewsReviewIdRoute:
     AuthenticatedWorkerMyProfileReviewsReviewIdRoute,
-  AuthenticatedWorkerOwnTasksPastTaskIdRoute:
-    AuthenticatedWorkerOwnTasksPastTaskIdRoute,
+  AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute:
+    AuthenticatedWorkerOwnTasksTaskIdTaskDetailRoute,
+  AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute:
+    AuthenticatedWorkerOwnTasksTaskIdTaskExecutionRoute,
   AuthenticatedWorkerOwnTasksToDoTaskIdRoute:
     AuthenticatedWorkerOwnTasksToDoTaskIdRoute,
-  AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute:
-    AuthenticatedWorkerOwnTasksWaitingApprovalTaskIdRoute,
   AuthenticatedWorkerDashboardPaymentsIndexRoute:
     AuthenticatedWorkerDashboardPaymentsIndexRoute,
   AuthenticatedWorkerMyApplicationsTaskIdIndexRoute:
@@ -1123,6 +1165,10 @@ const AuthenticatedWorkerRouteChildren: AuthenticatedWorkerRouteChildren = {
     AuthenticatedWorkerMyProfileDetailsIndexRoute,
   AuthenticatedWorkerMyProfileReviewsIndexRoute:
     AuthenticatedWorkerMyProfileReviewsIndexRoute,
+  AuthenticatedWorkerOwnTasksTaskIdIndexRoute:
+    AuthenticatedWorkerOwnTasksTaskIdIndexRoute,
+  AuthenticatedWorkerOwnTasksInProgressIndexRoute:
+    AuthenticatedWorkerOwnTasksInProgressIndexRoute,
   AuthenticatedWorkerOwnTasksPastIndexRoute:
     AuthenticatedWorkerOwnTasksPastIndexRoute,
   AuthenticatedWorkerOwnTasksToDoIndexRoute:

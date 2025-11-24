@@ -5,16 +5,19 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { taskQueries } from "../../../../../features/task/queries/taskQueries";
 import type { TaskFilters } from "../../../../../features/task";
 import WorkerTasksToList from "../../../../../features/task/components/WorkerTasksToList";
+import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
 
-export const Route = createFileRoute("/_authenticated/worker/own-tasks/past/")({
-  component: WorkerPastTasksPage,
+export const Route = createFileRoute(
+  '/_authenticated/worker/own-tasks/in-progress/',
+)({
+  component: WorkerInProgressTasksPage,
   loader: async ({ context }) => {
     try {
       return await context.queryClient.ensureQueryData(
         taskQueries.worker(context.auth.getAccessToken, {
           page: 0,
           size: 10,
-          status: "COMPLETED",
+          status: "IN_PROGRESS",
         })
       );
     } catch (error) {
@@ -23,9 +26,9 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/past/")({
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
   }
-});
+})
 
-function WorkerPastTasksPage() {
+function WorkerInProgressTasksPage() {
   const navigate = useNavigate();
   const { getAccessTokenSilently } = useAuth0();
   const [currentPage, setCurrentPage] = useState(0);
@@ -34,7 +37,7 @@ function WorkerPastTasksPage() {
 
   const { data: taskList } = useSuspenseQuery(
     taskQueries.worker(getAccessTokenSilently, {
-      status: "COMPLETED",
+      status: "IN_PROGRESS",
       page: currentPage,
       size: pageSize,
       ...filters,
@@ -64,7 +67,7 @@ function WorkerPastTasksPage() {
           Aktiiviset
         </button>
         <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
+          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
           onClick={() => navigate({ to: "/worker/own-tasks/in-progress" })}
         >
           Työn alla
@@ -76,7 +79,7 @@ function WorkerPastTasksPage() {
           Odottaa hyväksyntää
         </button>
         <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
+          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
           onClick={() => navigate({ to: "/worker/own-tasks/past" })}
         >
           Menneet
