@@ -68,19 +68,111 @@ function TestReviewsPage() {
       </div>
 
       <div className="space-y-8">
+        {/* User selection info */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <span className="material-icons text-blue-600" style={{ fontSize: "24px" }}>
+              info
+            </span>
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-1">Test Data Overview</h3>
+              <p className="text-sm text-blue-800 mb-2">
+                <strong>User1:</strong> 11 tasker reviews + 5 employer reviews (16 total)<br />
+                <strong>User2:</strong> 4 tasker reviews + 3 employer reviews (7 total)<br />
+                <strong>User3:</strong> 2 tasker reviews (2 total)
+              </p>
+              <p className="text-xs text-blue-700">
+                Reviews are paginated (default 10 per page). User1 will show "Showing 10 of 11" for tasker reviews with scrolling.
+                Task icons match the category (yard, cleaning_services, local_shipping, etc.)
+                Average ratings are displayed for each user.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Test Section 1: User1 - Full Profile */}
         <section className="border border-gray-300 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Average Rating Display</h2>
-          <AverageRating username="testuser" />
+          <h2 className="text-xl font-semibold mb-4">1. User1 - Complete Profile Test</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-md font-medium mb-3 text-gray-700">Average Rating:</h3>
+              <AverageRating username="User1" />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-md font-medium mb-3 text-gray-700">
+                  As Tasker (11 reviews - pagination/scroll test):
+                </h3>
+                <ReviewList username="User1" profileType="TASKER" limit={10} />
+              </div>
+              <div>
+                <h3 className="text-md font-medium mb-3 text-gray-700">
+                  As Employer (5 reviews):
+                </h3>
+                <ReviewList username="User1" profileType="EMPLOYER" limit={10} />
+              </div>
+            </div>
+          </div>
         </section>
 
+        {/* Test Section 2: User2 - Moderate Reviews */}
         <section className="border border-gray-300 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Tasker Reviews</h2>
-          <ReviewList username="testuser" profileType="TASKER" limit={10} />
+          <h2 className="text-xl font-semibold mb-4">2. User2 - Moderate Activity</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-md font-medium mb-3 text-gray-700">Average Rating:</h3>
+              <AverageRating username="User2" />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-md font-medium mb-3 text-gray-700">
+                  As Tasker (4 reviews):
+                </h3>
+                <ReviewList username="User2" profileType="TASKER" limit={10} />
+              </div>
+              <div>
+                <h3 className="text-md font-medium mb-3 text-gray-700">
+                  As Employer (3 reviews):
+                </h3>
+                <ReviewList username="User2" profileType="EMPLOYER" limit={10} />
+              </div>
+            </div>
+          </div>
         </section>
 
+        {/* Test Section 3: User3 - Minimal Reviews */}
         <section className="border border-gray-300 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Employer Reviews</h2>
-          <ReviewList username="testuser" profileType="EMPLOYER" limit={10} />
+          <h2 className="text-xl font-semibold mb-4">3. User3 - Minimal Activity</h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-md font-medium mb-3 text-gray-700">Average Rating:</h3>
+              <AverageRating username="User3" />
+            </div>
+            
+            <div>
+              <h3 className="text-md font-medium mb-3 text-gray-700">
+                As Tasker (2 reviews):
+              </h3>
+              <ReviewList username="User3" profileType="TASKER" limit={10} />
+            </div>
+            <div className="mt-4">
+              <h3 className="text-md font-medium mb-3 text-gray-700">
+                As Employer (should show empty state):
+              </h3>
+              <ReviewList username="User3" profileType="EMPLOYER" limit={10} />
+            </div>
+          </div>
+        </section>
+
+        {/* Test Section 4: Category Icons Verification */}
+        <section className="border border-gray-300 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">4. Category Icons Test</h2>
+          <p className="text-sm text-gray-600 mb-3">
+            Verify that task icons match categories (yard, cleaning_services, local_shipping, etc.)
+          </p>
+          <ReviewList username="User1" profileType="TASKER" limit={5} />
         </section>
       </div>
 

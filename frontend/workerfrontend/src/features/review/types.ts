@@ -9,6 +9,7 @@ export interface Review {
   id: number;
   taskId: number;
   taskTitle: string;
+  taskCategories: string[];  // Task categories (e.g., ["GARDEN", "CLEANING"])
   reviewerUsername: string;  // Person who wrote the review
   revieweeUsername: string;  // Person being reviewed
   rating: number;            // 1-5

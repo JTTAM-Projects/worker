@@ -75,10 +75,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reviewee.userName = :userId")
     Double calculateAverageRatingForUser(@Param("userId") String userId);
 
-    @Query("SELECT r FROM Review r JOIN r.task t JOIN t.applies a " +
+    @Query("SELECT r FROM Review r JOIN r.task t " +
            "WHERE r.reviewee.userName = :username " +
-           "AND a.user.userName = :username " +
-           "AND a.applicationStatus = 'ACCEPTED'")
+           "AND t.user.userName != :username")
     Page<Review> findTaskerReviewsForUser(@Param("username") String username, Pageable pageable);
 
     @Query("SELECT r FROM Review r JOIN r.task t " +

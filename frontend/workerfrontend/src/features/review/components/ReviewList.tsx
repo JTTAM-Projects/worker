@@ -82,9 +82,9 @@ export default function ReviewList({
   const reviews = data.content.slice(0, limit);
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full">
       {/* Review count header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <h3 className="text-lg font-semibold text-gray-800">
           {profileType === "TASKER" ? "Reviews as Tasker" : "Reviews as Employer"}
         </h3>
@@ -93,8 +93,8 @@ export default function ReviewList({
         </span>
       </div>
 
-      {/* Review list */}
-      <div className="space-y-4">
+      {/* Scrollable review list container */}
+      <div className="flex-1 overflow-y-auto max-h-[600px] pr-2 space-y-3">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
@@ -102,7 +102,7 @@ export default function ReviewList({
 
       {/* Show if there are more reviews */}
       {data.totalElements > limit && (
-        <div className="text-center pt-4">
+        <div className="text-center pt-3 mt-2 border-t border-gray-200 flex-shrink-0">
           <p className="text-sm text-gray-500">
             Showing {limit} of {data.totalElements} reviews
           </p>
