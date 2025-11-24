@@ -30,8 +30,14 @@ public class TaskerProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
         
+        // Get or create default profile if it doesn't exist (for legacy users)
         TaskerProfile taskerProfile = taskerProfileRepository.findByUser(user)
-                .orElseThrow(() -> new NotFoundException("TASKER_PROFILE_NOT_FOUND", "TaskerProfile not found for user."));
+                .orElseGet(() -> {
+                    TaskerProfile newProfile = new TaskerProfile();
+                    newProfile.setUser(user);
+                    newProfile.setStatus(ProfileStatus.ACTIVE);
+                    return taskerProfileRepository.save(newProfile);
+                });
         return taskerProfileMapper.toResponse(taskerProfile);
     }
 

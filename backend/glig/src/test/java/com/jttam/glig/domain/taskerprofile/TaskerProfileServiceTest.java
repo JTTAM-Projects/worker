@@ -100,16 +100,18 @@ class TaskerProfileServiceTest {
     }
 
     @Test
-    void getTaskerProfile_shouldThrowNotFoundException_whenNotExists() {
+    void getTaskerProfile_shouldCreateProfileAutomatically_whenNotExists() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(taskerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(taskerProfileRepository.save(any(TaskerProfile.class))).thenReturn(taskerProfile);
+        when(taskerProfileMapper.toResponse(taskerProfile)).thenReturn(taskerProfileResponse);
 
-        assertThrows(NotFoundException.class, () -> {
-            taskerProfileService.getTaskerProfile(userId);
-        });
+        TaskerProfileResponse result = taskerProfileService.getTaskerProfile(userId);
 
+        assertNotNull(result);
         verify(userRepository).findById(userId);
         verify(taskerProfileRepository).findByUser(user);
+        verify(taskerProfileRepository).save(any(TaskerProfile.class));
     }
 
     @Test

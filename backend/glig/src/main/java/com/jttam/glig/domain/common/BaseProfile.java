@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,12 +29,10 @@ public abstract class BaseProfile implements Serializable {
     @JoinColumn(name = "user_id", nullable = false, unique = true, updatable = false)
     private User user;
 
-    @NotBlank(message = "First name cannot be blank.")
     @Size(max = 100, message = "First name must be less than 100 characters.")
     @Column(name = "first_name")
     private String firstName;
 
-    @NotBlank(message = "Last name cannot be blank.")
     @Size(max = 100, message = "Last name must be less than 100 characters.")
     @Column(name = "last_name")
     private String lastName;

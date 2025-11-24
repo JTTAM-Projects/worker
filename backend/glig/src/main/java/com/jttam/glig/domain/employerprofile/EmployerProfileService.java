@@ -25,14 +25,20 @@ public class EmployerProfileService {
         this.userRepository = userRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public EmployerProfileResponse getEmployerProfile(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND", "User not found."));
 
+        // Get or create default profile if it doesn't exist (for legacy users)
         EmployerProfile employerProfile = employerProfileRepository.findByUser(user)
-                .orElseThrow(() -> new NotFoundException("NOT_FOUND",
-                        "Employer profile not found for user."));
+                .orElseGet(() -> {
+                    EmployerProfile newProfile = new EmployerProfile();
+                    newProfile.setUser(user);
+                    newProfile.setEmployerType(EmployerType.INDIVIDUAL);
+                    newProfile.setStatus(com.jttam.glig.domain.common.ProfileStatus.ACTIVE);
+                    return employerProfileRepository.save(newProfile);
+                });
         return employerProfileMapper.toResponse(employerProfile);
     }
 
