@@ -110,16 +110,18 @@ class EmployerProfileServiceTest {
     }
 
     @Test
-    void getEmployerProfile_shouldThrowNotFoundException_whenNotExists() {
+    void getEmployerProfile_shouldCreateProfileAutomatically_whenNotExists() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(employerProfileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(employerProfileRepository.save(any(EmployerProfile.class))).thenReturn(employerProfile);
+        when(employerProfileMapper.toResponse(employerProfile)).thenReturn(employerProfileResponse);
 
-        assertThrows(NotFoundException.class, () -> {
-            employerProfileService.getEmployerProfile(userId);
-        });
+        EmployerProfileResponse result = employerProfileService.getEmployerProfile(userId);
 
+        assertNotNull(result);
         verify(userRepository).findById(userId);
         verify(employerProfileRepository).findByUser(user);
+        verify(employerProfileRepository).save(any(EmployerProfile.class));
     }
 
     @Test
