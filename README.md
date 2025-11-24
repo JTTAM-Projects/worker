@@ -1,197 +1,501 @@
 # Gig-Based Job Platform
 
-This project is a desktop-first (mobile-optimized) application designed to connect individuals seeking help ("Employers") with skilled individuals looking for work ("Taskers"). The platform facilitates the entire process from posting a job to secure payment and feedback.
+A full-stack web application connecting people who need help with tasks ("Employers") with skilled individuals looking for work ("Taskers"). The platform facilitates the entire workflow from job posting to completion, payment, and feedback.
 
-## Core Features
+## 🚀 Core Features
 
-The application is built around two primary user roles: the Employer and the Tasker.
+The application supports two primary user roles: **Employer** and **Tasker**.
 
 ### For Employers
-* **Post & Manage Gigs:** Easily create new job listings with detailed descriptions, categories (e.g., yard work, cleaning, small repairs), a fixed price, and location. Employers can view and manage their active and archived job posts.
-* **Review & Hire Applicants:** Receive notifications for new applicants. Browse applicant profiles, which include star ratings and written feedback from previous jobs, and hire the best candidate for the task.
-* **Secure Payment System:** When a Tasker is hired, the payment is held in escrow. This assures the Tasker that the funds are available. The payment is released with a single click once the Employer confirms the job is completed.
-* **Rate & Review Taskers:** After a job is complete, employers can leave a 1-5 star rating and public feedback, which is added to the Tasker's profile.
+* **Post & Manage Tasks:** Create job listings with descriptions, categories (e.g., cleaning, yard work, repairs), fixed prices, and locations. Manage active and completed tasks from your dashboard.
+* **Review & Hire Applicants:** Receive applications from interested Taskers. Browse applicant profiles with ratings and reviews from previous jobs, then hire the best candidate.
+* **Secure Payment System:** Payments are held in escrow when a Tasker is hired, ensuring funds are available. Release payment with one click after confirming job completion.
+* **Rate & Review Taskers:** Leave 1-5 star ratings and written feedback after job completion, building the Tasker's reputation.
 
 ### For Taskers
-* **Build Your Profile:** Create and maintain a public profile to showcase skills and expertise. The profile automatically builds a work history with all completed jobs and reviews from Employers.
-* **Find & Apply for Gigs:** Browse all available jobs in a list or map view. Use powerful search and filter functions based on keywords, category, distance, and price to find suitable work.
-* **Track Applications:** Keep track of all job applications and their status (Pending, Approved, Rejected) in a personal dashboard.
-* **Track Your Earnings:** Receive payments instantly to your in-app balance after a job is marked as complete. View a comprehensive history of all earnings.
+* **Build Your Profile:** Create a professional profile showcasing your skills. Automatically track your work history with completed jobs and employer reviews.
+* **Find & Apply for Tasks:** Browse available jobs in list or map view. Search and filter by keywords, category, location radius, and price range.
+* **Track Applications:** Monitor all your applications and their status (Pending, Accepted, Rejected) in a personal dashboard.
+* **Manage Your Work:** View accepted tasks, track in-progress work, and mark jobs as complete.
 
-## Technology Stack
+## 🛠 Technology Stack
+
+### Backend
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![H2 Database](https://img.shields.io/badge/H2_Database-0000BB?style=for-the-badge&logo=database&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+![Auth0](https://img.shields.io/badge/Auth0-EB5424?style=for-the-badge&logo=auth0&logoColor=white)
+
+### Frontend
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TanStack Router](https://img.shields.io/badge/TanStack_Router-FF4154?style=for-the-badge&logo=react-router&logoColor=white)
+![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=react-query&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
+### Key Libraries & Tools
+- **Authentication:** Auth0 (OAuth 2.0)
+- **ORM:** Hibernate / Spring Data JPA
+- **State Management:** TanStack Query (React Query)
+- **Form Handling:** TanStack Form
+- **Mapping:** Google Maps API
+- **API Documentation:** Swagger/OpenAPI
+- **Testing:** JUnit, Mockito, Spring Boot Test
 
-## Entity-Relationship Diagram (ERD)
+## 📊 Entity-Relationship Diagram (ERD)
 
-The following ERD shows the current database design structure and the logical relationships between entities.
+The following ERD illustrates the database structure and relationships between entities:
+
 ```mermaid
 erDiagram
+    %% ========== BASE CLASSES (MappedSuperclass - not actual tables) ==========
+    baseClass {
+        instant created_at "CreationTimestamp"
+        instant updated_at "UpdateTimestamp"
+    }
+    
+    BaseProfile {
+        string first_name "not blank, max 100"
+        string last_name "not blank, max 100"
+        text bio "max 5000"
+        string street_address "max 255"
+        string postal_code "max 40"
+        string city "max 100"
+        string country "max 100"
+        string website_link "URL, max 2048"
+        string profile_image_url "URL, max 2048"
+        boolean is_verified "default false"
+        string status "ACTIVE|DELETED|SUSPENDED"
+        instant created_at
+        instant updated_at
+        instant deleted_at
+    }
+
+    %% ========== CONCRETE ENTITIES ==========
     User {
-        string user_id PK "unique, managed by Auth0"
-        string email "unique"
-        string first_name
-        string last_name
+        string user_name PK "Auth0 user ID"
+        string mail "not null"
+        string business_id
+        string address
         string phone_number
-        string status "e.g., active, suspended"
-        datetime created_at
     }
 
     Tasker_Profile {
-        int tasker_profile_id PK
+        long tasker_profile_id PK
         string user_id FK "unique"
-        string first_name
-        string last_name
-        text bio "optional"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        decimal average_rating
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
+        decimal average_rating "precision 3 scale 2"
     }
 
     Employer_Profile {
         long employer_profile_id PK
         string user_id FK "unique"
-        string first_name
-        string last_name
-        string employer_type "e.g., INDIVIDUAL, COMPANY"
-        string street_address "optional"
-        string postal_code "optional"
-        string city "optional"
-        string country "optional"
-        text bio "optional"
-        string company_name "optional"
-        string business_id "optional"
-        string website_link "optional"
-        string profile_image_url "optional"
-        boolean is_verified
-        string status "e.g., ACTIVE, DELETED, SUSPENDED"
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at "optional"
-    }
-
-    Job_Category {
-        int job_category_id PK
-        string category_name
-    }
-
-    Location {
-        int location_id PK
-        string street_address
-        string postal_code
-        string city
-        string country
-        decimal latitude
-        decimal longitude
+        string employer_type "INDIVIDUAL|COMPANY"
+        string company_name
+        string business_id
     }
 
     Task {
-        int task_id PK
-        string employer_id FK
-        int job_category_id FK
+        long id PK
+        string user_name FK
         string title
-        text description
-        decimal price
+        int price
         datetime start_date
         datetime end_date
-        string status "e.g., open, assigned, completed"
+        text description
+        string status "ACTIVE|IN_PROGRESS|COMPLETED"
+        instant created_at
+        instant updated_at
     }
 
-    Task_Location {
-        int task_id PK, FK
-        int location_id PK, FK
+    Category {
+        long category_id PK
+        string title "unique"
+        instant created_at
+        instant updated_at
+    }
+
+    Location {
+        long location_id PK
+        string street_address
+        string postal_code
+        string city "not null"
+        string country "not null"
+        decimal latitude "precision 9 scale 6"
+        decimal longitude "precision 9 scale 7"
     }
 
     Application {
-        int application_id PK
-        int task_id FK
-        string tasker_id FK
-        decimal price_suggestion
+        string user_name PK,FK
+        long task_id PK,FK
+        int price_suggestion
+        datetime time_suggestion
         text description
-        string status "e.g., pending, accepted, rejected"
+        string apply_status "PENDING|ACCEPTED|REJECTED"
+        instant created_at
+        instant updated_at
     }
 
     Review {
-        int review_id PK
-        int task_id FK
-        string reviewer_id FK "User (Employer)"
-        string reviewee_id FK "User (Tasker)"
+        long id PK
+        long task_id FK
+        string reviewer_id FK
+        string reviewee_id FK
         int rating "1-5"
-        text comment
-        datetime created_at
+        text comment "max 1000"
+        instant created_at
+        instant updated_at
     }
 
-    Conversation {
-        int conversation_id PK
-        int application_id FK
-        datetime created_at
+    Task_Category {
+        long task_id PK,FK
+        long category_id PK,FK
     }
 
-    Message {
-        int message_id PK
-        int conversation_id FK
-        string sender_id FK
-        text content
-        datetime sent_at
-        boolean is_read
+    Task_Location {
+        long task_id PK,FK
+        long location_id PK,FK
     }
 
-    %% --- Relationships ---
-    User |o--|| Tasker_Profile : "has one"
-    User |o--|| Employer_Profile : "has one"
-    User }o--|| Task : "posts"
-    User }o--o| Application : "applies with"
-    User }o--o| Message : "sends"
-    User }o--o| Review : "as reviewer/reviewee"
+    %% ========== RELATIONSHIPS ==========
+    
+    User ||--o| Tasker_Profile : "has one"
+    User ||--o| Employer_Profile : "has one"
+    User ||--o{ Task : "posts"
+    User ||--o{ Application : "applies"
+    User ||--o{ Review : "gives"
+    User ||--o{ Review : "receives"
 
-    Job_Category ||--o{ Task : "categorizes"
+    Task ||--o{ Application : "has applications"
+    Task ||--o{ Review : "has reviews"
+    Task }o--o{ Category : "categorized by"
+    Task }o--o{ Location : "located at"
 
-    Task ||--o{ Application : "has"
-    Task ||--o{ Review : "is reviewed in"
-    Task }o--o{ Location : "has (via Task_Location)"
+    Task ||--|{ Task_Category : "links"
+    Category ||--|{ Task_Category : "links"
+    Task ||--|{ Task_Location : "links"
+    Location ||--|{ Task_Location : "links"
 
-    Task ||--|{ Task_Location : "links to"
-    Location ||--|{ Task_Location : "links to"
-
-    Application ||--o| Conversation : "can lead to"
-    Conversation ||--o{ Message : "contains"
+    Application }o--|| User : "applicant"
+    Application }o--|| Task : "for task"
+    
+    Review }o--|| Task : "reviewed task"
+    Review }o--|| User : "reviewer"
+    Review }o--|| User : "reviewee"
 ```
-## Swagger-UI
 
-When you run Java-application on localhost, you can find api-documentation in this address:
-[Swagger-ui](http://localhost:8080/swagger-ui/index.html#/)
+### Database Notes
+- **Base Classes:** `baseClass` and `BaseProfile` are `@MappedSuperclass` entities providing common fields to child entities
+- **Composite Keys:** Application uses a composite primary key (user_name + task_id)
+- **Many-to-Many:** Task-Category and Task-Location relationships use join tables
+- **Soft Deletes:** Profiles use soft deletion with `deleted_at` timestamp
+- **Constraints:** Review has unique constraint on (task_id, reviewer_id) and check constraint (rating 1-5, reviewer ≠ reviewee)
 
-## Backend
+## 🚀 Getting Started
 
-Java version 17.0.12
+### Prerequisites
+- **Java 21** (JDK 21.0.5 or later)
+- **Node.js 18+** and npm
+- **Maven 3.8+**
+- **Auth0 Account** (for authentication)
 
-**MacOS & Windows**  
-Terminal commands:
+### Backend Setup
 
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend/glig
+   ```
+
+2. **Configure application properties:**
+   - Development uses H2 in-memory database (configured in `application-dev.yml`)
+   - Update Auth0 settings in `application.yml`:
+     ```yaml
+     okta:
+       oauth2:
+         issuer: https://your-auth0-domain.auth0.com/
+         audience: https://your-api-audience
+     ```
+
+3. **Run the application:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+
+4. **Access Swagger UI:**
+   - API Documentation: http://localhost:8080/swagger-ui/index.html
+   - H2 Console: http://localhost:8080/h2-console
+
+### Frontend Setup
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend/workerfrontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables:**
+   Create a `.env` file:
+   ```env
+   VITE_API_URL=http://localhost:8080/api
+   VITE_AUTH_DOMAIN=your-auth0-domain.auth0.com
+   VITE_AUTH_CLIENT_ID=your-auth0-client-id
+   VITE_AUTH_AUDIENCE=https://your-api-audience
+   VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+   ```
+
+4. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the application:**
+   - Frontend: http://localhost:5173
+
+## 🧪 Testing
+
+### Backend Tests
 ```bash
-cd glig
+cd backend/glig
+./mvnw test
 ```
 
+### Build for Production
 ```bash
-./mvnw spring-boot:run
+# Backend
+cd backend/glig
+./mvnw clean install
+
+# Frontend
+cd frontend/workerfrontend
+npm run build
 ```
 
-## Authors
-* Aku Ihamuotila
-* Tuomas Jaakkola
-* Jani Könönen
-* Tuomas Leinonen
-* Markus Mäntylä
+## 📝 API Documentation
+
+The REST API is documented using Swagger/OpenAPI. When running locally, access the interactive API documentation at:
+- **Swagger UI:** http://localhost:8080/swagger-ui/index.html
+- **OpenAPI JSON:** http://localhost:8080/v3/api-docs
+
+## 🔐 Authentication
+
+The application uses **Auth0** for secure authentication and authorization:
+- OAuth 2.0 / OIDC protocol
+- JWT token-based authentication
+- Separate user roles (Employer/Tasker determined by profile creation)
+
+## 📂 Project Structure
+
+```
+worker/
+├── backend/
+│   └── glig/                 # Spring Boot application
+│       ├── src/
+│       │   ├── main/
+│       │   │   ├── java/
+│       │   │   │   └── com/jttam/glig/
+│       │   │   │       ├── domain/           # Domain entities & logic
+│       │   │   │       ├── review/           # Review module
+│       │   │   │       ├── configuration/    # Spring configuration
+│       │   │   │       └── exception/        # Exception handling
+│       │   │   └── resources/
+│       │   │       └── application*.yml      # Configuration files
+│       │   └── test/                         # Unit & integration tests
+│       ├── pom.xml
+│       └── mvnw
+│
+└── frontend/
+    └── workerfrontend/       # React + TypeScript application
+        ├── src/
+        │   ├── features/             # Feature modules
+        │   ├── pages/                # Page components
+        │   ├── routes/               # TanStack Router routes
+        │   ├── ui-library/           # Reusable UI components
+        │   ├── auth/                 # Auth0 configuration
+        │   └── main.tsx              # Application entry point
+        ├── package.json
+        └── vite.config.ts
+```
+
+## 👥 Authors
+
+* **Aku Ihamuotila** - Developer
+* **Tuomas Jaakkola** - Developer
+* **Jani Könönen** - Developer
+* **Tuomas Leinonen** - Developer
+* **Markus Mäntylä** - Developer
+
+## 🌐 Live Demo
+
+**Live Application:** [https://worker-application.netlify.app/](https://worker-application.netlify.app/)
+
+**Test Credentials:**
+- Username: `test`
+- Password: `Test@123`
+
+**Note:** The application uses Auth0 authentication. After logging in, you can explore both Employer and Tasker functionalities depending on which profile you create.
+
+## 🔒 Security Considerations
+
+### Implemented Security Measures
+- **Authentication:** OAuth 2.0 via Auth0 with JWT tokens
+- **Authorization:** Role-based access control (Employer/Tasker profiles)
+- **Input Validation:** Server-side validation using Bean Validation (Jakarta)
+- **SQL Injection Protection:** JPA/Hibernate with parameterized queries
+- **XSS Protection:** React's built-in XSS protection
+- **CORS Configuration:** Currently allows all origins (should be restricted to specific domains in production)
+- **Environment Variables:** Sensitive data stored in `.env` files (not in version control)
+
+### Security Checklist
+- [x] API keys and secrets removed from version control
+- [x] Environment variables properly configured
+- [x] Database uses strong authentication (Auth0 managed)
+- [x] HTTPS enabled in production (Heroku/Netlify)
+- [ ] CORS should be restricted to specific origins for production security
+- [ ] Database backup strategy to be defined
+
+### Known Security Limitations
+- Development mode uses H2 in-memory database with default credentials (not for production)
+- **CORS Security:** Backend currently allows all origins (`*`). For production security, this should be restricted to specific domains (e.g., `https://worker-application.netlify.app`)
+
+## 🐛 Known Issues & Limitations
+
+For a complete list of known issues and planned improvements, see [GitHub Issues](https://github.com/JTTAM-Projects/worker/issues).
+
+### Current Limitations
+1. **Payment System:** Payment integration is not yet implemented (Paytrail integration planned)
+2. **Real-time Notifications:** Not yet implemented
+3. **Mobile Responsiveness:** Optimized for desktop, mobile improvements planned
+4. **Image Upload:** Profile images use URLs only (no file upload yet)
+5. **Search Performance:** May be slow with large datasets due to missing database indexing (currently relies on pagination)
+
+### Planned Features
+See [GitHub Issues](https://github.com/JTTAM-Projects/worker/issues) for detailed feature requests and enhancements.
+
+## 📈 Future Enhancements
+
+- [ ] Real-time messaging system between Employers and Taskers
+- [ ] Actual payment gateway integration (Paytrail)
+- [ ] Push notifications for new applications and job updates
+- [ ] Database indexing for improved search performance
+- [ ] Mobile application (React Native)
+- [ ] Multi-language support (i18n)
+- [ ] Analytics dashboard for users
+
+## 🧪 Testing Coverage
+
+### Backend Tests
+- Unit tests for service layer
+- Integration tests for API endpoints
+
+### Frontend Tests
+- To be implemented
+
+Run tests:
+```bash
+# Backend
+cd backend/glig
+./mvnw test
+
+# Generate coverage report
+./mvnw test jacoco:report
+```
+
+## 🚀 Deployment
+
+### Deployment Architecture
+- **Backend:** Hosted on Heroku with PostgreSQL database
+- **Frontend:** Hosted on Netlify
+- **Authentication:** Auth0
+- **Maps:** Google Maps API
+
+### Deployment Steps
+
+**Backend (Heroku):**
+1. Configure production database connection
+2. Set environment variables in Heroku dashboard
+3. Connect GitHub repository to Heroku
+4. Enable automatic deployments from `main` branch
+
+**Frontend (Netlify):**
+1. Build frontend: `npm run build`
+2. Connect GitHub repository to Netlify
+3. Configure build settings and environment variables
+4. Enable automatic deployments from `main` branch
+
+### Environment Variables for Production
+
+**Backend (Heroku Config Vars):**
+```env
+DATABASE_URL=postgresql://[host]:[port]/[database]?user=[username]&password=[password]
+SPRING_PROFILES_ACTIVE=prod
+```
+
+**Application Configuration (application.yml):**
+```yaml
+okta:
+  oauth2:
+    issuer: https://jk-projects.eu.auth0.com/
+    audience: https://glig.com
+```
+
+**Frontend (Netlify Environment Variables):**
+```env
+VITE_API_URL=https://your-heroku-app.herokuapp.com/api
+VITE_AUTH_DOMAIN=jk-projects.eu.auth0.com
+VITE_AUTH_CLIENT_ID=your-auth0-client-id
+VITE_AUTH_AUDIENCE=https://glig.com
+VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+```
+
+## 📚 Documentation
+
+### API Documentation
+- **Swagger UI:** Available at `/swagger-ui/index.html` when running locally
+- **OpenAPI Spec:** Available at `/v3/api-docs`
+
+### Code Documentation
+- Backend: JavaDoc comments on public APIs
+- Frontend: TSDoc comments on complex components and utilities
+
+### Architecture Decisions
+Key architectural decisions are documented in code comments and this README.
+
+## 🤝 Contributing
+
+This is an academic project for Haaga-Helia University of Applied Sciences. While the repository is public for educational purposes, it is not currently accepting external contributions.
+
+### For Team Members
+1. Create a feature branch from `dev`
+2. Make your changes
+3. Write/update tests
+4. Submit a pull request to `dev`
+5. Ensure all tests pass and code review is approved
+
+## 📄 License
+
+This project is created for educational purposes as part of Haaga-Helia University of Applied Sciences' Software Project II course.
+
+## 🙏 Acknowledgments
+
+- Haaga-Helia University of Applied Sciences
+- Course instructors and mentors
+- Auth0 for authentication services
+- Google Maps Platform for location services
+- Spring Boot and React communities
+
+## 📞 Contact
+
+For questions or feedback about this project:
+- **Repository:** [https://github.com/JTTAM-Projects/worker](https://github.com/JTTAM-Projects/worker)
+- **Issues:** [https://github.com/JTTAM-Projects/worker/issues](https://github.com/JTTAM-Projects/worker/issues)
+
+---
+
+*Last Updated: November 2025*
+*Project Status: In Development*
