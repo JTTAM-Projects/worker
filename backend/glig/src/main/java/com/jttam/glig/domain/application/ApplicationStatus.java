@@ -1,13 +1,10 @@
 package com.jttam.glig.domain.application;
 
 public enum ApplicationStatus {
-    PENDING("Application pending"),
-    ACCEPTED("Application accepted"),
-    REJECTED("Application rejected"),
-    CANCELLED("Worker canceled apply"),
-    IN_PROGRESS("Application in progress"),
-    COMPLETED("Application completed"),
-    CONFIRMED("Application confirmed");
+    PENDING("Application pending and waiting accept from employer"),
+    ACCEPTED("Application accepted by employer"),
+    REJECTED("Application rejected by employer"),
+    CANCELLED("Worker canceled apply");
 
     private final String displayName;
 
