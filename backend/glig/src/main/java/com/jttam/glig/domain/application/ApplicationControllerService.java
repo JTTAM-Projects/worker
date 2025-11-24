@@ -19,7 +19,9 @@ import com.jttam.glig.domain.application.dto.UpdateApplicationStatusRequest;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
 import com.jttam.glig.domain.task.Task;
 import com.jttam.glig.domain.task.TaskRepository;
+import com.jttam.glig.domain.task.TaskControllerService;
 import com.jttam.glig.domain.task.TaskStatus;
+import com.jttam.glig.domain.task.dto.TaskResponse;
 import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserRepository;
 import com.jttam.glig.exception.custom.ForbiddenException;
@@ -35,13 +37,15 @@ public class ApplicationControllerService {
     private final ApplicationRepository applyRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TaskControllerService taskControllerService;
     private final ApplicationMapper mapper;
 
     public ApplicationControllerService(ApplicationRepository applyRepository, TaskRepository taskRepository,
-            UserRepository userRepository, ApplicationMapper mapper) {
+            UserRepository userRepository, TaskControllerService taskControllerService, ApplicationMapper mapper) {
         this.applyRepository = applyRepository;
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.taskControllerService = taskControllerService;
         this.mapper = mapper;
     }
 
@@ -216,6 +220,11 @@ public class ApplicationControllerService {
         ApplicationResponse response = mapper.toApplicationResponse(updatedApplication);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @Transactional
+    public ResponseEntity<TaskResponse> tryCompleteApplication(Long taskId, String username) {
+        return taskControllerService.tryUpdateTaskStatus(taskId, TaskStatus.PENDING_APPROVAL, username);
     }
 
 }
