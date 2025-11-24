@@ -152,7 +152,7 @@ Task Feature Module
     ├── ApplicationsList.tsx - List of task applications
     ├── ApplicationDetailsModal.tsx - Application detail modal
     ├── CreateTask.tsx - Task creation modal/form
-│   ├── TaskWizardForm.tsx - Multi-step task creation wizard
+│   ├── TaskWizardForm.tsx - Multi-step task creation wizard (with geocoding)
 │   ├── TaskerPromoCard.tsx - Marketing card for taskers
 │   ├── TaskFilter.tsx - (Legacy) Simple category filter
 │   └── SearchBar.tsx - Quick text search input
@@ -277,6 +277,35 @@ Scrollable list of all tasks
 User clicks "Näytä tiedot" on one task
         ↓
 Navigate to TaskDetailPage
+```
+
+### 6. Task Creation with Geocoding Flow
+
+```
+User fills task creation form
+        ↓
+Enters address fields (street, postal code, city, country)
+        ↓
+User clicks submit
+        ↓
+handleSubmit() called in public-task.tsx or edit.tsx
+        ↓
+Call geocodeAddress() from utils/geocoding.ts
+        ↓
+Google Maps Geocoding API request
+        ↓
+Receive latitude/longitude coordinates
+        ↓
+If geocoding fails:
+   ├─ Show error: "Osoitteen geokoodaus epäonnistui..."
+   └─ Stop submission (return early)
+        ↓
+If geocoding succeeds:
+   ├─ Include coordinates in location payload
+   ├─ Submit task with latitude/longitude
+   └─ Task saved with valid GPS coordinates
+        ↓
+Task appears on Google Maps with marker
 ```
 
 ## Custom Hooks
@@ -766,6 +795,10 @@ src/features/task/
 │   │   ├── calculateZoomFromRadius() - Convert km to zoom level
 │   │   └── DEFAULT_MAP_CENTER      - Helsinki coordinates
 │   │
+│   ├── geocoding.ts                (Geocoding utilities - ~80 lines)
+│   │   ├── geocodeAddress()        - Convert address to GPS coordinates
+│   │   └── reverseGeocode()        - Convert coordinates to address
+│   │
 │   └── categoryUtils.ts            (Category utilities - ~50 lines)
 │       ├── getCategoryIcon()       - Map category to Material Icon
 │       └── getCategoryColor()      - Map category to Tailwind class
@@ -786,9 +819,15 @@ src/features/task/
 │
 ├── index.ts                         (Feature exports)
 │
-├── routes/ (in src/routes/_authenticated/worker/)
-│   └── tasks/
-│       └── index.tsx                (Route with Zod validation + beforeLoad)
+├── routes/ (in src/routes/_authenticated/)
+│   ├── worker/tasks/
+│   │   └── index.tsx                (Route with Zod validation + beforeLoad)
+│   │
+│   └── employer/
+│       ├── create-task/
+│       │   └── public-task.tsx      (Create task with geocoding - ~150 lines)
+│       └── my-tasks/$taskId/details/
+│           └── edit.tsx             (Edit task with geocoding - ~180 lines)
 │
 ├── pages/ (in src/pages/)
 │   ├── TaskPage.tsx                 (Main browsing - ~200 lines)
@@ -805,18 +844,19 @@ src/features/task/
 └── ARCHITECTURE.md                  (This file)
 ```
 
-**Total Lines of Code:** ~3,500+ lines across 30+ files
+**Total Lines of Code:** ~3,700+ lines across 33+ files
 
 **Key Metrics:**
 
 - 15 Components (6 core, 9 supporting)
 - 7 Custom Hooks (1 state, 2 browser, 4 API/query-related)
 - 9 TanStack Query hooks (in taskQueries.tsx)
-- 2 Utility modules (map helpers, category utils)
+- 3 Utility modules (map helpers, geocoding, category utils)
 - 5 Page-level components
-- 1 Route definition with Zod validation
+- 3 Route definitions (1 with Zod validation, 2 with geocoding)
 - Full TypeScript coverage
 - Google Maps integration (@react-google-maps/api)
+- Google Maps Geocoding API integration (task creation/editing)
 - TanStack Query v5 for data fetching
 - TanStack Router for routing
 - URL-based state management with SessionStorage persistence
@@ -828,14 +868,20 @@ src/features/task/
 1. **Google Maps JavaScript API**
    - API Key: VITE_GOOGLE_MAPS_API_KEY
    - Components: GoogleMap, Marker, MarkerClusterer, Circle, InfoWindow
-   - Usage: TaskMap.tsx
+   - Usage: TaskMap.tsx, geocoding.ts (Geocoding API)
 
-2. **Nominatim OpenStreetMap API**
-   - Endpoint: https://nominatim.openstreetmap.org/search
-   - Usage: useGeocoding.ts
+2. **Google Maps Geocoding API**
+   - API Key: VITE_GOOGLE_MAPS_API_KEY
+   - Usage: geocoding.ts utility
+   - Purpose: Convert addresses to GPS coordinates during task creation/editing
+   - Integration: Task creation routes (public-task.tsx, edit.tsx)
+
+3. **Nominatim OpenStreetMap API**
+   - Endpoint: <https://nominatim.openstreetmap.org/search>
+   - Usage: useGeocoding.ts (for location search in filters)
    - Rate limiting: Respectful use with User-Agent
 
-3. **Browser Geolocation API**
+4. **Browser Geolocation API**
    - Usage: useGeolocation.ts
    - Permissions: User must grant location access
 

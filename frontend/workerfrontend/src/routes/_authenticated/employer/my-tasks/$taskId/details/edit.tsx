@@ -16,6 +16,7 @@ import {
   type SubmissionState,
   type TaskWizardPayload,
 } from "../../../../../../features/task/components/TaskWizardForm";
+import { geocodeAddress } from "../../../../../../utils/geocoding";
 
 export const Route = createFileRoute(
   "/_authenticated/employer/my-tasks/$taskId/details/edit"
@@ -87,6 +88,22 @@ export default function EditTaskPage() {
 
     const addressForProfile = `${location.streetAddress} ${location.postalCode}, ${location.city}, ${location.country}`;
 
+    // Geocode the address to get coordinates
+    const geocodeResult = await geocodeAddress({
+      streetAddress: location.streetAddress,
+      postalCode: location.postalCode,
+      city: location.city,
+      country: location.country,
+    });
+
+    if (!geocodeResult) {
+      setSubmissionState("error");
+      setSubmissionError(
+        "Osoitteen geokoodaus epäonnistui. Tarkista osoite ja yritä uudelleen."
+      );
+      return;
+    }
+
     try {
       if (userDetails) {
         await updateUser({
@@ -108,7 +125,11 @@ export default function EditTaskPage() {
         startDate: isoStart,
         endDate: isoEnd,
         categories,
-        location,
+        location: {
+          ...location,
+          latitude: geocodeResult.latitude,
+          longitude: geocodeResult.longitude,
+        },
       });
       setSubmissionState("success");
       setTimeout(
