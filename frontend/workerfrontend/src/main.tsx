@@ -40,7 +40,7 @@ function InnerApp() {
 
   return <RouterProvider router={router} context={{ queryClient, auth }} />;
 }
-
+// eslint-disable-next-line react-refresh/only-export-components
 function App() {
   return (
     <QueryClientProvider client={queryClient}>

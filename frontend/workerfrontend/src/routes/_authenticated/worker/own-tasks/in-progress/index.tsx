@@ -9,9 +9,7 @@ import { TaskFilterPanel } from "../../../../../features/task/components/TaskFil
 import { TaskMap } from "../../../../../features/task/components/TaskMap";
 import { ResultsControlBar } from "../../../../../features/task/components/ResultsControlBar";
 
-export const Route = createFileRoute(
-  '/_authenticated/worker/own-tasks/in-progress/',
-)({
+export const Route = createFileRoute("/_authenticated/worker/own-tasks/in-progress/")({
   component: WorkerInProgressTasksPage,
   validateSearch: (search: Record<string, unknown>): { view?: ViewMode } => {
     return {
@@ -28,12 +26,12 @@ export const Route = createFileRoute(
         })
       );
     } catch (error) {
-      console.error('Failed to load tasks: ', error);
-      // Return empty data on error to prevent crash    
+      console.error("Failed to load tasks: ", error);
+      // Return empty data on error to prevent crash
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
-  }
-})
+  },
+});
 
 function WorkerInProgressTasksPage() {
   const navigate = useNavigate({ from: "/worker/own-tasks/in-progress" });
@@ -85,7 +83,7 @@ function WorkerInProgressTasksPage() {
     navigate({
       search: {
         ...search,
-        ...newFilters
+        ...newFilters,
       },
     });
   };
@@ -98,7 +96,7 @@ function WorkerInProgressTasksPage() {
         view: newViewMode,
       },
     });
-  }; 
+  };
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -131,46 +129,44 @@ function WorkerInProgressTasksPage() {
         </button>
       </div>
 
-      <div className="container mx-auto px-6 py-8">    
-          <TaskFilterPanel
-            filters={filters}
-            onFiltersChange={(newFilters) => {
-              setFilters((prev) => ({
-                ...prev,
-                ...newFilters
-              }));
-              setCurrentPage(0);
-            }}
-            onReset={handleResetFilters}
-          />
-          <ResultsControlBar
-            totalResults={data?.totalElements}
-            filters={filters}
-            sortBy={filters.sortBy || "newest"}
-            viewMode={viewMode}
-            onSortChange={(sort) =>
-              updateFilters({ ...filters, sortBy: sort })
-            }
-            onViewModeChange={updateViewMode}
-            onRemoveFilter={handleResetFilters}
-          />
+      <div className="container mx-auto px-6 py-8">
+        <TaskFilterPanel
+          filters={filters}
+          onFiltersChange={(newFilters) => {
+            setFilters((prev) => ({
+              ...prev,
+              ...newFilters,
+            }));
+            setCurrentPage(0);
+          }}
+          onReset={handleResetFilters}
+        />
+        <ResultsControlBar
+          totalResults={data?.totalElements}
+          filters={filters}
+          sortBy={filters.sortBy || "newest"}
+          viewMode={viewMode}
+          onSortChange={(sort) => updateFilters({ ...filters, sortBy: sort })}
+          onViewModeChange={updateViewMode}
+          onRemoveFilter={handleResetFilters}
+        />
         <div className="flex-1">
-        {viewMode === "list" ? (
-          <WorkerTasksToList 
-            tasks={taskList.content}
-            totalPages={taskList.totalPages}
-            currentPage={taskList.number}
-            onPageChange={handlePageChange}
-            isFirst={taskList.first}
-            isLast={taskList.last} 
-          />
-        ) : (
-          <TaskMap
-            tasks={tasksOnMap?.content || []}
-            totalElements={tasksOnMap?.totalElements || 0}
-            filters={filters}
-          />
-        )}
+          {viewMode === "list" ? (
+            <WorkerTasksToList
+              tasks={taskList.content}
+              totalPages={taskList.totalPages}
+              currentPage={taskList.number}
+              onPageChange={handlePageChange}
+              isFirst={taskList.first}
+              isLast={taskList.last}
+            />
+          ) : (
+            <TaskMap
+              tasks={tasksOnMap?.content || []}
+              totalElements={tasksOnMap?.totalElements || 0}
+              filters={filters}
+            />
+          )}
         </div>
       </div>
     </main>

@@ -1,7 +1,7 @@
 import type { User, TaskerProfile, EmployerProfile, Auth0User } from '../types';
 
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 //GET METHODS
 export async function getUser(getAccessToken: () => Promise<string>, userName : string | undefined): Promise<User> {
