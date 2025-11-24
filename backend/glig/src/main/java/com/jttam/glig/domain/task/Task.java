@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jttam.glig.domain.application.Application;
 import com.jttam.glig.domain.category.Category;
 import com.jttam.glig.domain.common.baseClass;

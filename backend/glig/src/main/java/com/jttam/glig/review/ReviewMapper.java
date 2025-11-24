@@ -13,6 +13,7 @@ public interface ReviewMapper {
 
     @Mapping(source = "task.id", target = "taskId")
     @Mapping(source = "task.title", target = "taskTitle")
+    @Mapping(target = "taskCategories", expression = "java(review.getTask().getCategories().stream().map(c -> c.getTitle()).collect(java.util.stream.Collectors.toSet()))")
     @Mapping(source = "reviewer.userName", target = "reviewerUsername")
     @Mapping(source = "reviewee.userName", target = "revieweeUsername")
     @Mapping(source = "createdAt", target = "createdAt")

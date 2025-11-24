@@ -228,6 +228,19 @@ public class TaskTestData {
         tasks.put("pendingApprovalTask", pendingApprovalTask);
         taskRepository.save(pendingApprovalTask);
 
+        Task auth0CompletedTask = new Task(
+                "Imuroi asunto",
+                50,
+                LocalDateTime.now().minusDays(2),
+                LocalDateTime.now().minusDays(2).plusHours(2),
+                TaskStatus.COMPLETED,
+                "Koko asunnon imurointi suoritettu.",
+                auth0);
+        auth0CompletedTask.getCategories().add(cleaningCategory);
+        auth0CompletedTask.getLocations().add(firstLocation);
+        tasks.put("auth0CompletedTask", auth0CompletedTask);
+        taskRepository.save(auth0CompletedTask);
+
         // Multi-location Rovaniemi reindeer task (for UI testing)
         Task reindeerTask = new Task(
                 "Porotallin siivous ja porojen ruokinta 🦌",

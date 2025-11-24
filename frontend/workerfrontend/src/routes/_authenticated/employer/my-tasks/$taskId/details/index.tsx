@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { taskQueries } from "../../../../../../features/task/queries/taskQueries";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useDeleteTask } from "../../../../../../features/task/hooks";
 import { useState } from "react";
 import TaskDetails from "../../../../../../features/task/components/TaskDetails";
 import { getCategoryIcon } from "../../../../../../features/task/utils/categoryUtils";
+import { Button } from "@headlessui/react";
 
 export const Route = createFileRoute("/_authenticated/employer/my-tasks/$taskId/details/")({
   component: OwnTaskDetailPage,
@@ -15,8 +15,7 @@ export const Route = createFileRoute("/_authenticated/employer/my-tasks/$taskId/
 
 function OwnTaskDetailPage() {
   const navigate = useNavigate();
-  const { taskId } = Route.useParams();
-  const { data: task } = useSuspenseQuery(taskQueries.detail(taskId));
+  const task = Route.useLoaderData();
   const deleteTaskMutation = useDeleteTask();
   const [successMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -85,6 +84,19 @@ function OwnTaskDetailPage() {
               getCategoryIcon={getCategoryIcon}
             />
             <div className="mt-6 flex gap-4 justify-end">
+              {task.status === "COMPLETED" && (
+                <Button
+                  onClick={() => {
+                    navigate({
+                      to: "/employer/my-tasks/$taskId/review/$username",
+                      params: { taskId: task.id.toString(), username: task.worker!.userName },
+                    });
+                  }}
+                  className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 border border-gray-300"
+                >
+                  Arvostele
+                </Button>
+              )}
               <button
                 onClick={() => {
                   navigate({ to: "/employer/my-tasks/$taskId/details/edit", params: { taskId: task.id.toString() } });

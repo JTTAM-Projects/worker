@@ -1,18 +1,11 @@
 spring:
-    application:
-        name: glig
-    h2:
-        console:
-            enabled: true
-    datasource:
-        url: jdbc:h2:mem:app
-        driver-class-name: org.h2.Driver
-        username: sa
-        password: password
+  application:
+    name: glig
 okta:
-    oauth2:
-        issuer: https://jk-projects.eu.auth0.com/
-        audience: https://glig.com
-logging:
-    level:
-        root: info
+  oauth2:
+    issuer: https://jk-projects.eu.auth0.com/
+    audience: https://glig.com
+---
+spring:
+  profiles:
+    active: dev

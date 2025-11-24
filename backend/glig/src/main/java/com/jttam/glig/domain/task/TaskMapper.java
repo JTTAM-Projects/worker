@@ -9,12 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import com.jttam.glig.domain.application.ApplicationMapper;
+import com.jttam.glig.domain.application.ApplicationStatus;
 import com.jttam.glig.domain.category.CategoryMapper;
 import com.jttam.glig.domain.location.LocationMapper;
 import com.jttam.glig.domain.task.dto.TaskResponse;
 import com.jttam.glig.domain.task.dto.ApplicationListTaskDto;
 import com.jttam.glig.domain.task.dto.TaskListDTO;
 import com.jttam.glig.domain.task.dto.TaskRequest;
+import com.jttam.glig.domain.user.User;
 import com.jttam.glig.domain.user.UserMapper;
 
 @Mapper(componentModel = "spring", uses = { UserMapper.class, ApplicationMapper.class, LocationMapper.class,
@@ -22,6 +24,7 @@ import com.jttam.glig.domain.user.UserMapper;
 })
 public interface TaskMapper {
 
+    @Mapping(target = "worker", expression = "java(getAcceptedWorker(task))")
     TaskResponse toTaskResponse(Task task);
 
     ApplicationListTaskDto toApplicationListTaskDto(Task task);
@@ -55,4 +58,13 @@ public interface TaskMapper {
         return new PageImpl<>(dtoList, page.getPageable(), page.getTotalElements());
     }
 
+    default User getAcceptedWorker(Task task) {
+        if (task == null || task.getApplies() == null)
+            return null;
+        return task.getApplies().stream()
+                .filter(a -> a.getApplicationStatus() == ApplicationStatus.ACCEPTED)
+                .map(a -> a.getUser())
+                .findFirst()
+                .orElse(null);
+    }
 }
