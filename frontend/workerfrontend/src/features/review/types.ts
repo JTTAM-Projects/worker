@@ -81,7 +81,6 @@ export type ReviewProfileType = 'TASKER' | 'EMPLOYER';
  * Props for ReviewList component
  */
 export interface ReviewListProps {
-  username: string;
   profileType: ReviewProfileType;
   limit?: number;  // Default: 10
 }
@@ -97,7 +96,7 @@ export interface ReviewCardProps {
  * Props for AverageRating component
  */
 export interface AverageRatingProps {
-  username: string;
+  // No props needed when using loader data
 }
 
 /**
