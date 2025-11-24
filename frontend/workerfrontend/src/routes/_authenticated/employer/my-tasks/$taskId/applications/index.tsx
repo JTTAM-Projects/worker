@@ -62,7 +62,7 @@ function OwnTaskApplicationsPage() {
       )}
 
       <button
-        onClick={() => navigate({ to: "/employer/my-tasks" })}
+        onClick={() => navigate({ to: "/employer/my-tasks", search: { tab: "active" } })}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
       >
         <span className="material-icons">arrow_back</span>

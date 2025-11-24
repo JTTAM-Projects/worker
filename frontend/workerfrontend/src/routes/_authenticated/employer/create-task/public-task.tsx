@@ -109,7 +109,7 @@ function CreateTaskPage() {
       });
 
       setSubmissionState("success");
-      setTimeout(() => navigate({ to: "/employer/my-tasks" }), 1500);
+      setTimeout(() => navigate({ to: "/employer/my-tasks", search: { tab: "active" } }), 1500);
     } catch (error) {
       console.error(error);
       setSubmissionState("error");

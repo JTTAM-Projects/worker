@@ -28,7 +28,7 @@ function OwnTaskDetailPage() {
 
     try {
       await deleteTaskMutation.mutateAsync({ taskId: task.id });
-      navigate({ to: "/employer/my-tasks" });
+      navigate({ to: "/employer/my-tasks", search: { tab: "active" } });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Työilmoituksen poistaminen epäonnistui.";
       setErrorMessage(message);
@@ -47,7 +47,7 @@ function OwnTaskDetailPage() {
       )}
 
       <button
-        onClick={() => navigate({ to: "/employer/my-tasks" })}
+        onClick={() => navigate({ to: "/employer/my-tasks", search: { tab: "active" } })}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
       >
         <span className="material-icons">arrow_back</span>

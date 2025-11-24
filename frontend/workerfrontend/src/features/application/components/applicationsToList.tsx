@@ -5,7 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 type ApplicationListRow = ApplicationWithDetails & {
   task?: {
     id: number;
-    title: string;
+    title?: string;
     categories?: Array<{ title: string }>;
     locations?: Array<{
       streetAddress?: string;

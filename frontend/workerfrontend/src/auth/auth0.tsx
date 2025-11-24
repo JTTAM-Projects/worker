@@ -25,16 +25,15 @@ const Auth0Context = createContext<Auth0ContextType | undefined>(undefined);
 export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <Auth0Provider
-      domain="jk-projects.eu.auth0.com"
-      clientId="aDYOG7a9fYDDBoTgWX9AW3BKYdv6XdlJ"
+      domain={import.meta.env.VITE_AUTH_DOMAIN}
+      clientId={import.meta.env.VITE_AUTH_CLIENT_ID}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: "https://glig.com",
+        audience: import.meta.env.VITE_AUTH_AUDIENCE,
         scope: "openid profile email offline_access",
       }}
       onRedirectCallback={onRedirectCallback}
       useRefreshTokens={true}
-      cacheLocation="localstorage"
     >
       <Auth0ContextProvider>{children}</Auth0ContextProvider>
     </Auth0Provider>
