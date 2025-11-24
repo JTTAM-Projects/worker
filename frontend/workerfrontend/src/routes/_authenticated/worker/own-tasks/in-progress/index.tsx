@@ -1,21 +1,30 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
 import { taskQueries } from "../../../../../features/task/queries/taskQueries";
-import type { TaskFilters } from "../../../../../features/task";
+import type { TaskFilters, ViewMode } from "../../../../../features/task";
 import WorkerTasksToList from "../../../../../features/task/components/WorkerTasksToList";
 import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
+import { TaskMap } from "../../../../../features/task/components/TaskMap";
+import { ResultsControlBar } from "../../../../../features/task/components/ResultsControlBar";
 
-export const Route = createFileRoute("/_authenticated/worker/own-tasks/waiting-approval/")({
-  component: WorkerWaitingApprovalTasksPage,
+export const Route = createFileRoute(
+  '/_authenticated/worker/own-tasks/in-progress/',
+)({
+  component: WorkerInProgressTasksPage,
+  validateSearch: (search: Record<string, unknown>): { view?: ViewMode } => {
+    return {
+      view: (search.view as ViewMode) || undefined,
+    };
+  },
   loader: async ({ context }) => {
     try {
       return await context.queryClient.ensureQueryData(
         taskQueries.worker(context.auth.getAccessToken, {
           page: 0,
           size: 10,
-          status: "PENDING_APPROVAL",
+          status: "IN_PROGRESS",
         })
       );
     } catch (error) {
@@ -24,23 +33,38 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/waiting-a
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
   }
-});
+})
 
-function WorkerWaitingApprovalTasksPage() {
-  const navigate = useNavigate();
+function WorkerInProgressTasksPage() {
+  const navigate = useNavigate({ from: "/worker/own-tasks/in-progress" });
+  const search = useSearch({ from: "/_authenticated/worker/own-tasks/in-progress/" });
   const { getAccessTokenSilently } = useAuth0();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
-  const [filters, setFilters] = useState<TaskFilters>({})
+  const [filters, setFilters] = useState<TaskFilters>({});
+  const viewMode: ViewMode = search.view ?? "list";
 
   const { data: taskList } = useSuspenseQuery(
     taskQueries.worker(getAccessTokenSilently, {
-      status: "PENDING_APPROVAL",
+      status: "IN_PROGRESS",
       page: currentPage,
       size: pageSize,
       ...filters,
     })
   );
+
+  const { data: tasksOnMap } = useQuery({
+    ...taskQueries.worker(getAccessTokenSilently, {
+      status: "IN_PROGRESS",
+      page: currentPage,
+      size: pageSize,
+      ...filters,
+    }),
+    enabled: viewMode === "map", // Only fetch when in map view
+  });
+
+  const data = viewMode === "list" ? taskList : tasksOnMap;
+  // console.log(taskList); DEBUGGING
 
   const handleResetFilters = () => {
     setFilters((prev) => ({
@@ -49,8 +73,32 @@ function WorkerWaitingApprovalTasksPage() {
       categories: undefined,
       minPrice: undefined,
       maxPrice: undefined,
+      latitude: undefined,
+      longitude: undefined,
+      radiusKm: undefined,
+      locationText: undefined,
     }));
   };
+
+  // Update filters and reset to page 0
+  const updateFilters = (newFilters: TaskFilters) => {
+    navigate({
+      search: {
+        ...search,
+        ...newFilters
+      },
+    });
+  };
+
+  // Update view mode
+  const updateViewMode = (newViewMode: ViewMode) => {
+    navigate({
+      search: {
+        ...search,
+        view: newViewMode,
+      },
+    });
+  }; 
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -64,13 +112,13 @@ function WorkerWaitingApprovalTasksPage() {
           Aktiiviset
         </button>
         <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
+          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
           onClick={() => navigate({ to: "/worker/own-tasks/in-progress" })}
         >
           Työn alla
         </button>
         <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
+          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
           onClick={() => navigate({ to: "/worker/own-tasks/waiting-approval" })}
         >
           Odottaa hyväksyntää
@@ -95,7 +143,19 @@ function WorkerWaitingApprovalTasksPage() {
             }}
             onReset={handleResetFilters}
           />
+          <ResultsControlBar
+            totalResults={data?.totalElements}
+            filters={filters}
+            sortBy={filters.sortBy || "newest"}
+            viewMode={viewMode}
+            onSortChange={(sort) =>
+              updateFilters({ ...filters, sortBy: sort })
+            }
+            onViewModeChange={updateViewMode}
+            onRemoveFilter={handleResetFilters}
+          />
         <div className="flex-1">
+        {viewMode === "list" ? (
           <WorkerTasksToList 
             tasks={taskList.content}
             totalPages={taskList.totalPages}
@@ -104,6 +164,13 @@ function WorkerWaitingApprovalTasksPage() {
             isFirst={taskList.first}
             isLast={taskList.last} 
           />
+        ) : (
+          <TaskMap
+            tasks={tasksOnMap?.content || []}
+            totalElements={tasksOnMap?.totalElements || 0}
+            filters={filters}
+          />
+        )}
         </div>
       </div>
     </main>

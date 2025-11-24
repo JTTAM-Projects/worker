@@ -4,6 +4,7 @@ import {
   fetchTaskById,
   fetchTasks,
   fetchUserTasks,
+  fetchWorkerTasks,
   type FetchTasksParams,
 } from "../api/taskApi";
 
@@ -48,6 +49,17 @@ export const taskQueries = {
     queryOptions({
       queryKey: ["tasks", "own", params],
       queryFn: () => fetchUserTasks(getAccessTokenSilently, params),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    }),
+    
+  /** Fetch tasks for worker */
+  worker: (
+    getAccessTokenSilently: () => Promise<string>,
+    params: FetchTasksParams = {}
+  ) => 
+    queryOptions({
+      queryKey: ["tasks", "worker", params],
+      queryFn: () => fetchWorkerTasks(getAccessTokenSilently, params),
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
 };
