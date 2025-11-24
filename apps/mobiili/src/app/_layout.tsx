@@ -3,8 +3,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Auth0Provider } from "react-native-auth0";
 
 export default function RootLayout() {
+  const domain = process.env.EXPO_PUBLIC_AUTH0_DOMAIN;
+  const client = process.env.EXPO_PUBLIC_CLIENT_ID;
   return (
-    <Auth0Provider domain="jk-projects.eu.auth0.com" clientId="x60B8rXt645ak4BLuE4LqVcIoovQBzrq">
+    <Auth0Provider domain={domain!} clientId={client!}>
       <SafeAreaProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

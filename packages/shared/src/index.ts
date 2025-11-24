@@ -1,4 +1,1 @@
-export function hello(text : string) : string {
-	return `Hello ${text}`;
-}
-export * from "../features"
+export * from "../features/task/"

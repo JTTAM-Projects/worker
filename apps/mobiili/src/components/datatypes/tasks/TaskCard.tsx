@@ -1,20 +1,8 @@
-// Esimerkkikortti React Native + NativeWind
 import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Task } from "@myorg/shared";
 
-export default function TaskCard() {
-  // Esimerkkidata
-  const task = {
-    id: 1,
-    title: "Pihan haravointi",
-    price: 40,
-    startDate: "2025-11-21T00:00:00.000Z",
-    location: { city: "Helsinki" },
-    categories: [{ title: "YARD" }],
-    user: { userName: "Maija Meikäläinen" },
-  };
-
-  // Apufunktiot
+export default function TaskCard({ task }: { task: Task }) {
   const formatDate = (isoString: string) =>
     new Date(isoString).toLocaleDateString("fi-FI", { day: "numeric", month: "long" });
 
@@ -72,7 +60,7 @@ export default function TaskCard() {
         <View className="flex-row items-center gap-x-4 mb-2">
           <View className="flex-row items-center">
             <MaterialIcons name="place" size={18} color="#22C55E" />
-            <Text className="ml-1 text-gray-600">{task.location.city}</Text>
+            <Text className="ml-1 text-gray-600">{task.location?.city}</Text>
           </View>
           <View className="flex-row items-center">
             <MaterialIcons name="event" size={18} color="#22C55E" />
