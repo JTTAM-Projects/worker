@@ -15,6 +15,7 @@ import com.jttam.glig.domain.application.dto.MyApplicationDTO;
 import com.jttam.glig.domain.application.dto.TaskApplicantDto;
 import com.jttam.glig.domain.application.dto.UpdateApplicationStatusRequest;
 import com.jttam.glig.domain.application.dto.ApplicationRequest;
+import com.jttam.glig.domain.task.dto.TaskResponse;
 import com.jttam.glig.service.GlobalServiceMethods;
 import com.jttam.glig.service.Message;
 
@@ -49,6 +50,22 @@ public class ApplicationController {
     public ApplicationResponse getSingleApplication(@PathVariable Long taskId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
         return service.tryGetSingleApplicationResponseByUsernameAndTaskId(taskId, username);
+    }
+
+    @Operation(summary = "Complete task execution (worker)", description = "Marks the task as pending approval after worker finishes execution.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task status moved to pending approval"),
+            @ApiResponse(responseCode = "400", description = "Illegal status transition"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, user is not the accepted worker"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @PostMapping("/task/{taskId}/application/complete")
+    public ResponseEntity<TaskResponse> completeApplication(@PathVariable Long taskId,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        String username = jwt.getSubject();
+        return service.tryCompleteApplication(taskId, username);
     }
 
     @Operation(summary = "Get a single application for a task (not own)", description = "Fetches a single application DTO for a given task ID and username, example when fetching application from the list that isnt users own.")
