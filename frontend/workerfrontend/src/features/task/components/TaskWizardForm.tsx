@@ -174,7 +174,8 @@ export function TaskWizardForm({
     queryKey: ["categories"],
     queryFn: async () => {
       const token = await getAccessTokenSilently();
-      const res = await fetch("http://localhost:8080/api/categories", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+      const res = await fetch(`${apiUrl}/categories`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
