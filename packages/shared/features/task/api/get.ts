@@ -128,7 +128,9 @@ export async function fetchTasks(
     const errorText = await response.text();
     throw new Error(`Failed to fetch tasks: ${response.status} ${errorText}`);
   }
-  return response.json();
+  const data = await response.json();
+  console.log('API response: ', data);
+  return data;
 }
 
 // Fetch user's own tasks (requires authentication)

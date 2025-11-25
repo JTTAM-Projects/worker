@@ -46,11 +46,11 @@ export default function TaskCard({ task }: { task: Task }) {
   return (
     <TouchableOpacity className="bg-white rounded-xl border border-gray-200 shadow-md flex-row overflow-hidden my-2">
       {/* Vasen: Ikoni */}
-      <View className={`w-32 h-32 items-center justify-center ${categoryBg}`}>
+      <View className={`w-28 h-32 items-center justify-center ${categoryBg}`}>
         <MaterialIcons name={categoryIcon} size={48} color="#4B5563" />
       </View>
       {/* Oikea: Sisältö */}
-      <View className="flex-1 p-4 justify-between">
+      <View className="flex-1 p-3 justify-between">
         {/* Otsikko & hinta */}
         <View className="flex-row justify-between items-start mb-2">
           <Text className="font-bold text-gray-800 text-lg flex-1">{task.title}</Text>
@@ -60,7 +60,7 @@ export default function TaskCard({ task }: { task: Task }) {
         <View className="flex-row items-center gap-x-4 mb-2">
           <View className="flex-row items-center">
             <MaterialIcons name="place" size={18} color="#22C55E" />
-            <Text className="ml-1 text-gray-600">{task.location?.city}</Text>
+            <Text className="ml-1 text-gray-600">{task.locations[0].city}</Text>
           </View>
           <View className="flex-row items-center">
             <MaterialIcons name="event" size={18} color="#22C55E" />
@@ -69,7 +69,7 @@ export default function TaskCard({ task }: { task: Task }) {
         </View>
         {/* Käyttäjä */}
         <View className="flex-row items-center gap-x-2 pt-2 border-t border-gray-100">
-          <View className="w-8 h-8 rounded-full bg-green-500 items-center justify-center">
+          <View className="w-7 h-7 rounded-full bg-green-500 items-center justify-center">
             <Text className="text-white font-medium text-sm">{getUserInitials(task.user.userName)}</Text>
           </View>
           <Text className="text-sm text-gray-700 font-medium">{task.user.userName}</Text>

@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import "../../../global.css";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { Entypo, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Login from "@/src/components/ui/Login";
 
 export default function RootLayout() {
@@ -37,6 +37,13 @@ export default function RootLayout() {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="application-edit-outline" size={size} color={color} />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profiili",
+            tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
           }}
         />
       </Tabs>

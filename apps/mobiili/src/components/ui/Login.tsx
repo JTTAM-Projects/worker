@@ -8,7 +8,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      await authorize();
+      await authorize({ audience: "https://glig.com", scope: "openid profile email" });
     } catch (e) {
       console.error(e);
     }
