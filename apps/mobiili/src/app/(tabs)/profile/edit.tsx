@@ -1,6 +1,4 @@
 import ProfileDetailCard from "@/src/components/datatypes/profile/ProfileDetailCard";
-import BigNavigate from "@/src/components/ui/BigNavigate";
-import useLogin from "@/src/components/ui/useLogin";
 import { TaskerProfile, useCreateProfile, useProfile } from "@myorg/shared";
 import { useEffect } from "react";
 import { View } from "react-native";
@@ -18,7 +16,6 @@ const defaultTaskerProfile: TaskerProfile = {
 };
 
 export default function Profile() {
-  const { handleLogout } = useLogin();
   const { data: profile, refetch, loading } = useProfile();
   const { create } = useCreateProfile();
 
@@ -31,7 +28,6 @@ export default function Profile() {
   return (
     <View className="flex-1 items-center justify-start p-4">
       <ProfileDetailCard profile={profile} />
-      <BigNavigate to={handleLogout} title="Kirjaudu ulos" />
     </View>
   );
 }

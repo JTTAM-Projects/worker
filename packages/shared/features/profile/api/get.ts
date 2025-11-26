@@ -23,39 +23,3 @@ export async function fetchTaskerProfile(token : string): Promise<TaskerProfile 
 
     return response.json();
 }
-
-export async function createTaskerProfile(
-    token : string,
-    taskerData: Partial<TaskerProfile>
-): Promise<TaskerProfile>{
-
-    const formattedData = {
-        ...taskerData,
-        websiteLink: taskerData.websiteLink 
-            ? taskerData.websiteLink.startsWith('http') 
-                ? taskerData.websiteLink 
-                : `https://${taskerData.websiteLink}`
-            : '',
-        profileImageUrl: taskerData.profileImageUrl
-            ? taskerData.profileImageUrl.startsWith('http')
-                ? taskerData.profileImageUrl
-                : `https://${taskerData.profileImageUrl}`
-            : ''
-    };
-    const response = await fetch(`${API_BASE_URL}/tasker-profiles`, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(formattedData)
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error('createEmployer error response: ' + errorText)
-        throw new Error(`Failed to fetch profile: ${response.statusText}`);
-    }
-
-    return response.json();
-}

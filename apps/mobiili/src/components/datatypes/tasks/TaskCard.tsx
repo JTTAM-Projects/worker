@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Task } from "@myorg/shared";
+import { formatDate, Task } from "@myorg/shared";
+import { useRouter } from "expo-router";
 
 export default function TaskCard({ task }: { task: Task }) {
-  const formatDate = (isoString: string) =>
-    new Date(isoString).toLocaleDateString("fi-FI", { day: "numeric", month: "long" });
+  const route = useRouter();
 
   const getCategoryIcon = (categoryTitle: string) => {
     switch (categoryTitle?.toUpperCase()) {
@@ -44,7 +44,10 @@ export default function TaskCard({ task }: { task: Task }) {
   const categoryBg = getCategoryColor(firstCategory);
 
   return (
-    <TouchableOpacity className="bg-white rounded-xl border border-gray-200 shadow-md flex-row overflow-hidden my-2">
+    <Pressable
+      className="bg-white rounded-xl border border-gray-200 shadow-md flex-row overflow-hidden my-2"
+      onPress={() => route.push(`/tasks/${task.id.toString()}`)}
+    >
       {/* Vasen: Ikoni */}
       <View className={`w-28 h-32 items-center justify-center ${categoryBg}`}>
         <MaterialIcons name={categoryIcon} size={48} color="#4B5563" />
@@ -64,7 +67,7 @@ export default function TaskCard({ task }: { task: Task }) {
           </View>
           <View className="flex-row items-center">
             <MaterialIcons name="event" size={18} color="#22C55E" />
-            <Text className="ml-1 text-gray-600">{formatDate(task.startDate)}</Text>
+            <Text className="ml-1 text-gray-600">{formatDate(task.startDate) ?? ""}</Text>
           </View>
         </View>
         {/* Käyttäjä */}
@@ -75,6 +78,6 @@ export default function TaskCard({ task }: { task: Task }) {
           <Text className="text-sm text-gray-700 font-medium">{task.user.userName}</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

@@ -3,7 +3,6 @@ import "../../../global.css";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { Entypo, FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import Login from "@/src/components/ui/Login";
 
 export default function RootLayout() {
   return (
@@ -11,7 +10,6 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Tabs
         screenOptions={{
-          headerRight: () => <Login />,
           tabBarActiveTintColor: "#22c55e",
           headerTitleAlign: "center",
         }}
@@ -27,6 +25,7 @@ export default function RootLayout() {
           name="tasks"
           options={{
             title: "Työilmoitukset",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => <FontAwesome name="tasks" size={size} color={color} />,
           }}
         />
@@ -34,6 +33,7 @@ export default function RootLayout() {
           name="applications"
           options={{
             title: "Hakemukset",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="application-edit-outline" size={size} color={color} />
             ),
@@ -43,6 +43,7 @@ export default function RootLayout() {
           name="profile"
           options={{
             title: "Profiili",
+            headerShown: false,
             tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
           }}
         />
