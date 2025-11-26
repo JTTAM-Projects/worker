@@ -94,7 +94,6 @@ Luo `.env` tiedosto `apps/mobiili` -hakemistoon:
 ```env
 AUTH0_DOMAIN=your-domain.eu.auth0.com
 AUTH0_CLIENT_ID=your_client_id_here
-AUTH0_CLIENT_SECRET=your_client_secret_here
 ```
 
 **Huom:** Älä koskaan committaa `.env` tiedostoa versionhallintaan!
