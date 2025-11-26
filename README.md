@@ -16,7 +16,7 @@ Ennen asennusta varmista, että sinulla on asennettuna:
 
 Ohjeet
 
-### Asennus
+### Asennus & frontend -setup
 
 1. Kloonaa repositorio:
 
@@ -48,7 +48,6 @@ Luo `.env` tiedosto `apps/mobiili` -hakemistoon seuraavalla sisällöllä:
 ```env
 AUTH0_DOMAIN=your-domain.eu.auth0.com
 AUTH0_CLIENT_ID=your_client_id_here
-AUTH0_CLIENT_SECRET=your_client_secret_here
 ```
 
 Korvaa arvot omilla Auth0-tunnuksillasi, jotka löydät [Auth0 Dashboard](https://manage.auth0.com/) -sivulta, kohdasta applications -> mobiili -> setting
@@ -64,12 +63,27 @@ Ohjeet Android emulaattorin asennukseen sekä konfigurointiin [täältä](https:
 # Käynnistä Android-emulaattorissa tai laitteessa
 npx expo run:android
 ```
+### Backend Setup
 
-## 🏗️ Projektin rakenne
+1. **Navigoi glig -hakemistoon:**
+   ```bash
+   cd apps/backend/glig
+   ```
 
-```
+2. **Määrittele application.properties:**
+   - Kehitysvaiheessa käytetään H2-tietokantaa (konfiguroitu `application-dev.yml`)
+   - Päivitä Auth0 tunnukset ja domainit tänne `application.yml`:
+     ```yaml
+     okta:
+       oauth2:
+         issuer: https://your-auth0-domain.auth0.com/
+         audience: https://your-api-audience
+     ```
 
-```
+3. **Aja sovellus:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
 ## 🔧 Konfiguraatio
 
@@ -94,6 +108,5 @@ AUTH0_CLIENT_SECRET=your_client_secret_here
 ## 📱 Tuki ja yhteensopivuus
 
 - **Android:** 6.0 (API level 23) tai uudempi
-- **iOS:** iOS 12.0 tai uudempi
 
 huom. tämä ohje ei sisällä ios asennuksia
