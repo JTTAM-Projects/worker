@@ -3,22 +3,77 @@ import { useNavigate } from "@tanstack/react-router";
 /**
  * Tabulation Component
  * 
- * Renders a horizontal tab navigation bar with Material Icons.
- * Each tab is a button that navigates to a specified route when clicked.
- * The active tab is highlighted with a green bottom border and text color.
+ * A reusable horizontal tab navigation component that renders clickable tabs with Material Icons.
+ * Each tab navigates to a specified route when clicked, and the active tab is visually highlighted
+ * with a green bottom border and text color.
+ * 
+ * Features:
+ * - Material Icons integration for visual indicators
+ * - Active state highlighting with green accent
+ * - Hover states for inactive tabs
+ * - Smooth transitions between states
+ * - Responsive spacing with Tailwind utilities
  * 
  * @param {TabulationProps} props - Component props
- * @param {Tab[]} props.tabs - Array of tab objects defining the navigation items
+ * @param {Tab[]} props.tabs - Array of tab configuration objects
+ * 
+ * @typedef {Object} Tab
+ * @property {string} iconName - Material Icon name (e.g., "task", "work", "history")
+ * @property {string} label - Display text for the tab
+ * @property {string} tabLink - Route path to navigate to when clicked
+ * @property {boolean} isActive - Whether this tab is currently active (use matchRoute for automatic detection)
  * 
  * @example
- * const tabs = [
- *   { iconName: "task", label: "Aktiiviset", tabLink: "/worker/own-tasks/to-do", isActive: true },
- *   { iconName: "work", label: "Työn alla", tabLink: "/worker/own-tasks/in-progress", isActive: false },
- *   { iconName: "hourglass_empty", label: "Odottaa hyväksyntää", tabLink: "/worker/own-tasks/waiting-approval", isActive: false },
- *   { iconName: "history", label: "Menneet", tabLink: "/worker/own-tasks/past", isActive: false },
- * ];
+ * // Create a custom hook for shared tab configuration
+ * // filepath: src/routes/_authenticated/worker/own-tasks/workerTaskTabConfig.tsx
+ * import { useMatchRoute } from "@tanstack/react-router";
  * 
- * <Tabulation tabs={tabs} />
+ * export function useWorkerTaskTabs() {
+ *   const matchRoute = useMatchRoute();
+ * 
+ *   return [
+ *     {
+ *       iconName: "task",
+ *       label: "Aktiiviset",
+ *       tabLink: "/worker/own-tasks/to-do",
+ *       isActive: !!matchRoute({ to: "/worker/own-tasks/to-do" }),
+ *     },
+ *     {
+ *       iconName: "work",
+ *       label: "Työn Alla",
+ *       tabLink: "/worker/own-tasks/in-progress",
+ *       isActive: !!matchRoute({ to: "/worker/own-tasks/in-progress" }),
+ *     },
+ *     {
+ *       iconName: "hourglass_empty",
+ *       label: "Odottaa hyväksyntää",
+ *       tabLink: "/worker/own-tasks/waiting-approval",
+ *       isActive: !!matchRoute({ to: "/worker/own-tasks/waiting-approval" }),
+ *     },
+ *     {
+ *       iconName: "history",
+ *       label: "Menneet",
+ *       tabLink: "/worker/own-tasks/past",
+ *       isActive: !!matchRoute({ to: "/worker/own-tasks/past" }),
+ *     },
+ *   ];
+ * }
+ * 
+ * // Use the hook in your page component
+ * // filepath: src/routes/_authenticated/worker/own-tasks/to-do/index.tsx
+ * import { useWorkerTaskTabs } from "../workerTaskTabConfig";
+ * import Tabulation from "@/ui-library/Tabulation";
+ * 
+ * function WorkerToDoTasksPage() {
+ *   const tabs = useWorkerTaskTabs();
+ *   
+ *   return (
+ *     <main className="container mx-auto px-6 py-12">
+ *       <Tabulation tabs={tabs} />
+ *       {/* Rest of page content *\/}
+ *     </main>
+ *   );
+ * }
  */
 
 type Tab = {
