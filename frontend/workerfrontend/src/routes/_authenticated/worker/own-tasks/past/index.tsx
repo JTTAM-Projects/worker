@@ -6,6 +6,8 @@ import { taskQueries } from "../../../../../features/task/queries/taskQueries";
 import type { TaskFilters } from "../../../../../features/task";
 import WorkerTasksToList from "../../../../../features/task/components/WorkerTasksToList";
 import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
+import { useWorkerTaskTabs } from "../workerTaskTabConfig";
+import Tabulation from "../../../../../ui-library/Tabulation";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/past/")({
   component: WorkerPastTasksPage,
@@ -32,6 +34,7 @@ function WorkerPastTasksPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
   const [filters, setFilters] = useState<TaskFilters>({})
+  const tabs = useWorkerTaskTabs();
 
   const { data: taskList } = useSuspenseQuery(
     taskQueries.worker(getAccessTokenSilently, {
@@ -58,30 +61,7 @@ function WorkerPastTasksPage() {
   return (
     <main className="container mx-auto px-6 py-12 gap-10">
       <div className="flex mt-5 justify-center">
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/to-do" })}
-        >
-          Aktiiviset
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/in-progress" })}
-        >
-          Työn alla
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/waiting-approval" })}
-        >
-          Odottaa hyväksyntää
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
-          onClick={() => navigate({ to: "/worker/own-tasks/past" })}
-        >
-          Menneet
-        </button>
+        <Tabulation tabs={tabs} />
       </div>
 
       <div className="container mx-auto px-6 py-8">    

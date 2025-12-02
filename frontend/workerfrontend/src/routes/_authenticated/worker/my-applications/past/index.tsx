@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useGetUserApplications } from "../../../../../features/application/hooks/useGetApplication";
 import { ApplicationFilterPanel } from "../../../../../features/application/components/ApplicationFilterPanel";
 import ApplicationToList from "../../../../../features/application/components/applicationsToList";
+import { useWorkerApplicationTabs } from "../workerApplicationTabConfig";
+import Tabulation from "../../../../../ui-library/Tabulation";
 
 export const Route = createFileRoute("/_authenticated/worker/my-applications/past/")({
   component: PastApplicationsPage,
@@ -16,6 +18,7 @@ export default function PastApplicationsPage() {
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "ACCEPTED",
   });
+  const tabs = useWorkerApplicationTabs();
 
   const { data: paginatedResponse } = useGetUserApplications({
     page: currentPage,
@@ -40,23 +43,7 @@ export default function PastApplicationsPage() {
   return (
     <div className="min-h-screen align-center bg-gray-50">
       <div className="flex mt-5 justify-center">
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/my-applications/active" })}
-        >
-          Aktiiviset
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
-          onClick={() => navigate({ to: "/worker/my-applications/past" })}
-        >
-          Menneet
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-        >
-          Työtarjoukset
-        </button>
+        <Tabulation tabs={tabs} />
       </div>
       <div className="container mx-auto px-6 py-8">
         <ApplicationFilterPanel
