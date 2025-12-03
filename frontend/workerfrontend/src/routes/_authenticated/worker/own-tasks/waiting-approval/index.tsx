@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
 import { taskQueries } from "../../../../../features/task/queries/taskQueries";
@@ -29,7 +29,6 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/waiting-a
 });
 
 function WorkerWaitingApprovalTasksPage() {
-  const navigate = useNavigate();
   const { getAccessTokenSilently } = useAuth0();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;

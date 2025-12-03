@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import type { ApplicationFilters } from "../../../../../features/application/types";
 import { useState } from "react";
 import { ApplicationFilterPanel } from "../../../../../features/application/components/ApplicationFilterPanel";
@@ -29,7 +29,6 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/act
 });
 
 export default function ActiveApplicationsPage() {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
   const { getAccessTokenSilently } = useAuth0();

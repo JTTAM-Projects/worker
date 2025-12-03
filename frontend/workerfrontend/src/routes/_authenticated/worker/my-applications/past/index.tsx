@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import type { ApplicationFilters } from "../../../../../features/application/types";
 import { useState } from "react";
 import { useGetUserApplications } from "../../../../../features/application/hooks/useGetApplication";
@@ -12,7 +12,6 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/pas
 });
 
 export default function PastApplicationsPage() {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
   const [filters, setFilters] = useState<ApplicationFilters>({
