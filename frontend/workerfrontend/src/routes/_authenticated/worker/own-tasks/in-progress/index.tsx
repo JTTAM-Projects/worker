@@ -8,6 +8,8 @@ import WorkerTasksToList from "../../../../../features/task/components/WorkerTas
 import { TaskFilterPanel } from "../../../../../features/task/components/TaskFilterPanel";
 import { TaskMap } from "../../../../../features/task/components/TaskMap";
 import { ResultsControlBar } from "../../../../../features/task/components/ResultsControlBar";
+import { useWorkerTaskTabs } from "../workerTaskTabConfig";
+import Tabulation from "../../../../../ui-library/Tabulation";
 
 export const Route = createFileRoute("/_authenticated/worker/own-tasks/in-progress/")({
   component: WorkerInProgressTasksPage,
@@ -41,6 +43,7 @@ function WorkerInProgressTasksPage() {
   const pageSize = 10;
   const [filters, setFilters] = useState<TaskFilters>({});
   const viewMode: ViewMode = search.view ?? "list";
+  const tabs = useWorkerTaskTabs();
 
   const { data: taskList } = useSuspenseQuery(
     taskQueries.worker(getAccessTokenSilently, {
@@ -103,30 +106,7 @@ function WorkerInProgressTasksPage() {
   return (
     <main className="container mx-auto px-6 py-12 gap-10">
       <div className="flex mt-5 justify-center">
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/to-do" })}
-        >
-          Aktiiviset
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
-          onClick={() => navigate({ to: "/worker/own-tasks/in-progress" })}
-        >
-          Työn alla
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/waiting-approval" })}
-        >
-          Odottaa hyväksyntää
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/own-tasks/past" })}
-        >
-          Menneet
-        </button>
+        <Tabulation tabs={tabs} />
       </div>
 
       <div className="container mx-auto px-6 py-8">

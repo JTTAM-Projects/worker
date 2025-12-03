@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import type { ApplicationFilters } from "../../../../../features/application/types";
 import { useState } from "react";
 import { ApplicationFilterPanel } from "../../../../../features/application/components/ApplicationFilterPanel";
@@ -6,6 +6,8 @@ import ApplicationToList from "../../../../../features/application/components/ap
 import { applicationQueries } from "../../../../../features/application/queries/applicationQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useWorkerApplicationTabs } from "../workerApplicationTabConfig";
+import Tabulation from "../../../../../ui-library/Tabulation";
 
 export const Route = createFileRoute("/_authenticated/worker/my-applications/active/")({
   component: ActiveApplicationsPage,
@@ -27,13 +29,13 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/act
 });
 
 export default function ActiveApplicationsPage() {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
   const { getAccessTokenSilently } = useAuth0();
   const [filters, setFilters] = useState<ApplicationFilters>({
     applicationStatus: "PENDING",
   });
+  const tabs = useWorkerApplicationTabs();
 
   const { data: paginatedResponse } = useSuspenseQuery(
     applicationQueries.ownApplications(getAccessTokenSilently, {
@@ -60,23 +62,7 @@ export default function ActiveApplicationsPage() {
   return (
     <div className="min-h-screen align-center bg-gray-50">
       <div className="flex mt-5 justify-center">
-        <button
-          className={"py-2 px-4 text-sm font-medium text-green-600 border-b-2 border-green-600"}
-          onClick={() => navigate({ to: "/worker/my-applications/active" })}
-        >
-          Aktiiviset
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-          onClick={() => navigate({ to: "/worker/my-applications/past" })}
-        >
-          Menneet
-        </button>
-        <button
-          className={"py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700"}
-        >
-          Työtarjoukset
-        </button>
+        <Tabulation tabs={tabs} />
       </div>
       <div className="container mx-auto px-6 py-8">
         <ApplicationFilterPanel

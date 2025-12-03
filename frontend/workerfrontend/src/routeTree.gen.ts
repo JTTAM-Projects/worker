@@ -38,6 +38,7 @@ import { Route as AuthenticatedWorkerOwnTasksTaskIdIndexRouteImport } from './ro
 import { Route as AuthenticatedWorkerMyProfileReviewsIndexRouteImport } from './routes/_authenticated/worker/my-profile/reviews/index'
 import { Route as AuthenticatedWorkerMyProfileDetailsIndexRouteImport } from './routes/_authenticated/worker/my-profile/details/index'
 import { Route as AuthenticatedWorkerMyApplicationsPastIndexRouteImport } from './routes/_authenticated/worker/my-applications/past/index'
+import { Route as AuthenticatedWorkerMyApplicationsJobOffersIndexRouteImport } from './routes/_authenticated/worker/my-applications/job-offers/index'
 import { Route as AuthenticatedWorkerMyApplicationsActiveIndexRouteImport } from './routes/_authenticated/worker/my-applications/active/index'
 import { Route as AuthenticatedWorkerMyApplicationsTaskIdIndexRouteImport } from './routes/_authenticated/worker/my-applications/$taskId/index'
 import { Route as AuthenticatedWorkerDashboardPaymentsIndexRouteImport } from './routes/_authenticated/worker/dashboard/payments/index'
@@ -227,6 +228,12 @@ const AuthenticatedWorkerMyApplicationsPastIndexRoute =
     path: '/my-applications/past/',
     getParentRoute: () => AuthenticatedWorkerRoute,
   } as any)
+const AuthenticatedWorkerMyApplicationsJobOffersIndexRoute =
+  AuthenticatedWorkerMyApplicationsJobOffersIndexRouteImport.update({
+    id: '/my-applications/job-offers/',
+    path: '/my-applications/job-offers/',
+    getParentRoute: () => AuthenticatedWorkerRoute,
+  } as any)
 const AuthenticatedWorkerMyApplicationsActiveIndexRoute =
   AuthenticatedWorkerMyApplicationsActiveIndexRouteImport.update({
     id: '/my-applications/active/',
@@ -410,6 +417,7 @@ export interface FileRoutesByFullPath {
   '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/worker/my-applications/job-offers': typeof AuthenticatedWorkerMyApplicationsJobOffersIndexRoute
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
@@ -461,6 +469,7 @@ export interface FileRoutesByTo {
   '/worker/dashboard/payments': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/worker/my-applications/$taskId': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/worker/my-applications/active': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/worker/my-applications/job-offers': typeof AuthenticatedWorkerMyApplicationsJobOffersIndexRoute
   '/worker/my-applications/past': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/worker/my-profile/details': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/worker/my-profile/reviews': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
@@ -517,6 +526,7 @@ export interface FileRoutesById {
   '/_authenticated/worker/dashboard/payments/': typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   '/_authenticated/worker/my-applications/$taskId/': typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   '/_authenticated/worker/my-applications/active/': typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  '/_authenticated/worker/my-applications/job-offers/': typeof AuthenticatedWorkerMyApplicationsJobOffersIndexRoute
   '/_authenticated/worker/my-applications/past/': typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   '/_authenticated/worker/my-profile/details/': typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   '/_authenticated/worker/my-profile/reviews/': typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
@@ -572,6 +582,7 @@ export interface FileRouteTypes {
     | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
+    | '/worker/my-applications/job-offers'
     | '/worker/my-applications/past'
     | '/worker/my-profile/details'
     | '/worker/my-profile/reviews'
@@ -623,6 +634,7 @@ export interface FileRouteTypes {
     | '/worker/dashboard/payments'
     | '/worker/my-applications/$taskId'
     | '/worker/my-applications/active'
+    | '/worker/my-applications/job-offers'
     | '/worker/my-applications/past'
     | '/worker/my-profile/details'
     | '/worker/my-profile/reviews'
@@ -678,6 +690,7 @@ export interface FileRouteTypes {
     | '/_authenticated/worker/dashboard/payments/'
     | '/_authenticated/worker/my-applications/$taskId/'
     | '/_authenticated/worker/my-applications/active/'
+    | '/_authenticated/worker/my-applications/job-offers/'
     | '/_authenticated/worker/my-applications/past/'
     | '/_authenticated/worker/my-profile/details/'
     | '/_authenticated/worker/my-profile/reviews/'
@@ -903,6 +916,13 @@ declare module '@tanstack/react-router' {
       path: '/my-applications/past'
       fullPath: '/worker/my-applications/past'
       preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkerRoute
+    }
+    '/_authenticated/worker/my-applications/job-offers/': {
+      id: '/_authenticated/worker/my-applications/job-offers/'
+      path: '/my-applications/job-offers'
+      fullPath: '/worker/my-applications/job-offers'
+      preLoaderRoute: typeof AuthenticatedWorkerMyApplicationsJobOffersIndexRouteImport
       parentRoute: typeof AuthenticatedWorkerRoute
     }
     '/_authenticated/worker/my-applications/active/': {
@@ -1162,6 +1182,7 @@ interface AuthenticatedWorkerRouteChildren {
   AuthenticatedWorkerDashboardPaymentsIndexRoute: typeof AuthenticatedWorkerDashboardPaymentsIndexRoute
   AuthenticatedWorkerMyApplicationsTaskIdIndexRoute: typeof AuthenticatedWorkerMyApplicationsTaskIdIndexRoute
   AuthenticatedWorkerMyApplicationsActiveIndexRoute: typeof AuthenticatedWorkerMyApplicationsActiveIndexRoute
+  AuthenticatedWorkerMyApplicationsJobOffersIndexRoute: typeof AuthenticatedWorkerMyApplicationsJobOffersIndexRoute
   AuthenticatedWorkerMyApplicationsPastIndexRoute: typeof AuthenticatedWorkerMyApplicationsPastIndexRoute
   AuthenticatedWorkerMyProfileDetailsIndexRoute: typeof AuthenticatedWorkerMyProfileDetailsIndexRoute
   AuthenticatedWorkerMyProfileReviewsIndexRoute: typeof AuthenticatedWorkerMyProfileReviewsIndexRoute
@@ -1205,6 +1226,8 @@ const AuthenticatedWorkerRouteChildren: AuthenticatedWorkerRouteChildren = {
     AuthenticatedWorkerMyApplicationsTaskIdIndexRoute,
   AuthenticatedWorkerMyApplicationsActiveIndexRoute:
     AuthenticatedWorkerMyApplicationsActiveIndexRoute,
+  AuthenticatedWorkerMyApplicationsJobOffersIndexRoute:
+    AuthenticatedWorkerMyApplicationsJobOffersIndexRoute,
   AuthenticatedWorkerMyApplicationsPastIndexRoute:
     AuthenticatedWorkerMyApplicationsPastIndexRoute,
   AuthenticatedWorkerMyProfileDetailsIndexRoute:
