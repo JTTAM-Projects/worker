@@ -1,3 +1,8 @@
+import type { UserDto } from '../Profile/types';
+
+// Re-export for convenience
+export type { UserDto };
+
 // Backend categories 
 export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
@@ -39,15 +44,6 @@ export interface LocationResponse {
   longitude?: number;
 }
 
-// Matches backend UserResponse/UserDto
-export interface UserDto {
-  userName: string;
-  mail: string;
-  businessId: string;
-  phoneNumber: string;
-  address: string;
-}
-
 // Matches backend TaskListDTO exactly
 export interface Task {
   id: number;
@@ -73,6 +69,55 @@ export interface TaskApplicant {
   timeSuggestion: string; // ISO 8601 datetime string suggested by applicant
   description?: string; // free text message from applicant
 }
+
+// Submission state for form handling
+export type SubmissionState = "idle" | "loading" | "success" | "error";
+
+// Form state types for task creation/editing
+export type TaskFormState = {
+  title: string;
+  description: string;
+  categoryTitle: string;
+  price: string;
+  startDate: string;
+  endDate: string;
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  country: string;
+};
+
+// Form state types for contact information
+export type ContactFormState = {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+};
+
+// Input types for task creation/editing
+export interface TaskCategoryInput {
+  title: Category | string;
+  categoryId?: number;
+}
+
+// Location input for task creation/editing
+export interface TaskLocationInput {
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+// Task wizard payload combining task, contact, categories, and location inputs
+export type TaskWizardPayload = {
+  task: TaskFormState;
+  contact: ContactFormState;
+  categories: TaskCategoryInput[];
+  location: TaskLocationInput;
+};
 
 // Paginated response from backend
 export interface PaginatedResponse<T> {

@@ -1,5 +1,5 @@
 export type EmployerType = 'INDIVIDUAL' | 'COMPANY'
-export interface User {
+export interface UserDto {
   userName: string;
   mail: string;
   businessId: string;

@@ -1,10 +1,19 @@
-import type { UserDto, Category } from '../task/types';
+import type { UserDto } from '../Profile/types';
+import type { Category } from '../task/types';
 
 export type ApplicationStatus = 
   | 'PENDING' 
   | 'ACCEPTED' 
   | 'REJECTED' 
   | 'WITHDRAWN';
+
+export type ApplicationFormMode = "create" | "edit";
+
+export interface ApplicationFormValues {
+  priceSuggestion: number;
+  timeSuggestion: string;
+  description?: string;
+}
 
 export interface ApplicationFilters {
   searchText?: string;

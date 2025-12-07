@@ -1,13 +1,14 @@
 import type {
   Task,
   PaginatedResponse,
-  Category,
   TaskStatus,
   TaskApplicant,
   TaskFilters,
   CategoryResponse,
   LocationResponse,
   UserDto,
+  TaskCategoryInput,
+  TaskLocationInput,
 } from "../types";
 
 // This is a file for interacting with the backend task API.
@@ -283,20 +284,6 @@ export async function fetchWorkerTasks(
   }
 
   return response.json();
-}
-
-export interface TaskCategoryInput {
-  title: Category | string;
-  categoryId?: number;
-}
-
-export interface TaskLocationInput {
-  streetAddress: string;
-  postalCode: string;
-  city: string;
-  country: string;
-  latitude?: number;
-  longitude?: number;
 }
 
 export interface CreateTaskInput {

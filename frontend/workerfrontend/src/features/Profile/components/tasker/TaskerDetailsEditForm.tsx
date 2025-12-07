@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useUpdateUser } from "../../hooks/userHooks";
 import { useCreateTasker, useGetTaskerDetails, useUpdateTaskerDetails } from "../../hooks/taskerHooks";
-import type { User, TaskerProfile } from "../../types";
+import type { UserDto, TaskerProfile } from "../../types";
 import { profileStyles, buttonStyles, formStyles } from "../../../../ui-library/stylesConfig";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -10,7 +10,7 @@ export default function TaskerDetailsEditForm({
     onSuccess,
     onClose,
 }: {
-    initialValues?: Partial<User & TaskerProfile>;
+    initialValues?: Partial<UserDto & TaskerProfile>;
     onSuccess?: () => void;
     onClose?: () => void;
 }) {
