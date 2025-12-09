@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/act
         })
       );
     } catch (error) {
-      console.error('Failed to load applications:', error);
+      console.error("Failed to load applications:", error);
       // Return empty data on error to prevent crash
       return { content: [], totalPages: 0, number: 0, first: true, last: true };
     }
