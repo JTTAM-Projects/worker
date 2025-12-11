@@ -7,6 +7,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { Auth0Wrapper, useAuth0Context, type Auth0ContextType } from "./auth/auth0";
 import NotFoundComponent from "./ui-library/routeComponents/PageNotFoundComponent";
+import ErrorComponent from "./ui-library/routeComponents/ErrorComponent";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
   defaultNotFoundComponent: NotFoundComponent,
+  defaultErrorComponent: ErrorComponent,
 });
 
 // eslint-disable-next-line react-refresh/only-export-components

@@ -1,6 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import Button from "../components/Button";
 
 export default function PageNotFoundComponent() {
+  const navigate = useNavigate();
   return (
     <main className="grid min-h-full place-items-center bg-gray-100 px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
@@ -12,18 +14,8 @@ export default function PageNotFoundComponent() {
           Pahoittelut, emme löytäneet sivua jota yritit hakea.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link
-            to="/"
-            className="rounded-md bg-green-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-white hover:text-green-500"
-          >
-            Takaisin etusivulle
-          </Link>
-          <Link
-            to="/"
-            className="rounded-md bg-gray-300 px-3.5 py-2.5 text-sm font-semibold text-black shadow-xs hover:bg-white "
-          >
-            Takaisin etusivulle
-          </Link>
+          <Button title="Takaisin etusivulle" onClick={() => navigate({ to: "/" })} />
+          <Button title="Ota yhteyttä" color={"secondary"} onClick={() => navigate({ to: "/" })} />
         </div>
       </div>
     </main>
