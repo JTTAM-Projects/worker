@@ -5,18 +5,18 @@ import { Link } from "@tanstack/react-router";
 
 export default function WorkerNavBar() {
   const { isAuthenticated } = useAuth0();
-  
+
   // Get saved search params from sessionStorage
   const getSavedTasksSearch = () => {
     try {
-      const saved = sessionStorage.getItem('worker-tasks-search');
+      const saved = sessionStorage.getItem("worker-tasks-search");
       return saved ? JSON.parse(saved) : undefined;
     } catch {
       return undefined;
     }
   };
   return (
-    <header className="bg-gradient-to-r from-green-600 to-green-500 shadow-lg sticky top-0 z-50 border-b-2 border-green-700">
+    <header className="bg-gradient-to-r from-green-600 to-green-500 shadow-lg top-0 z-50 border-b-2 border-green-700">
       {/* navigaatio */}
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo ja navigaatio-linkit (vasen) */}

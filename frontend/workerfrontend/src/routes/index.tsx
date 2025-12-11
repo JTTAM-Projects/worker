@@ -7,7 +7,7 @@ import TaskList from "../features/task/components/TaskList";
 import { useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { taskQueries } from "../features/task/queries/taskQueries";
-import WorkerNavBar from "../features/layoutcomponents/WorkerNavBar";
+import EmployerNavBar from "../features/layoutcomponents/EmployerNavBar";
 
 export const Route = createFileRoute("/")({
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(taskQueries.all()),
@@ -34,7 +34,7 @@ function RouteComponent() {
 
   return (
     <>
-      <WorkerNavBar />
+      <EmployerNavBar />
       <main className="container mx-auto px-6 py-12 grid gap-12">
         <section className="bg-white rounded-lg shadow-lg text-center py-16 px-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800">Saa enemmän aikaan WorkerAppilla!</h1>
