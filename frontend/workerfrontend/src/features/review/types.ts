@@ -2,6 +2,11 @@
 // Review Types - Matching Backend DTOs
 // ============================================================================
 
+import type { PaginatedResponse } from '../task/types';
+
+// Re-export for convenience
+export type { PaginatedResponse };
+
 /**
  * Review response from backend (matches ReviewResponse.java)
  */
@@ -26,38 +31,6 @@ export interface ReviewRequest {
   revieweeUsername: string;
   rating: number;            // 1-5
   comment?: string;          // Optional, max 1000 chars
-}
-
-/**
- * Spring Data Page wrapper for paginated responses
- */
-export interface Page<T> {
-  content: T[];
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-    sort: {
-      sorted: boolean;
-      unsorted: boolean;
-      empty: boolean;
-    };
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
-  empty: boolean;
-  numberOfElements: number;
-  sort: {
-    sorted: boolean;
-    unsorted: boolean;
-    empty: boolean;
-  };
 }
 
 /**
