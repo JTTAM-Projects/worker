@@ -1,5 +1,5 @@
 import ReviewCard from "./ReviewCard";
-import type { ReviewListProps, Page, Review } from "../types";
+import type { ReviewListProps, PaginatedResponse, Review } from "../types";
 
 /**
  * ReviewList Container Component
@@ -10,7 +10,7 @@ export default function ReviewList({
     reviews,
     profileType,
     limit = 10,
-}: ReviewListProps & { reviews: Page<Review> | null }) {
+}: ReviewListProps & { reviews: PaginatedResponse<Review> | null }) {
     // Empty state
     if (!reviews || reviews.content.length === 0) {
         const emptyMessage =

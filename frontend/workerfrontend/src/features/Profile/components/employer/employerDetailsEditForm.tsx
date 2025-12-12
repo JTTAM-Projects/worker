@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useUpdateUser } from "../../hooks/userHooks";
 import { useCreateEmployerProfile, useGetEmployerProfile, useUpdateEmployer } from "../../hooks/EmployerHooks";
-import type { User, EmployerProfile } from "../../types";
+import type { UserDto, EmployerProfile } from "../../types";
 import { profileStyles, buttonStyles, formStyles } from "../../../../ui-library/stylesConfig";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -10,7 +10,7 @@ export default function EmployerDetailsEditForm({
     onSuccess,
     onClose,
 }: {
-    initialValues?: Partial<User & EmployerProfile>;
+    initialValues?: Partial<UserDto & EmployerProfile>;
     onSuccess?: () => void;
     onClose?: () => void;
 }) {

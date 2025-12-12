@@ -1,4 +1,4 @@
-import type { Review, ReviewRequest, Page, ReviewProfileType } from "../types";
+import type { Review, ReviewRequest, PaginatedResponse, ReviewProfileType } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL
 
@@ -17,7 +17,7 @@ export async function getReviews(
   profileType: ReviewProfileType,
   page = 0,
   size = 10
-): Promise<Page<Review>> {
+): Promise<PaginatedResponse<Review>> {
   const token = await getAccessTokenSilently();
   const endpoint = profileType === 'TASKER' ? 'tasker' : 'employer';
   
