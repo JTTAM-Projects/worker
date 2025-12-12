@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus, updateTaskStatus, type CreateTaskInput } from "../api/taskApi";
+import { fetchTaskById, updateTask, createTask, deleteTask, updateApplicationStatus, updateTaskStatus } from "../api/taskApi";
 import { useAuth0 } from "@auth0/auth0-react";
-import type { TaskStatus } from "../types";
+import type { CreateTaskInput, DeleteTaskInput, UpdateTaskStatusInput } from "../types";
 
 /**
  * @deprecated Use taskQueries.detail() with useQuery instead
@@ -49,10 +49,6 @@ export function useUpdateTask(taskId: number) {
   });
 }
 
-export interface DeleteTaskInput {
-  taskId: number;
-}
-
 /** Delete a task and clean up related cache entries */
 export function useDeleteTask() {
   const { getAccessTokenSilently } = useAuth0();
@@ -89,11 +85,6 @@ export function useUpdateApplicationStatus() {
       qc.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-}
-
-export interface UpdateTaskStatusInput {
-  taskId: number;
-  status: TaskStatus;
 }
 
 /** Update task status (e.g., approve/reject work, change to COMPLETED or IN_PROGRESS) */

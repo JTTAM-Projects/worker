@@ -3,18 +3,22 @@ import type { UserDto } from '../Profile/types';
 // Re-export for convenience
 export type { UserDto };
 
-// Backend categories 
+/** Available task categories (matches backend enum) */
 export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
 
+/** Task lifecycle status (matches backend enum) */
 export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "PENDING_APPROVAL" | "COMPLETED" | "CANCELLED" | "EXPIRED";
 
+/** Application status for task applicants (matches backend enum) */
 export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED";
 
+/** Available sort options for task lists */
 export type SortOption = "newest" | "oldest" | "priceAsc" | "priceDesc" | "nearest";
 
+/** Display mode for task browsing (list or map view) */
 export type ViewMode = "list" | "map";
 
-// Task filter parameters matching backend TaskDataGridFilters
+/** Filter parameters for searching tasks (matches backend TaskDataGridFilters) */
 export interface TaskFilters {
   searchText?: string;
   categories?: string[];
@@ -28,12 +32,12 @@ export interface TaskFilters {
   sortBy?: SortOption;
 }
 
-// Matches backend CategoryResponse
+/** Category response from backend API */
 export interface CategoryResponse {
   title: string;
 }
 
-// Matches backend LocationResponse
+/** Location response from backend API */
 export interface LocationResponse {
   locationId?: number;
   streetAddress?: string;
@@ -44,7 +48,7 @@ export interface LocationResponse {
   longitude?: number;
 }
 
-// Matches backend TaskListDTO exactly
+/** Complete task data (matches backend TaskListDTO) */
 export interface Task {
   id: number;
   user: UserDto;
@@ -59,7 +63,7 @@ export interface Task {
   worker?: UserDto;
 }
 
-// Matches backend TaskApplicantDto
+/** Task applicant details (matches backend TaskApplicantDto) */
 export interface TaskApplicant {
   appliedUser: UserDto;
   priceSuggestion: number;
@@ -70,10 +74,10 @@ export interface TaskApplicant {
   description?: string; // free text message from applicant
 }
 
-// Submission state for form handling
+/** UI state for form submission tracking */
 export type SubmissionState = "idle" | "loading" | "success" | "error";
 
-// Form state types for task creation/editing
+/** Form state for task creation/editing wizard */
 export type TaskFormState = {
   title: string;
   description: string;
@@ -87,7 +91,7 @@ export type TaskFormState = {
   country: string;
 };
 
-// Form state types for contact information
+/** Form state for contact information in task wizard */
 export type ContactFormState = {
   firstName: string;
   lastName: string;
@@ -95,13 +99,13 @@ export type ContactFormState = {
   email: string;
 };
 
-// Input types for task creation/editing
+/** Category input for creating/editing tasks */
 export interface TaskCategoryInput {
   title: Category | string;
   categoryId?: number;
 }
 
-// Location input for task creation/editing
+/** Location input for creating/editing tasks */
 export interface TaskLocationInput {
   streetAddress: string;
   postalCode: string;
@@ -111,7 +115,7 @@ export interface TaskLocationInput {
   longitude?: number;
 }
 
-// Task wizard payload combining task, contact, categories, and location inputs
+/** Complete payload from task creation wizard */
 export type TaskWizardPayload = {
   task: TaskFormState;
   contact: ContactFormState;
@@ -119,7 +123,32 @@ export type TaskWizardPayload = {
   location: TaskLocationInput;
 };
 
-// Paginated response from backend
+// Mutation input types
+
+/** Input for creating a new task (used by useCreateTask hook) */
+export interface CreateTaskInput {
+  categories: TaskCategoryInput[];
+  title: string;
+  price: number;
+  startDate: string;
+  endDate: string;
+  location: TaskLocationInput;
+  description?: string;
+  status?: TaskStatus;
+}
+
+/** Input for deleting a task (used by useDeleteTask hook) */
+export interface DeleteTaskInput {
+  taskId: number;
+}
+
+/** Input for updating task status (used by useUpdateTaskStatus hook) */
+export interface UpdateTaskStatusInput {
+  taskId: number;
+  status: TaskStatus;
+}
+
+/** Generic paginated response from backend API */
 export interface PaginatedResponse<T> {
   content: T[];
   pageable: {

@@ -1,14 +1,12 @@
 import type {
   Task,
   PaginatedResponse,
-  TaskStatus,
   TaskApplicant,
   TaskFilters,
   CategoryResponse,
   LocationResponse,
   UserDto,
-  TaskCategoryInput,
-  TaskLocationInput,
+  CreateTaskInput,
 } from "../types";
 
 // This is a file for interacting with the backend task API.
@@ -284,17 +282,6 @@ export async function fetchWorkerTasks(
   }
 
   return response.json();
-}
-
-export interface CreateTaskInput {
-  categories: TaskCategoryInput[];
-  title: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  location: TaskLocationInput;
-  description?: string;
-  status?: TaskStatus;
 }
 
 // Create a new task (requires authentication)

@@ -17,4 +17,4 @@ export {
   useUpdateApplicationStatus,
   useUpdateTaskStatus
 } from './taskMutations';
-export type { DeleteTaskInput, UpdateTaskStatusInput } from './taskMutations';
+export type { DeleteTaskInput, UpdateTaskStatusInput } from '../types';
