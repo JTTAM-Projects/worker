@@ -1,10 +1,10 @@
-import type { User, TaskerProfile, EmployerProfile, Auth0User } from '../types';
+import type { UserDto, TaskerProfile, EmployerProfile, Auth0User } from '../types';
 
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE_URL = 'http://localhost:8080/api';
 
 //GET METHODS
-export async function getUser(getAccessToken: () => Promise<string>, userName : string | undefined): Promise<User> {
+export async function getUser(getAccessToken: () => Promise<string>, userName : string | undefined): Promise<UserDto> {
     const token = await getAccessToken();
 
     const response = await fetch(`${API_BASE_URL}/user/${userName}`, {
@@ -70,8 +70,8 @@ export async function getEmployerProfile(getAccessToken: () => Promise<string>):
 //POST METHODS
 export async function createUser(
     getAccessToken: () => Promise<string>,
-    userData: User
-): Promise<User>{
+    userData: UserDto
+): Promise<UserDto>{
     const token = await getAccessToken();
 
     const response = await fetch(`${API_BASE_URL}/user/me`, {
@@ -169,8 +169,8 @@ export async function createTaskerProfile(
 //PUT METHODS
 export async function updateUser(
     getAccessToken: () => Promise<string>,
-    userData: Partial<User>
-): Promise<User> {
+    userData: Partial<UserDto>
+): Promise<UserDto> {
     const token = await getAccessToken();
     
     const response = await fetch(`${API_BASE_URL}/user/me`, {

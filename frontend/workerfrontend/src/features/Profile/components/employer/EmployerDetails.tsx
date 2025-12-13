@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { profileStyles, buttonStyles } from "../../../../ui-library/stylesConfig";
-import type { EmployerProfile, User } from "../../types";
+import type { EmployerProfile, UserDto } from "../../types";
 
 type EmployerDetailsProps = {
     employerDetails: EmployerProfile | null;
-    userDetails: User;
+    userDetails: UserDto;
     userEmail: string;
 };
 

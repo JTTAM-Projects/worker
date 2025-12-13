@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { profileStyles, buttonStyles } from "../../../../ui-library/stylesConfig";
-import type { TaskerProfile, User } from "../../types";
+import type { TaskerProfile, UserDto } from "../../types";
 import ProfileSkillsSection from "../UserSkillsSection";
 
 type TaskerDetailsProps = {
     taskerDetails: TaskerProfile | null;
-    userDetails: User;
+    userDetails: UserDto;
     userEmail: string;
 };
 

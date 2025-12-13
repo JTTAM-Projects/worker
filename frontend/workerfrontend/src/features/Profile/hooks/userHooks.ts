@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth0 } from "@auth0/auth0-react";
 import { createUser, getUser, updateUser} from "../api/profileApi";
-import type { User } from "../types";
+import type { UserDto } from "../types";
 
 export function useGetUserDetails() {
     const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
@@ -19,7 +19,7 @@ export function useUpdateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async(userData:Partial<User>) => {
+        mutationFn: async(userData:Partial<UserDto>) => {
                 if (!user?.sub) {
                     throw new Error("No user authenticated");
                 }
@@ -39,7 +39,7 @@ export function useCreateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (userData: User) => {
+        mutationFn: async (userData: UserDto) => {
             if (!user?.sub) {
                 throw new Error("No user authenticated")
             }
