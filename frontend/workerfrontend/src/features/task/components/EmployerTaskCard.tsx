@@ -42,9 +42,7 @@ export default function EmployerTaskCard({
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              {task.title}
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900">{task.title}</h2>
             <span
               className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${status.className}`}
             >
@@ -54,45 +52,31 @@ export default function EmployerTaskCard({
 
           <div className="mt-3 grid gap-4 text-sm text-gray-600 md:grid-cols-3">
             <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                event
-              </span>
+              <span className="material-icons text-base text-green-500">event</span>
               <span>
                 {formatDate(task.startDate)} – {formatDate(task.endDate)}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                place
-              </span>
+              <span className="material-icons text-base text-green-500">place</span>
               <span>
                 {task.locations && task.locations.length > 0
                   ? task.locations
                       .map((loc) => {
-                        const parts = [loc.streetAddress, loc.city].filter(
-                          Boolean
-                        );
-                        return parts.length > 0
-                          ? parts.join(", ")
-                          : "Ei sijaintia";
+                        const parts = [loc.streetAddress, loc.city].filter(Boolean);
+                        return parts.length > 0 ? parts.join(", ") : "Ei sijaintia";
                       })
                       .join(" | ")
                   : "Ei sijaintia"}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="material-icons text-base text-green-500">
-                euro
-              </span>
+              <span className="material-icons text-base text-green-500">euro</span>
               <span>{task.price} €</span>
             </div>
           </div>
 
-          {task.description && (
-            <p className="mt-3 line-clamp-2 text-gray-700">
-              {task.description}
-            </p>
-          )}
+          {task.description && <p className="mt-3 line-clamp-2 text-gray-700">{task.description}</p>}
         </div>
 
         <div className="flex flex-shrink-0 flex-col gap-2">

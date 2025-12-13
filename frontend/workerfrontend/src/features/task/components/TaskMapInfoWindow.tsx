@@ -1,7 +1,7 @@
-import { InfoWindow } from '@react-google-maps/api';
-import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import type { Task } from '../types';
+import { InfoWindow } from "@react-google-maps/api";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import type { Task } from "../types";
 
 interface TaskMapInfoWindowProps {
   tasks: Task[]; // Now accepts an array of tasks
@@ -14,12 +14,12 @@ interface TaskMapInfoWindowProps {
  */
 export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
   const navigate = useNavigate();
-  
+
   // Track which tasks have expanded locations
   const [expandedLocations, setExpandedLocations] = useState<Set<number>>(new Set());
 
   const toggleLocations = (taskId: number) => {
-    setExpandedLocations(prev => {
+    setExpandedLocations((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(taskId)) {
         newSet.delete(taskId);
@@ -33,7 +33,7 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
   // All tasks are at the same location, so use the first one for position
   const firstTask = tasks[0];
   const location = firstTask.locations[0];
-  
+
   return (
     <InfoWindow
       position={{
@@ -46,21 +46,14 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
       <div className="max-h-96 w-72 max-w-xs overflow-y-auto pr-2">
         {/* Header showing count if multiple tasks */}
         {tasks.length > 1 && (
-          <h4 className="mb-3 border-b pb-2 font-bold text-gray-900">
-            {tasks.length} tehtävää tässä sijainnissa
-          </h4>
+          <h4 className="mb-3 border-b pb-2 font-bold text-gray-900">{tasks.length} tehtävää tässä sijainnissa</h4>
         )}
 
         {/* Loop over all tasks at this location */}
         {tasks.map((task, index) => (
-          <div 
-            key={task.id} 
-            className={index > 0 ? 'mt-4 border-t pt-4' : ''}
-          >
+          <div key={task.id} className={index > 0 ? "mt-4 border-t pt-4" : ""}>
             {/* Task Title */}
-            <h3 className="font-semibold text-gray-900 mb-2 text-base">
-              {task.title}
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-2 text-base">{task.title}</h3>
 
             {/* Task Details */}
             <div className="space-y-1 text-sm mb-3">
@@ -74,7 +67,7 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
               {task.categories && task.categories.length > 0 && (
                 <div className="flex items-center gap-1 text-gray-600">
                   <span className="material-icons text-sm">category</span>
-                  <span>{task.categories.map(cat => cat.title).join(', ')}</span>
+                  <span>{task.categories.map((cat) => cat.title).join(", ")}</span>
                 </div>
               )}
 
@@ -86,15 +79,9 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
                     <div className="flex-1">
                       {/* First location */}
                       <div>
-                        {task.locations[0].streetAddress && (
-                          <span>{task.locations[0].streetAddress}</span>
-                        )}
-                        {task.locations[0].streetAddress && task.locations[0].city && (
-                          <span>, </span>
-                        )}
-                        {task.locations[0].city && (
-                          <span>{task.locations[0].city}</span>
-                        )}
+                        {task.locations[0].streetAddress && <span>{task.locations[0].streetAddress}</span>}
+                        {task.locations[0].streetAddress && task.locations[0].city && <span>, </span>}
+                        {task.locations[0].city && <span>{task.locations[0].city}</span>}
                       </div>
 
                       {/* Expand/collapse button if more than 1 location */}
@@ -103,27 +90,21 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
                           onClick={() => toggleLocations(task.id)}
                           className="text-blue-600 hover:text-blue-800 underline text-xs mt-1"
                         >
-                          {expandedLocations.has(task.id) 
-                            ? 'Näytä vähemmän'
-                            : `+ ${task.locations.length - 1} muuta sijaintia`
-                          }
+                          {expandedLocations.has(task.id)
+                            ? "Näytä vähemmän"
+                            : `+ ${task.locations.length - 1} muuta sijaintia`}
                         </button>
                       )}
 
                       {/* Additional locations (when expanded) */}
-                      {expandedLocations.has(task.id) && task.locations.slice(1).map((loc, idx) => (
-                        <div key={idx} className="mt-1">
-                          {loc.streetAddress && (
-                            <span>{loc.streetAddress}</span>
-                          )}
-                          {loc.streetAddress && loc.city && (
-                            <span>, </span>
-                          )}
-                          {loc.city && (
-                            <span>{loc.city}</span>
-                          )}
-                        </div>
-                      ))}
+                      {expandedLocations.has(task.id) &&
+                        task.locations.slice(1).map((loc, idx) => (
+                          <div key={idx} className="mt-1">
+                            {loc.streetAddress && <span>{loc.streetAddress}</span>}
+                            {loc.streetAddress && loc.city && <span>, </span>}
+                            {loc.city && <span>{loc.city}</span>}
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -131,11 +112,7 @@ export function TaskMapInfoWindow({ tasks, onClose }: TaskMapInfoWindowProps) {
             </div>
 
             {/* Description Preview */}
-            {task.description && (
-              <p className="text-gray-700 text-sm mb-3 line-clamp-2">
-                {task.description}
-              </p>
-            )}
+            {task.description && <p className="text-gray-700 text-sm mb-3 line-clamp-2">{task.description}</p>}
 
             {/* View Details Button */}
             <button

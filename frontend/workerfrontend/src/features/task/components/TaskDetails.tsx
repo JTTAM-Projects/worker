@@ -7,12 +7,7 @@ interface TaskDetailsProps {
   getCategoryIcon?: (categoryTitle: string) => string;
 }
 
-export default function TaskDetails({
-  task,
-  description,
-  categories,
-  getCategoryIcon,
-}: TaskDetailsProps) {
+export default function TaskDetails({ task, description, categories, getCategoryIcon }: TaskDetailsProps) {
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleDateString("fi-FI", {
@@ -38,9 +33,7 @@ export default function TaskDetails({
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <span className="material-icons text-gray-600 text-xl">
-                  description
-                </span>
+                <span className="material-icons text-gray-600 text-xl">description</span>
                 Kuvaus
               </h2>
               {categories && categories.length > 0 && (
@@ -51,9 +44,7 @@ export default function TaskDetails({
                       className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full text-gray-700"
                     >
                       {getCategoryIcon && (
-                        <span className="material-icons text-base">
-                          {getCategoryIcon(cat.title)}
-                        </span>
+                        <span className="material-icons text-base">{getCategoryIcon(cat.title)}</span>
                       )}
                       <span className="font-medium text-xs">{cat.title}</span>
                     </span>
@@ -61,9 +52,7 @@ export default function TaskDetails({
                 </div>
               )}
             </div>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {description}
-            </p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{description}</p>
           </div>
         )}
       </div>
@@ -89,18 +78,14 @@ export default function TaskDetails({
               {task.locations && task.locations.length > 0 ? (
                 <div className="text-gray-600 space-y-3">
                   {task.locations.map((location, index) => (
-                    <div key={index} className={index > 0 ? 'pt-3 border-t border-gray-200' : ''}>
-                      {location.streetAddress && (
-                        <div>{location.streetAddress}</div>
-                      )}
+                    <div key={index} className={index > 0 ? "pt-3 border-t border-gray-200" : ""}>
+                      {location.streetAddress && <div>{location.streetAddress}</div>}
                       {location.postalCode && location.city && (
                         <div>
                           {location.postalCode} {location.city}
                         </div>
                       )}
-                      {!location.streetAddress && !location.city && (
-                        <div className="italic">Ei tarkkaa sijaintia</div>
-                      )}
+                      {!location.streetAddress && !location.city && <div className="italic">Ei tarkkaa sijaintia</div>}
                     </div>
                   ))}
                 </div>
@@ -117,25 +102,16 @@ export default function TaskDetails({
             <div className="flex-1">
               <div className="text-gray-700 font-medium mb-1">Työnantaja</div>
               <div className="space-y-2">
-                <div className="text-gray-800 font-medium">
-                  {task.user.userName}
-                </div>
+                <div className="text-gray-800 font-medium">{task.user.userName}</div>
                 {task.user.mail && (
-                  <a
-                    href={`mailto:${task.user.mail}`}
-                    className="text-blue-600 hover:underline text-sm block"
-                  >
+                  <a href={`mailto:${task.user.mail}`} className="text-blue-600 hover:underline text-sm block">
                     {task.user.mail}
                   </a>
                 )}
                 <div className="pt-2 border-t border-gray-200">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="material-icons text-yellow-500 text-base">
-                      star
-                    </span>
-                    <span className="text-gray-600 italic">
-                      Arvosteluja ei vielä saatavilla
-                    </span>
+                    <span className="material-icons text-yellow-500 text-base">star</span>
+                    <span className="text-gray-600 italic">Arvosteluja ei vielä saatavilla</span>
                   </div>
                 </div>
               </div>
@@ -146,9 +122,7 @@ export default function TaskDetails({
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <span className="text-gray-700 font-medium">Palkkio</span>
-            <span className="text-green-600 text-2xl font-bold">
-              {task.price} €
-            </span>
+            <span className="text-green-600 text-2xl font-bold">{task.price} €</span>
           </div>
         </div>
       </div>

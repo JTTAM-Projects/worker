@@ -29,7 +29,7 @@ export default function Pagination({
   // Use server data if available, otherwise calculate based on indexing
   const isFirstPage = serverIsFirstPage ?? (zeroIndexed ? currentPage === 0 : currentPage === 1);
   const isLastPage = serverIsLastPage ?? (zeroIndexed ? currentPage >= totalPages - 1 : currentPage >= totalPages);
-  
+
   return (
     <div className="flex items-center justify-center gap-2 flex-wrap">
       {/* Previous Button - Outline Style (Secondary Action) */}
@@ -52,10 +52,7 @@ export default function Pagination({
           {pageNumbers.map((page, index) => {
             if (page === "...") {
               return (
-                <span
-                  key={`ellipsis-${index}`}
-                  className="px-3 py-2 text-gray-500"
-                >
+                <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">
                   ...
                 </span>
               );
@@ -90,9 +87,7 @@ export default function Pagination({
         onClick={onNext}
         disabled={isLastPage}
         className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
-          isLastPage
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-green-500 text-white hover:bg-green-600"
+          isLastPage ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"
         }`}
       >
         Seuraava

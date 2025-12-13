@@ -13,7 +13,7 @@ import type {
 // It uses the Fetch API to make HTTP requests.
 // GET requests are public and don't require authentication.
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export type TaskApplicationDetails = TaskApplicant & {
   user?: UserDto & {
@@ -38,15 +38,15 @@ export interface FetchTasksParams extends TaskFilters {
  */
 function getSortParam(sortBy?: string): string | undefined {
   switch (sortBy) {
-    case 'newest':
-      return 'startDate,desc'; // Sort by start date descending (newest first)
-    case 'oldest':
-      return 'startDate,asc'; // Sort by start date ascending (oldest first)
-    case 'priceAsc':
-      return 'price,asc'; // Sort by price ascending (cheapest first)
-    case 'priceDesc':
-      return 'price,desc'; // Sort by price descending (most expensive first)
-    case 'nearest':
+    case "newest":
+      return "startDate,desc"; // Sort by start date descending (newest first)
+    case "oldest":
+      return "startDate,asc"; // Sort by start date ascending (oldest first)
+    case "priceAsc":
+      return "price,asc"; // Sort by price ascending (cheapest first)
+    case "priceDesc":
+      return "price,desc"; // Sort by price descending (most expensive first)
+    case "nearest":
       // For nearest, we'd need to calculate distance on backend
       // For now, just use default sorting
       return undefined;
@@ -56,12 +56,10 @@ function getSortParam(sortBy?: string): string | undefined {
 }
 
 // Fetch tasks with optional pagination and filtering
-export async function fetchTasks(
-  params: FetchTasksParams = {}
-): Promise<PaginatedResponse<Task>> {
-  const { 
-    page = 0, 
-    size = 10, 
+export async function fetchTasks(params: FetchTasksParams = {}): Promise<PaginatedResponse<Task>> {
+  const {
+    page = 0,
+    size = 10,
     searchText,
     categories,
     minPrice,
@@ -70,7 +68,7 @@ export async function fetchTasks(
     longitude,
     radiusKm,
     status,
-    sortBy
+    sortBy,
   } = params;
 
   const queryParams = new URLSearchParams({
@@ -85,7 +83,7 @@ export async function fetchTasks(
 
   // Add multiple categories
   if (categories && categories.length > 0) {
-    categories.forEach(cat => queryParams.append("categories", cat));
+    categories.forEach((cat) => queryParams.append("categories", cat));
   }
 
   // Add price range
@@ -114,14 +112,11 @@ export async function fetchTasks(
     queryParams.append("sort", sortParam);
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/task/all-tasks?${queryParams.toString()}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -133,11 +128,11 @@ export async function fetchTasks(
 // Fetch user's own tasks (requires authentication)
 export async function fetchUserTasks(
   getAccessToken: () => Promise<string>,
-  params: FetchTasksParams = {}
+  params: FetchTasksParams = {},
 ): Promise<PaginatedResponse<Task>> {
-  const { 
-    page = 0, 
-    size = 10, 
+  const {
+    page = 0,
+    size = 10,
     searchText,
     categories,
     minPrice,
@@ -146,7 +141,7 @@ export async function fetchUserTasks(
     longitude,
     radiusKm,
     status,
-    sortBy
+    sortBy,
   } = params;
 
   const token = await getAccessToken();
@@ -163,7 +158,7 @@ export async function fetchUserTasks(
 
   // Add multiple categories
   if (categories && categories.length > 0) {
-    categories.forEach(cat => queryParams.append("categories", cat));
+    categories.forEach((cat) => queryParams.append("categories", cat));
   }
 
   // Add price range
@@ -210,11 +205,11 @@ export async function fetchUserTasks(
 // Fetch workers own tasks (requires authentication)
 export async function fetchWorkerTasks(
   getAccessToken: () => Promise<string>,
-  params: FetchTasksParams = {}
+  params: FetchTasksParams = {},
 ): Promise<PaginatedResponse<Task>> {
-  const { 
-    page = 0, 
-    size = 10, 
+  const {
+    page = 0,
+    size = 10,
     searchText,
     categories,
     minPrice,
@@ -223,7 +218,7 @@ export async function fetchWorkerTasks(
     longitude,
     radiusKm,
     status,
-    sortBy
+    sortBy,
   } = params;
 
   const token = await getAccessToken();
@@ -240,7 +235,7 @@ export async function fetchWorkerTasks(
 
   // Add multiple categories
   if (categories && categories.length > 0) {
-    categories.forEach(cat => queryParams.append("categories", cat));
+    categories.forEach((cat) => queryParams.append("categories", cat));
   }
 
   // Add price range
@@ -287,7 +282,7 @@ export async function fetchWorkerTasks(
 // Create a new task (requires authentication)
 export async function createTask(
   getAccessTokenSilently: () => Promise<string>,
-  payload: CreateTaskInput
+  payload: CreateTaskInput,
 ): Promise<Task> {
   const token = await getAccessTokenSilently();
   const { location, ...rest } = payload;
@@ -310,9 +305,7 @@ export async function createTask(
   }
 
   const data = await response.json();
-  const [primaryLocation] = Array.isArray(data.locations)
-    ? data.locations
-    : [];
+  const [primaryLocation] = Array.isArray(data.locations) ? data.locations : [];
   return {
     ...data,
     location: primaryLocation,
@@ -332,9 +325,7 @@ export async function fetchTaskById(taskId: number): Promise<Task> {
   }
 
   const data = await response.json();
-  const [primaryLocation] = Array.isArray(data.locations)
-    ? data.locations
-    : [];
+  const [primaryLocation] = Array.isArray(data.locations) ? data.locations : [];
   return {
     ...data,
     location: primaryLocation,
@@ -344,7 +335,7 @@ export async function fetchTaskById(taskId: number): Promise<Task> {
 // Fetch all applications for a task
 export async function fetchTaskApplications(
   taskId: number,
-  params: { page?: number; size?: number } = {}
+  params: { page?: number; size?: number } = {},
 ): Promise<PaginatedResponse<TaskApplicant>> {
   const { page = 0, size = 10 } = params;
 
@@ -353,14 +344,11 @@ export async function fetchTaskApplications(
     size: size.toString(),
   });
 
-  const response = await fetch(
-    `${API_BASE_URL}/task/${taskId}/applications?${queryParams.toString()}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/task/${taskId}/applications?${queryParams.toString()}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch applications: ${response.statusText}`);
@@ -373,7 +361,7 @@ export async function fetchTaskApplications(
 export async function updateTask(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number,
-  payload: CreateTaskInput
+  payload: CreateTaskInput,
 ): Promise<Task> {
   const token = await getAccessTokenSilently();
   const { location, ...rest } = payload;
@@ -396,9 +384,7 @@ export async function updateTask(
   }
 
   const data = await response.json();
-  const [primaryLocation] = Array.isArray(data.locations)
-    ? data.locations
-    : [];
+  const [primaryLocation] = Array.isArray(data.locations) ? data.locations : [];
   return {
     ...data,
     location: primaryLocation,
@@ -406,10 +392,7 @@ export async function updateTask(
 }
 
 // Delete an existing task (requires authentication)
-export async function deleteTask(
-  getAccessTokenSilently: () => Promise<string>,
-  taskId: number
-): Promise<void> {
+export async function deleteTask(getAccessTokenSilently: () => Promise<string>, taskId: number): Promise<void> {
   const token = await getAccessTokenSilently();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}`, {
@@ -429,7 +412,7 @@ export async function deleteTask(
 export async function fetchApplicationDetails(
   taskId: number,
   username: string,
-  accessToken: string
+  accessToken: string,
 ): Promise<TaskApplicationDetails> {
   const res = await fetch(`${API_BASE_URL}/task/${taskId}/user/${encodeURIComponent(username)}/application`, {
     headers: {
@@ -450,29 +433,32 @@ export async function updateApplicationStatus(
   getAccessToken: () => Promise<string>,
   taskId: number,
   applicantUsername: string,
-  status: 'ACCEPTED' | 'REJECTED'
+  status: "ACCEPTED" | "REJECTED",
 ): Promise<void> {
   const token = await getAccessToken();
 
-  const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/applications/${encodeURIComponent(applicantUsername)}/status`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_BASE_URL}/tasks/${taskId}/applications/${encodeURIComponent(applicantUsername)}/status`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
     },
-    body: JSON.stringify({ status }),
-  });
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('API Error:', response.status, errorText);
+    console.error("API Error:", response.status, errorText);
     throw new Error(`Failed to update application status: ${response.status} ${errorText}`);
   }
 }
 
 export async function completeTaskExecution(
   getAccessTokenSilently: () => Promise<string>,
-  taskId: number
+  taskId: number,
 ): Promise<void> {
   await updateTaskStatus(getAccessTokenSilently, taskId, "PENDING_APPROVAL");
 }
@@ -481,7 +467,7 @@ export async function completeTaskExecution(
 export async function updateTaskStatus(
   getAccessTokenSilently: () => Promise<string>,
   taskId: number,
-  status: string
+  status: string,
 ): Promise<void> {
   const token = await getAccessTokenSilently();
 

@@ -10,12 +10,7 @@ type Props = {
 
 // Modal dialog for task owners to view detailed application information and accept/reject applicants.
 // Displays applicant profile, rating, message, price suggestion, and provides action buttons for status updates.
-export default function ApplicationDetailsModal({
-  application,
-  onClose,
-  onUpdateStatus,
-  loading,
-}: Props) {
+export default function ApplicationDetailsModal({ application, onClose, onUpdateStatus, loading }: Props) {
   if (!application) return null;
 
   return (
@@ -23,11 +18,7 @@ export default function ApplicationDetailsModal({
       <div className="bg-white rounded-lg w-full max-w-xl p-6 mx-4">
         <div className="flex items-start justify-between">
           <h3 className="text-lg font-semibold">Hakemuksen tiedot</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-            aria-label="Sulje"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700" aria-label="Sulje">
             <span className="material-icons">close</span>
           </button>
         </div>
@@ -48,15 +39,11 @@ export default function ApplicationDetailsModal({
 
             <div>
               <div className="text-xs text-gray-500">Hakija</div>
-              <div className="font-medium text-gray-900">
-                {application.user?.userName}
-              </div>
+              <div className="font-medium text-gray-900">{application.user?.userName}</div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 {typeof application.user?.averageRating === "number" ? (
                   <>
-                    <span className="material-icons text-yellow-500 text-base">
-                      star
-                    </span>
+                    <span className="material-icons text-yellow-500 text-base">star</span>
                     <span>{application.user.averageRating.toFixed(1)}</span>
                   </>
                 ) : (
@@ -88,9 +75,7 @@ export default function ApplicationDetailsModal({
 
           <div>
             <div className="text-xs text-gray-500">Hintaehdotus</div>
-            <div className="font-medium text-green-600 text-lg">
-              {application.priceSuggestion} €
-            </div>
+            <div className="font-medium text-green-600 text-lg">{application.priceSuggestion} €</div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -114,10 +99,10 @@ export default function ApplicationDetailsModal({
               <div className="text-xs text-gray-500">Kellonaika</div>
               <div className="text-gray-900">
                 <div className="text-sm font-medium">
-                  {new Date(application.timeSuggestion).toLocaleTimeString(
-                    "fi-FI",
-                    { hour: "2-digit", minute: "2-digit" }
-                  )}
+                  {new Date(application.timeSuggestion).toLocaleTimeString("fi-FI", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
             </div>
@@ -136,9 +121,7 @@ export default function ApplicationDetailsModal({
 
           <div>
             <div className="text-xs text-gray-500">Hakemus jätetty</div>
-            <div className="text-gray-700">
-              {new Date(application.createdAt).toLocaleDateString("fi-FI")}
-            </div>
+            <div className="text-gray-700">{new Date(application.createdAt).toLocaleDateString("fi-FI")}</div>
           </div>
         </div>
 
@@ -146,30 +129,18 @@ export default function ApplicationDetailsModal({
           {application.applicationStatus === "PENDING" ? (
             <>
               <div>
-                <ActionGroup
-                  actionType="REJECTED"
-                  loading={loading}
-                  onConfirm={() => onUpdateStatus("REJECTED")}
-                />
+                <ActionGroup actionType="REJECTED" loading={loading} onConfirm={() => onUpdateStatus("REJECTED")} />
               </div>
               <div>
-                <ActionGroup
-                  actionType="ACCEPTED"
-                  loading={loading}
-                  onConfirm={() => onUpdateStatus("ACCEPTED")}
-                />
+                <ActionGroup actionType="ACCEPTED" loading={loading} onConfirm={() => onUpdateStatus("ACCEPTED")} />
               </div>
             </>
           ) : (
             <div className="w-full text-center py-4">
               {application.applicationStatus === "ACCEPTED" ? (
-                <span className="text-green-700 font-semibold">
-                  Hakemus on hyväksytty.
-                </span>
+                <span className="text-green-700 font-semibold">Hakemus on hyväksytty.</span>
               ) : application.applicationStatus === "REJECTED" ? (
-                <span className="text-red-700 font-semibold">
-                  Hakemus on hylätty.
-                </span>
+                <span className="text-red-700 font-semibold">Hakemus on hylätty.</span>
               ) : null}
             </div>
           )}
@@ -188,17 +159,13 @@ function ActionGroup({
   onConfirm: () => void;
   loading?: boolean;
 }) {
-  const [confirmAction, setConfirmAction] = useState<
-    null | "ACCEPTED" | "REJECTED"
-  >(null);
+  const [confirmAction, setConfirmAction] = useState<null | "ACCEPTED" | "REJECTED">(null);
   const isReject = actionType === "REJECTED";
 
   if (confirmAction === actionType) {
     return (
       <div className="flex flex-col gap-2">
-        <span className="text-sm text-gray-700">
-          Haluatko varmasti {isReject ? "hylätä" : "hyväksyä"} hakemuksen?
-        </span>
+        <span className="text-sm text-gray-700">Haluatko varmasti {isReject ? "hylätä" : "hyväksyä"} hakemuksen?</span>
         <div className="flex gap-2">
           <button
             className={

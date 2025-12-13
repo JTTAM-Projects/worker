@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/in-progre
           page: 0,
           size: 10,
           status: "IN_PROGRESS",
-        })
+        }),
       );
     } catch (error) {
       console.error("Failed to load tasks: ", error);
@@ -51,7 +51,7 @@ function WorkerInProgressTasksPage() {
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
 
   const { data: tasksOnMap } = useQuery({

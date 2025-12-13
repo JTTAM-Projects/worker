@@ -147,7 +147,7 @@ export default function ApplicationToList({
             <div className="pt-4">
               <span
                 className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                  application.applicationStatus
+                  application.applicationStatus,
                 )}`}
               >
                 {translateStatus(application.applicationStatus)}

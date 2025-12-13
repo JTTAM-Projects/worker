@@ -31,14 +31,8 @@ export default function TaskApplyButtonActions({
         disabled={checkingApplication}
         className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className="material-icons">
-          {showApplicationForm ? "close" : "edit"}
-        </span>
-        {checkingApplication
-          ? "Tarkistetaan..."
-          : showApplicationForm
-          ? "Sulje lomake"
-          : "Muokkaa hakemusta"}
+        <span className="material-icons">{showApplicationForm ? "close" : "edit"}</span>
+        {checkingApplication ? "Tarkistetaan..." : showApplicationForm ? "Sulje lomake" : "Muokkaa hakemusta"}
       </button>
     );
   }
@@ -55,15 +49,9 @@ export default function TaskApplyButtonActions({
       disabled={checkingApplication}
       className="w-full md:w-[320px] px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <span className="material-icons">
-        {showApplicationForm ? "close" : "check_circle"}
-      </span>
+      <span className="material-icons">{showApplicationForm ? "close" : "check_circle"}</span>
 
-      {checkingApplication
-        ? "Tarkistetaan..."
-        : showApplicationForm
-        ? "Sulje lomake"
-        : "Hae työhön"}
+      {checkingApplication ? "Tarkistetaan..." : showApplicationForm ? "Sulje lomake" : "Hae työhön"}
     </button>
   );
 }

@@ -8,7 +8,7 @@ export function useWorkerTaskTabs() {
       iconName: "task",
       label: "Aktiiviset",
       tabLink: "/worker/own-tasks/to-do",
-      isActive: !!matchRoute({ to: "/worker/own-tasks/to-do" }) ,
+      isActive: !!matchRoute({ to: "/worker/own-tasks/to-do" }),
     },
     {
       iconName: "work",

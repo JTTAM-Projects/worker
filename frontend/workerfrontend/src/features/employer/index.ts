@@ -1,2 +1,1 @@
-export * from './components/EmployerPromoCard';
-
+export * from "./components/EmployerPromoCard";

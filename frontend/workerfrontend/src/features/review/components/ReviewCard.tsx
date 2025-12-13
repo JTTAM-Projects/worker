@@ -56,18 +56,17 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   };
 
   // Get the first category icon for the task
-  const categoryIcon = review.taskCategories && review.taskCategories.length > 0
-    ? getCategoryIcon(review.taskCategories[0])
-    : DEFAULT_ICON;
+  const categoryIcon =
+    review.taskCategories && review.taskCategories.length > 0
+      ? getCategoryIcon(review.taskCategories[0])
+      : DEFAULT_ICON;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow">
       {/* Header: Rating and Date */}
       <div className="flex items-start justify-between mb-2">
         <StarRating rating={review.rating} size="sm" showNumber />
-        <span className="text-xs text-gray-500">
-          {formatDate(review.createdAt)}
-        </span>
+        <span className="text-xs text-gray-500">{formatDate(review.createdAt)}</span>
       </div>
 
       {/* Comment */}
@@ -85,7 +84,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           </span>
           <span className="font-medium">{review.reviewerUsername}</span>
         </div>
-        
+
         {review.taskTitle && (
           <div className="flex items-center gap-1 text-gray-500 max-w-[180px] truncate">
             <span className="material-icons" style={{ fontSize: "14px" }}>

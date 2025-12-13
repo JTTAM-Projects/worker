@@ -42,21 +42,15 @@ export const taskQueries = {
     }),
 
   /** Fetch authenticated user's own tasks */
-  own: (
-    getAccessTokenSilently: () => Promise<string>,
-    params: FetchTasksParams = {}
-  ) =>
+  own: (getAccessTokenSilently: () => Promise<string>, params: FetchTasksParams = {}) =>
     queryOptions({
       queryKey: ["tasks", "own", params],
       queryFn: () => fetchUserTasks(getAccessTokenSilently, params),
       staleTime: 5 * 60 * 1000, // 5 minutes
     }),
-    
+
   /** Fetch tasks for worker */
-  worker: (
-    getAccessTokenSilently: () => Promise<string>,
-    params: FetchTasksParams = {}
-  ) => 
+  worker: (getAccessTokenSilently: () => Promise<string>, params: FetchTasksParams = {}) =>
     queryOptions({
       queryKey: ["tasks", "worker", params],
       queryFn: () => fetchWorkerTasks(getAccessTokenSilently, params),

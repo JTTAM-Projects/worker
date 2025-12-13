@@ -9,11 +9,7 @@ interface StarRatingProps {
   showNumber?: boolean; // Show numeric rating next to stars
 }
 
-export default function StarRating({
-  rating,
-  size = "md",
-  showNumber = false,
-}: StarRatingProps) {
+export default function StarRating({ rating, size = "md", showNumber = false }: StarRatingProps) {
   // Clamp rating between 0 and 5
   const clampedRating = Math.max(0, Math.min(5, rating));
 
@@ -32,10 +28,7 @@ export default function StarRating({
 
   // Generate array of 5 stars
   const stars = Array.from({ length: 5 }, (_, index) => {
-    const fillPercentage = Math.max(
-      0,
-      Math.min(100, (clampedRating - index) * 100)
-    );
+    const fillPercentage = Math.max(0, Math.min(100, (clampedRating - index) * 100));
 
     return (
       <div key={index} className="relative inline-block">
@@ -50,10 +43,7 @@ export default function StarRating({
         </svg>
         {/* Foreground star (filled) */}
         {fillPercentage > 0 && (
-          <div
-            className="absolute top-0 left-0 overflow-hidden"
-            style={{ width: `${fillPercentage}%` }}
-          >
+          <div className="absolute top-0 left-0 overflow-hidden" style={{ width: `${fillPercentage}%` }}>
             <svg
               className={`${sizeClasses[size]} text-yellow-400`}
               fill="currentColor"
@@ -72,9 +62,7 @@ export default function StarRating({
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-0.5">{stars}</div>
       {showNumber && (
-        <span className={`${textSizeClasses[size]} text-gray-700 font-medium`}>
-          {clampedRating.toFixed(1)}
-        </span>
+        <span className={`${textSizeClasses[size]} text-gray-700 font-medium`}>{clampedRating.toFixed(1)}</span>
       )}
     </div>
   );

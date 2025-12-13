@@ -2,7 +2,7 @@
 // Review Types - Matching Backend DTOs
 // ============================================================================
 
-import type { PaginatedResponse } from '../task/types';
+import type { PaginatedResponse } from "../task/types";
 
 // Re-export for convenience
 export type { PaginatedResponse };
@@ -14,13 +14,13 @@ export interface Review {
   id: number;
   taskId: number;
   taskTitle: string;
-  taskCategories: string[];  // Task categories (e.g., ["GARDEN", "CLEANING"])
-  reviewerUsername: string;  // Person who wrote the review
-  revieweeUsername: string;  // Person being reviewed
-  rating: number;            // 1-5
-  comment: string | null;    // Max 1000 chars, nullable
-  createdAt: string;         // ISO 8601 timestamp
-  updatedAt: string;         // ISO 8601 timestamp
+  taskCategories: string[]; // Task categories (e.g., ["GARDEN", "CLEANING"])
+  reviewerUsername: string; // Person who wrote the review
+  revieweeUsername: string; // Person being reviewed
+  rating: number; // 1-5
+  comment: string | null; // Max 1000 chars, nullable
+  createdAt: string; // ISO 8601 timestamp
+  updatedAt: string; // ISO 8601 timestamp
 }
 
 /**
@@ -29,8 +29,8 @@ export interface Review {
 export interface ReviewRequest {
   taskId: number;
   revieweeUsername: string;
-  rating: number;            // 1-5
-  comment?: string;          // Optional, max 1000 chars
+  rating: number; // 1-5
+  comment?: string; // Optional, max 1000 chars
 }
 
 /**
@@ -48,14 +48,14 @@ export interface AverageRating {
 /**
  * Profile type for determining which reviews to fetch
  */
-export type ReviewProfileType = 'TASKER' | 'EMPLOYER';
+export type ReviewProfileType = "TASKER" | "EMPLOYER";
 
 /**
  * Props for ReviewList component
  */
 export interface ReviewListProps {
   profileType: ReviewProfileType;
-  limit?: number;  // Default: 10
+  limit?: number; // Default: 10
 }
 
 /**

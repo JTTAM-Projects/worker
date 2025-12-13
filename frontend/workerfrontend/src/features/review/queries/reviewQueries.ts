@@ -19,7 +19,7 @@ export const reviewQueries = {
     username: string,
     profileType: ReviewProfileType,
     page = 0,
-    size = 10
+    size = 10,
   ) =>
     queryOptions({
       queryKey: ["reviews", username, profileType, page, size],

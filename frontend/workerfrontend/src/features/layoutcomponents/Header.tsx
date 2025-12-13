@@ -8,7 +8,7 @@ import { Link } from "@tanstack/react-router";
 
 function getSavedTasksSearch() {
   try {
-    const saved = sessionStorage.getItem('worker-tasks-search');
+    const saved = sessionStorage.getItem("worker-tasks-search");
     return saved ? JSON.parse(saved) : undefined;
   } catch {
     return undefined;
@@ -74,7 +74,7 @@ export default function Header() {
                           search={getSavedTasksSearch()}
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Avoimet työilmoitukset
@@ -87,7 +87,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Luo työilmoitus
@@ -100,7 +100,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Omat työilmoitukset
@@ -138,7 +138,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Aktiiviset hakemukset
@@ -151,7 +151,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Hyväksytyt hakemukset
@@ -164,7 +164,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Vasta-tarjoukset
@@ -177,7 +177,7 @@ export default function Header() {
                           to="/"
                           className={classNames(
                             focus ? "bg-green-50 text-green-700" : "text-gray-700",
-                            "block px-4 py-3 text-sm font-medium transition-colors duration-150"
+                            "block px-4 py-3 text-sm font-medium transition-colors duration-150",
                           )}
                         >
                           Menneet hakemukset

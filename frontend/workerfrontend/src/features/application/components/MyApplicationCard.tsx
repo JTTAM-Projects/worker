@@ -12,12 +12,7 @@ interface MyApplicationCardProps {
 
 // Displays user's own application with status badge, price suggestion, time details, and description.
 // Provides edit and delete actions for managing the application.
-export default function MyApplicationCard({
-  application,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: MyApplicationCardProps) {
+export default function MyApplicationCard({ application, onEdit, onDelete, isDeleting }: MyApplicationCardProps) {
   const formatDate = (value: string) => {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
@@ -71,9 +66,7 @@ export default function MyApplicationCard({
     <div className="mt-6 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            Oma hakemus
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Oma hakemus</h3>
           <div>
             <span
               className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${statusVariant}`}
@@ -104,40 +97,24 @@ export default function MyApplicationCard({
 
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         <div className="rounded-lg border border-gray-200 p-4">
-          <div className="text-xs uppercase tracking-wide text-gray-500">
-            Hintaehdotus
-          </div>
-          <div className="text-2xl font-semibold text-green-600">
-            {application.priceSuggestion} €
-          </div>
+          <div className="text-xs uppercase tracking-wide text-gray-500">Hintaehdotus</div>
+          <div className="text-2xl font-semibold text-green-600">{application.priceSuggestion} €</div>
         </div>
 
         <div className="rounded-lg border border-gray-200 p-4">
-          <div className="text-xs uppercase tracking-wide text-gray-500">
-            Päivämäärä
-          </div>
-          <div className="text-lg font-semibold text-gray-800">
-            {formatDate(application.timeSuggestion)}
-          </div>
+          <div className="text-xs uppercase tracking-wide text-gray-500">Päivämäärä</div>
+          <div className="text-lg font-semibold text-gray-800">{formatDate(application.timeSuggestion)}</div>
         </div>
 
         <div className="rounded-lg border border-gray-200 p-4">
-          <div className="text-xs uppercase tracking-wide text-gray-500">
-            Kellonaika
-          </div>
-          <div className="text-lg font-semibold text-gray-800">
-            {formatTime(application.timeSuggestion)}
-          </div>
+          <div className="text-xs uppercase tracking-wide text-gray-500">Kellonaika</div>
+          <div className="text-lg font-semibold text-gray-800">{formatTime(application.timeSuggestion)}</div>
         </div>
       </div>
 
       <div className="mt-4 border-t border-gray-200 pt-4">
-        <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
-          Viesti työnantajalle
-        </div>
-        <p className="whitespace-pre-line text-gray-700">
-          {application.description?.trim() || "Ei lisätietoja"}
-        </p>
+        <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">Viesti työnantajalle</div>
+        <p className="whitespace-pre-line text-gray-700">{application.description?.trim() || "Ei lisätietoja"}</p>
       </div>
     </div>
   );

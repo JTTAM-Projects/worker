@@ -8,8 +8,7 @@ export function useCreateReview() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: ReviewRequest) =>
-      createReview(getAccessTokenSilently, input),
+    mutationFn: (input: ReviewRequest) => createReview(getAccessTokenSilently, input),
     onSuccess: () => {
       // Invalidate all review queries
       qc.invalidateQueries({ queryKey: ["reviews"] });

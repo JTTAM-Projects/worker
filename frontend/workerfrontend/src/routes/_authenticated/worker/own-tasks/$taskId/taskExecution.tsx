@@ -5,9 +5,7 @@ import TaskExecutionWizard from "../../../../../features/task/components/TaskExe
 import { useAuth0 } from "@auth0/auth0-react";
 import { completeTaskExecution } from "../../../../../features/task/api/taskApi";
 
-export const Route = createFileRoute(
-  '/_authenticated/worker/own-tasks/$taskId/taskExecution',
-)({
+export const Route = createFileRoute("/_authenticated/worker/own-tasks/$taskId/taskExecution")({
   loader: ({ params, context }) => context.queryClient.ensureQueryData(taskQueries.detail(params.taskId)),
   component: TaskExecutionPage,
 });

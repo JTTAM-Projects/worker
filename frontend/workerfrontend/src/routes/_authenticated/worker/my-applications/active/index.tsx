@@ -18,10 +18,10 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/act
           page: 0,
           size: 5,
           applicationStatus: "PENDING",
-        })
+        }),
       );
     } catch (error) {
-      console.error('Failed to load applications:', error);
+      console.error("Failed to load applications:", error);
       // Return empty data on error to prevent crash
       return { content: [], totalPages: 0, number: 0, first: true, last: true };
     }
@@ -43,7 +43,7 @@ export default function ActiveApplicationsPage() {
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
 
   const handleResetFilters = () => {

@@ -1,11 +1,11 @@
-import { memo, useCallback } from 'react';
-import type { TaskFilters } from '../types';
-import { useFilterState } from '../hooks/useFilterState';
-import { useGeocoding } from '../hooks/useGeocoding';
-import { useGeolocation } from '../hooks/useGeolocation';
-import { CategoryFilter } from './CategoryFilter';
-import { PriceRangeInput } from './PriceRangeInput';
-import { LocationSearchInput } from './LocationSearchInput';
+import { memo, useCallback } from "react";
+import type { TaskFilters } from "../types";
+import { useFilterState } from "../hooks/useFilterState";
+import { useGeocoding } from "../hooks/useGeocoding";
+import { useGeolocation } from "../hooks/useGeolocation";
+import { CategoryFilter } from "./CategoryFilter";
+import { PriceRangeInput } from "./PriceRangeInput";
+import { LocationSearchInput } from "./LocationSearchInput";
 
 interface TaskFilterPanelProps {
   filters: TaskFilters;
@@ -15,23 +15,23 @@ interface TaskFilterPanelProps {
 
 /**
  * TaskFilterPanel - A comprehensive filter panel for task search
- * 
+ *
  * This component provides a master search pattern where users can:
  * 1. Configure multiple filter criteria (text, categories, price, location)
  * 2. Trigger a single search with all filters applied at once
- * 
+ *
  * Architecture:
  * - Custom hooks for complex logic (useFilterState, useGeocoding, useGeolocation)
  * - Presentational components for UI sections (CategoryFilter, PriceRangeInput, LocationSearchInput)
  * - Master search button that applies all filters simultaneously
- * 
+ *
  * Features:
  * - Text search with Enter key support
  * - Multi-select category filtering
  * - Dual-handle price range slider with synchronized inputs
  * - Location search via Nominatim API or browser geolocation
  * - Radius-based location filtering (1-100 km)
- * 
+ *
  * @param filters - Current active filters from parent
  * @param onFiltersChange - Callback to update filters in parent state
  * @param onReset - Callback to reset all filters
@@ -51,7 +51,7 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
     const hasLocationText = filterState.state.locationSearch.trim();
     const hasLocationCoords = filters.latitude && filters.longitude;
     const locationTextChanged = hasLocationText && hasLocationText !== filters.locationText;
-    
+
     if (hasLocationText && (!hasLocationCoords || locationTextChanged)) {
       // Geocode the location first
       const result = await geocode(filterState.state.locationSearch);
@@ -61,7 +61,7 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
           latitude: result.latitude,
           longitude: result.longitude,
           radiusKm: filterState.state.radiusKm,
-          locationText: filterState.state.locationSearch.trim()
+          locationText: filterState.state.locationSearch.trim(),
         });
         onFiltersChange(newFilters);
       }
@@ -85,7 +85,7 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
         latitude: result.latitude,
         longitude: result.longitude,
         radiusKm: filterState.state.radiusKm,
-        locationText: filterState.state.locationSearch.trim()
+        locationText: filterState.state.locationSearch.trim(),
       });
     }
   }, [filterState.state.locationSearch, filterState.state.radiusKm, geocode, filters, onFiltersChange]);
@@ -94,13 +94,13 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
   const handleCurrentLocation = useCallback(async () => {
     const result = await getCurrentLocation();
     if (result) {
-      filterState.setLocationSearch('Nykyinen sijainti');
+      filterState.setLocationSearch("Nykyinen sijainti");
       onFiltersChange({
         ...filters,
         latitude: result.latitude,
         longitude: result.longitude,
         radiusKm: filterState.state.radiusKm,
-        locationText: 'Nykyinen sijainti'
+        locationText: "Nykyinen sijainti",
       });
     }
   }, [getCurrentLocation, filterState, filters, onFiltersChange]);
@@ -124,27 +124,22 @@ function TaskFilterPanelComponent({ filters, onFiltersChange, onReset }: TaskFil
           Nollaa suodattimet
         </button>
       </div>
-      
+
       {/* Text Search */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tekstihaku
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Tekstihaku</label>
         <input
           type="text"
           value={filterState.state.searchText}
           onChange={(e) => filterState.setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Etsi otsikosta tai kuvauksesta..."
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
         />
       </div>
 
       {/* Categories */}
-      <CategoryFilter
-        selectedCategories={filterState.state.selectedCategories}
-        onToggle={filterState.toggleCategory}
-      />
+      <CategoryFilter selectedCategories={filterState.state.selectedCategories} onToggle={filterState.toggleCategory} />
 
       {/* Price Range */}
       <PriceRangeInput
@@ -204,6 +199,6 @@ const TaskFilterPanelMemoized = memo(TaskFilterPanelComponent, (prevProps, nextP
   );
 });
 
-TaskFilterPanelMemoized.displayName = 'TaskFilterPanel';
+TaskFilterPanelMemoized.displayName = "TaskFilterPanel";
 
 export { TaskFilterPanelMemoized as TaskFilterPanel };
