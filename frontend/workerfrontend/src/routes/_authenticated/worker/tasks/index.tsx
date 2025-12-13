@@ -86,7 +86,7 @@ function TaskListPage() {
       page,
       size: 20,
       ...filters,
-    })
+    }),
   );
 
   // Fetch all filtered tasks for map view (up to 1000)

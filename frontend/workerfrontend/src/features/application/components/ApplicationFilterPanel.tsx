@@ -12,11 +12,7 @@ interface ApplicationFilterPanelProps {
 
 // Filter panel for user's application list with text search, category selection, and price range inputs.
 // Uses useApplicationFilterState hook for managing filter state and provides reset functionality.
-function ApplicationFilterPanelComponent({
-  filters,
-  onFiltersChange,
-  onReset,
-}: ApplicationFilterPanelProps) {
+function ApplicationFilterPanelComponent({ filters, onFiltersChange, onReset }: ApplicationFilterPanelProps) {
   const filterState = useApplicationFilterState(filters);
 
   const handleSearch = useCallback(() => {
@@ -38,18 +34,14 @@ function ApplicationFilterPanelComponent({
           onClick={handleReset}
           className="px-4 py-2 text-sm bg-white text-green-600 border-2 border-green-500 rounded-lg hover:bg-green-50 hover:border-green-600 transition-colors font-medium"
         >
-          <span className="material-icons text-sm align-middle mr-1">
-            refresh
-          </span>
+          <span className="material-icons text-sm align-middle mr-1">refresh</span>
           Nollaa suodattimet
         </button>
       </div>
 
       {/* Text Search */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tekstihaku
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Tekstihaku</label>
         <input
           type="text"
           value={filterState.state.searchText}
@@ -61,10 +53,7 @@ function ApplicationFilterPanelComponent({
       </div>
 
       {/* Categories */}
-      <CategoryFilter
-        selectedCategories={filterState.state.selectedCategories}
-        onToggle={filterState.toggleCategory}
-      />
+      <CategoryFilter selectedCategories={filterState.state.selectedCategories} onToggle={filterState.toggleCategory} />
 
       {/* Price Range */}
       <PriceRangeInput
@@ -93,20 +82,16 @@ function ApplicationFilterPanelComponent({
   );
 }
 
-const ApplicationFilterPanelMemoized = memo(
-  ApplicationFilterPanelComponent,
-  (prevProps, nextProps) => {
-    return (
-      prevProps.filters?.searchText === nextProps.filters?.searchText &&
-      prevProps.filters?.minPrice === nextProps.filters?.minPrice &&
-      prevProps.filters?.maxPrice === nextProps.filters?.maxPrice &&
-      JSON.stringify(prevProps.filters?.categories) ===
-        JSON.stringify(nextProps.filters?.categories) &&
-      prevProps.onFiltersChange === nextProps.onFiltersChange &&
-      prevProps.onReset === nextProps.onReset
-    );
-  }
-);
+const ApplicationFilterPanelMemoized = memo(ApplicationFilterPanelComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.filters?.searchText === nextProps.filters?.searchText &&
+    prevProps.filters?.minPrice === nextProps.filters?.minPrice &&
+    prevProps.filters?.maxPrice === nextProps.filters?.maxPrice &&
+    JSON.stringify(prevProps.filters?.categories) === JSON.stringify(nextProps.filters?.categories) &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.onReset === nextProps.onReset
+  );
+});
 
 ApplicationFilterPanelMemoized.displayName = "ApplicationFilterPanel";
 

@@ -1,0 +1,6 @@
+* text=auto
+*.{js,jsx,ts,tsx,css,scss,html,json,md,yaml} eol=lf
+*.{png,jpg,jpeg,gif,ico,svg} binary
+
+/mvnw text eol=lf
+*.cmd text eol=crlf

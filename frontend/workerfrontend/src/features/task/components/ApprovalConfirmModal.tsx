@@ -27,16 +27,10 @@ export default function ApprovalConfirmModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-6">
           <div className="flex items-center gap-3">
-            <span
-              className={`material-icons text-2xl ${
-                isApprove ? "text-green-600" : "text-orange-600"
-              }`}
-            >
+            <span className={`material-icons text-2xl ${isApprove ? "text-green-600" : "text-orange-600"}`}>
               {isApprove ? "check_circle" : "info"}
             </span>
-            <h2 className="text-xl font-bold text-gray-800">
-              {isApprove ? "Hyväksy työ" : "Hylkää työ"}
-            </h2>
+            <h2 className="text-xl font-bold text-gray-800">{isApprove ? "Hyväksy työ" : "Hylkää työ"}</h2>
           </div>
           <button
             onClick={onClose}
@@ -52,60 +46,40 @@ export default function ApprovalConfirmModal({
           <div className="space-y-4">
             <div>
               <p className="text-xs font-medium uppercase text-gray-500">Työ</p>
-              <p className="mt-1 text-base font-semibold text-gray-900">
-                {task.title}
-              </p>
+              <p className="mt-1 text-base font-semibold text-gray-900">{task.title}</p>
             </div>
 
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">
-                Hinta
-              </p>
-              <p className="mt-1 text-base font-semibold text-gray-900">
-                {task.price} €
-              </p>
+              <p className="text-xs font-medium uppercase text-gray-500">Hinta</p>
+              <p className="mt-1 text-base font-semibold text-gray-900">{task.price} €</p>
             </div>
 
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">
-                Työntekijä
-              </p>
-              <p className="mt-1 text-base font-semibold text-gray-900">
-                {task.user?.userName || "Ei tiedossa"}
-              </p>
+              <p className="text-xs font-medium uppercase text-gray-500">Työntekijä</p>
+              <p className="mt-1 text-base font-semibold text-gray-900">{task.user?.userName || "Ei tiedossa"}</p>
             </div>
 
             <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
               {isApprove ? (
                 <>
-                  <p className="mb-3 font-semibold text-gray-800">
-                    Hyväksymällä työn:
-                  </p>
+                  <p className="mb-3 font-semibold text-gray-800">Hyväksymällä työn:</p>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-start gap-2">
-                      <span className="material-icons mt-0.5 text-base text-green-600">
-                        check
-                      </span>
+                      <span className="material-icons mt-0.5 text-base text-green-600">check</span>
                       <span>Työntekijälle maksetaan sovittu summa</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="material-icons mt-0.5 text-base text-green-600">
-                        check
-                      </span>
+                      <span className="material-icons mt-0.5 text-base text-green-600">check</span>
                       <span>Työtä ei voi enää muokata</span>
                     </li>
                   </ul>
                 </>
               ) : (
                 <>
-                  <p className="mb-3 font-semibold text-gray-800">
-                    Hylkäämällä työn:
-                  </p>
+                  <p className="mb-3 font-semibold text-gray-800">Hylkäämällä työn:</p>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-start gap-2">
-                      <span className="material-icons mt-0.5 text-base text-orange-600">
-                        info
-                      </span>
+                      <span className="material-icons mt-0.5 text-base text-orange-600">info</span>
                       <span>Työ asetetaan takaisin keskeneräiseksi</span>
                     </li>
                   </ul>
@@ -129,16 +103,10 @@ export default function ApprovalConfirmModal({
               onClick={onConfirm}
               disabled={isLoading}
               className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${
-                isApprove
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-orange-600 hover:bg-orange-700"
+                isApprove ? "bg-green-600 hover:bg-green-700" : "bg-orange-600 hover:bg-orange-700"
               }`}
             >
-              {isLoading
-                ? "Päivitetään..."
-                : isApprove
-                  ? "Hyväksy työ"
-                  : "Hylkää työ"}
+              {isLoading ? "Päivitetään..." : isApprove ? "Hyväksy työ" : "Hylkää työ"}
             </button>
           </div>
         </div>

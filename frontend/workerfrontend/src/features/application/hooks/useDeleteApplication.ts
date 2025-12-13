@@ -8,8 +8,7 @@ export function useDeleteApplication() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ taskId }: DeleteApplicationInput) =>
-      deleteApplication(getAccessTokenSilently, taskId),
+    mutationFn: ({ taskId }: DeleteApplicationInput) => deleteApplication(getAccessTokenSilently, taskId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["applications", "detail", variables.taskId],

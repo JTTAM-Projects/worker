@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface GeocodingResult {
   latitude: number;
@@ -20,7 +20,7 @@ export function useGeocoding(): UseGeocodingReturn {
 
   const geocode = useCallback(async (location: string): Promise<GeocodingResult | null> => {
     if (!location.trim()) {
-      setError('Location cannot be empty');
+      setError("Location cannot be empty");
       return null;
     }
 
@@ -32,13 +32,13 @@ export function useGeocoding(): UseGeocodingReturn {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`,
         {
           headers: {
-            'User-Agent': 'GligApp/1.0'
-          }
-        }
+            "User-Agent": "GligApp/1.0",
+          },
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
@@ -47,16 +47,16 @@ export function useGeocoding(): UseGeocodingReturn {
         const { lat, lon } = data[0];
         return {
           latitude: parseFloat(lat),
-          longitude: parseFloat(lon)
+          longitude: parseFloat(lon),
         };
       } else {
-        setError('Sijaintia ei löytynyt. Kokeile tarkempaa osoitetta.');
+        setError("Sijaintia ei löytynyt. Kokeile tarkempaa osoitetta.");
         return null;
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Virhe haettaessa sijaintia';
+      const errorMessage = err instanceof Error ? err.message : "Virhe haettaessa sijaintia";
       setError(errorMessage);
-      console.error('Geocoding error:', err);
+      console.error("Geocoding error:", err);
       return null;
     } finally {
       setIsLoading(false);

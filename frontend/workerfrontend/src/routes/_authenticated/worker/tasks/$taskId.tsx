@@ -31,7 +31,7 @@ function TaskDetailPage() {
   // Get saved search params for back navigation
   const getSavedTasksSearch = () => {
     try {
-      const saved = sessionStorage.getItem('worker-tasks-search');
+      const saved = sessionStorage.getItem("worker-tasks-search");
       return saved ? JSON.parse(saved) : undefined;
     } catch {
       return undefined;

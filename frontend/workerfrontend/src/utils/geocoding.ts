@@ -16,12 +16,14 @@ export interface GeocodeResult {
  * @returns Promise with latitude and longitude, or null if geocoding fails
  */
 export async function geocodeAddress(
-  address: string | {
-    streetAddress?: string;
-    postalCode?: string;
-    city: string;
-    country: string;
-  }
+  address:
+    | string
+    | {
+        streetAddress?: string;
+        postalCode?: string;
+        city: string;
+        country: string;
+      },
 ): Promise<GeocodeResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
     console.warn("Google Maps API key not configured");
@@ -30,23 +32,17 @@ export async function geocodeAddress(
 
   try {
     // Build address string from components if object is passed
-    const addressString = typeof address === "string" 
-      ? address 
-      : [
-          address.streetAddress,
-          address.postalCode,
-          address.city,
-          address.country,
-        ]
-        .filter(Boolean)
-        .join(", ");
+    const addressString =
+      typeof address === "string"
+        ? address
+        : [address.streetAddress, address.postalCode, address.city, address.country].filter(Boolean).join(", ");
 
     const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
     url.searchParams.set("address", addressString);
     url.searchParams.set("key", GOOGLE_MAPS_API_KEY);
 
     const response = await fetch(url.toString());
-    
+
     if (!response.ok) {
       console.error("Geocoding API request failed:", response.status);
       return null;
@@ -86,7 +82,7 @@ export async function geocodeAddress(
  */
 export async function reverseGeocode(
   latitude: number,
-  longitude: number
+  longitude: number,
 ): Promise<{ formattedAddress: string } | null> {
   if (!GOOGLE_MAPS_API_KEY) {
     console.warn("Google Maps API key not configured");
@@ -99,7 +95,7 @@ export async function reverseGeocode(
     url.searchParams.set("key", GOOGLE_MAPS_API_KEY);
 
     const response = await fetch(url.toString());
-    
+
     if (!response.ok) {
       console.error("Reverse geocoding API request failed:", response.status);
       return null;

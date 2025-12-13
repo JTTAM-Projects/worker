@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/employer/my-tasks/")({
             : "ACTIVE";
 
     return context.queryClient.ensureQueryData(
-      taskQueries.own(context.auth.getAccessToken, { page: 0, size: 6, status })
+      taskQueries.own(context.auth.getAccessToken, { page: 0, size: 6, status }),
     );
   },
 });
@@ -69,7 +69,7 @@ function MyTasksPage() {
       page,
       size: pageSize,
       status,
-    })
+    }),
   );
 
   const tasks = data?.content ?? [];
@@ -128,7 +128,7 @@ function MyTasksPage() {
         "success",
         confirmModal.action === "approve"
           ? "Työ hyväksyttiin onnistuneesti!"
-          : "Työ palautettiin työntekijälle korjattavaksi."
+          : "Työ palautettiin työntekijälle korjattavaksi.",
       );
       setConfirmModal(null);
     } catch (error) {

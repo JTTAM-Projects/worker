@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/worker/my-applications/act
           page: 0,
           size: 5,
           applicationStatus: "PENDING",
-        })
+        }),
       );
     } catch (error) {
       console.error("Failed to load applications:", error);
@@ -43,7 +43,7 @@ export default function ActiveApplicationsPage() {
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
 
   const handleResetFilters = () => {

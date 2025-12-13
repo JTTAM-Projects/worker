@@ -10,12 +10,11 @@ export function useGetApplication(taskId: number) {
     queryKey: applicationQueries.ownApplication(taskId).queryKey,
     queryFn: () => fetchApplication(getAccessTokenSilently, taskId),
     enabled: isAuthenticated && !!taskId,
-  })
+  });
 }
 
-export function useGetUserApplications(params: FetchApplicationParams){
+export function useGetUserApplications(params: FetchApplicationParams) {
   const { getAccessTokenSilently } = useAuth0();
 
-  return useQuery(applicationQueries.ownApplications(getAccessTokenSilently, params))
+  return useQuery(applicationQueries.ownApplications(getAccessTokenSilently, params));
 }
-

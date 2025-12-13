@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker, Circle } from '@react-google-maps/api';
-import { TaskMapInfoWindow } from './TaskMapInfoWindow';
-import type { Task, TaskFilters } from '../types';
-import { 
-  filterMappableTasks, 
+import { useEffect, useRef, useState, useMemo } from "react";
+import { GoogleMap, useJsApiLoader, MarkerClusterer, Marker, Circle } from "@react-google-maps/api";
+import { TaskMapInfoWindow } from "./TaskMapInfoWindow";
+import type { Task, TaskFilters } from "../types";
+import {
+  filterMappableTasks,
   isTaskListCapped,
   DEFAULT_MAP_CENTER,
-  calculateZoomFromRadius 
-} from '../utils/mapHelpers';
+  calculateZoomFromRadius,
+} from "../utils/mapHelpers";
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
 
 const MAP_CONTAINER_STYLE = {
-  width: '100%',
-  height: '600px', // Fixed rectangular height
+  width: "100%",
+  height: "600px", // Fixed rectangular height
 };
 
 const MAP_OPTIONS: google.maps.MapOptions = {
@@ -21,7 +21,7 @@ const MAP_OPTIONS: google.maps.MapOptions = {
   fullscreenControl: true,
   streetViewControl: false,
   mapTypeControl: false,
-  gestureHandling: 'greedy',
+  gestureHandling: "greedy",
 };
 
 const CLUSTERER_OPTIONS = {
@@ -36,8 +36,8 @@ const CLUSTERER_OPTIONS = {
   calculator: (markers: google.maps.Marker[], numStyles: number) => {
     // Only show cluster if there are actually multiple distinct tasks
     const count = markers.length;
-    if (count < 2) return { text: '', index: 1 };
-    
+    if (count < 2) return { text: "", index: 1 };
+
     // Use a simple index based on count for styling
     let index = 0;
     if (count < 10) index = 1;
@@ -45,7 +45,7 @@ const CLUSTERER_OPTIONS = {
     else if (count < 100) index = 3;
     else if (count < 500) index = 4;
     else index = 5;
-    
+
     return {
       text: String(count),
       index: Math.min(index, numStyles),
@@ -63,7 +63,7 @@ interface TaskMapProps {
 export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ['marker'],
+    libraries: ["marker"],
   });
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -87,10 +87,10 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
 
   // Use useMemo to calculate these only when 'tasks' prop changes
   const mappableTasks = useMemo(() => filterMappableTasks(tasks), [tasks]);
-  
+
   // Backend should handle radius filtering, so we use all mappable tasks
   const displayedTasks = mappableTasks;
-  
+
   // Calculate stats with useMemo to avoid redundant filtering
   const stats = useMemo(() => {
     const unmappableTasks = tasks.length - mappableTasks.length;
@@ -101,7 +101,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
       hasUnmappableTasks: unmappableTasks > 0,
     };
   }, [tasks, mappableTasks]);
-  
+
   const isCapped = isTaskListCapped(totalElements, tasks.length);
 
   // Handle map load and fit bounds
@@ -115,13 +115,9 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
     if (!location) return;
 
     // Find all tasks at this exact location (stacked markers)
-    const tasksAtSameLocation = displayedTasks.filter(task => {
+    const tasksAtSameLocation = displayedTasks.filter((task) => {
       const loc = task.locations[0];
-      return (
-        loc &&
-        loc.latitude === location.latitude &&
-        loc.longitude === location.longitude
-      );
+      return loc && loc.latitude === location.latitude && loc.longitude === location.longitude;
     });
 
     // Set the array of tasks as selected
@@ -137,18 +133,16 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
     // 2. If a location filter is active, center on it
     if (filters.latitude && filters.longitude) {
       map.setCenter({ lat: filters.latitude, lng: filters.longitude });
-      
-      const zoom = filters.radiusKm 
-        ? calculateZoomFromRadius(filters.radiusKm) 
-        : 12; // Default zoom if no radius
+
+      const zoom = filters.radiusKm ? calculateZoomFromRadius(filters.radiusKm) : 12; // Default zoom if no radius
       map.setZoom(zoom);
-    } 
+    }
     // 3. If no location filter, but we have tasks, fit them all
     else if (displayedTasks.length > 0) {
       const bounds = new google.maps.LatLngBounds();
-      
+
       displayedTasks.forEach((task) => {
-        const location = task.locations[0]; 
+        const location = task.locations[0];
         if (location && location.latitude && location.longitude) {
           bounds.extend({
             lat: location.latitude,
@@ -160,7 +154,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
       map.fitBounds(bounds);
 
       // 4. Prevent over-zooming on a single pin
-      const listener = google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+      const listener = google.maps.event.addListenerOnce(map, "bounds_changed", () => {
         const currentZoom = map.getZoom();
         if (currentZoom && currentZoom > 15) {
           map.setZoom(15);
@@ -177,7 +171,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
   if (!isLoaded || isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-        <div className="flex items-center justify-center" style={{ height: '600px' }}>
+        <div className="flex items-center justify-center" style={{ height: "600px" }}>
           <div className="text-center text-gray-600">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
             <p className="text-lg font-semibold">Ladataan karttaa...</p>
@@ -236,17 +230,15 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
             Näytetään <strong>{displayedTasks.length}</strong> tehtävää kartalla
             {filters.latitude && filters.longitude && filters.radiusKm && (
               <span className="text-gray-600 ml-2">
-                ({filters.radiusKm} km säteellä: {filters.locationText || 'valittu sijainti'})
+                ({filters.radiusKm} km säteellä: {filters.locationText || "valittu sijainti"})
               </span>
             )}
             {stats.hasUnmappableTasks && (
-              <span className="text-gray-500 ml-2">
-                ({stats.unmappableTasks} ilman sijaintia)
-              </span>
+              <span className="text-gray-500 ml-2">({stats.unmappableTasks} ilman sijaintia)</span>
             )}
           </span>
         </div>
-        
+
         {isCapped && (
           <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded">
             <span className="material-icons text-lg">info</span>
@@ -273,9 +265,9 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
             }}
             radius={filters.radiusKm * 1000} // Convert km to meters
             options={{
-              fillColor: '#10b981',
+              fillColor: "#10b981",
               fillOpacity: 0.1,
-              strokeColor: '#10b981',
+              strokeColor: "#10b981",
               strokeOpacity: 0.5,
               strokeWeight: 2,
               clickable: false, // Prevent circle from intercepting map clicks
@@ -285,8 +277,8 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
           />
         )}
 
-        <MarkerClusterer 
-          key={`clusterer-${displayedTasks.length}-${filters.radiusKm || 'all'}`}
+        <MarkerClusterer
+          key={`clusterer-${displayedTasks.length}-${filters.radiusKm || "all"}`}
           options={CLUSTERER_OPTIONS}
         >
           {(clusterer) => (
@@ -312,10 +304,7 @@ export function TaskMap({ tasks, totalElements, filters, isLoading }: TaskMapPro
 
         {/* InfoWindow for selected task(s) */}
         {selectedTasks && selectedTasks.length > 0 && (
-          <TaskMapInfoWindow
-            tasks={selectedTasks}
-            onClose={() => setSelectedTasks(null)}
-          />
+          <TaskMapInfoWindow tasks={selectedTasks} onClose={() => setSelectedTasks(null)} />
         )}
       </GoogleMap>
     </div>

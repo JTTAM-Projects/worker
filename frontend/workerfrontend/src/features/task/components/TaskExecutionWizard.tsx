@@ -226,25 +226,25 @@ export default function TaskExecutionWizard({ taskTitle, onBack, onFinish, onCom
     }
 
     return (
-        <Card>
-          <div className="flex flex-col items-center">
-            <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-500 mb-4">
-              <span className="material-icons text-3xl">check_circle</span>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Työ lähetetty hyväksyttäväksi</h2>
-            <p className="text-gray-600 mb-6">Kokonaisaika: {formattedTime}</p>
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="rounded-lg bg-green-500 px-6 py-3 text-base font-semibold text-white hover:bg-green-600"
-              >
-                Palaa listoihin
-              </button>
-            )}
+      <Card>
+        <div className="flex flex-col items-center">
+          <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-500 mb-4">
+            <span className="material-icons text-3xl">check_circle</span>
           </div>
-        </Card>
-      );
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Työ lähetetty hyväksyttäväksi</h2>
+          <p className="text-gray-600 mb-6">Kokonaisaika: {formattedTime}</p>
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="rounded-lg bg-green-500 px-6 py-3 text-base font-semibold text-white hover:bg-green-600"
+            >
+              Palaa listoihin
+            </button>
+          )}
+        </div>
+      </Card>
+    );
   };
 
   return (

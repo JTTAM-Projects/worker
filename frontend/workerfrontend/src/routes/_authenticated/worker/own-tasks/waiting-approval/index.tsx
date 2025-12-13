@@ -18,14 +18,14 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/waiting-a
           page: 0,
           size: 10,
           status: "PENDING_APPROVAL",
-        })
+        }),
       );
     } catch (error) {
-      console.error('Failed to load tasks: ', error);
-      // Return empty data on error to prevent crash    
+      console.error("Failed to load tasks: ", error);
+      // Return empty data on error to prevent crash
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
-  }
+  },
 });
 
 function WorkerWaitingApprovalTasksPage() {
@@ -41,7 +41,7 @@ function WorkerWaitingApprovalTasksPage() {
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
 
   const handleResetFilters = () => {
@@ -62,26 +62,26 @@ function WorkerWaitingApprovalTasksPage() {
         <Tabulation tabs={tabs} />
       </div>
 
-      <div className="container mx-auto px-6 py-8">    
-          <TaskFilterPanel
-            filters={filters}
-            onFiltersChange={(newFilters) => {
-              setFilters((prev) => ({
-                ...prev,
-                ...newFilters
-              }));
-              setCurrentPage(0);
-            }}
-            onReset={handleResetFilters}
-          />
+      <div className="container mx-auto px-6 py-8">
+        <TaskFilterPanel
+          filters={filters}
+          onFiltersChange={(newFilters) => {
+            setFilters((prev) => ({
+              ...prev,
+              ...newFilters,
+            }));
+            setCurrentPage(0);
+          }}
+          onReset={handleResetFilters}
+        />
         <div className="flex-1">
-          <WorkerTasksToList 
+          <WorkerTasksToList
             tasks={taskList.content}
             totalPages={taskList.totalPages}
             currentPage={taskList.number}
             onPageChange={handlePageChange}
             isFirst={taskList.first}
-            isLast={taskList.last} 
+            isLast={taskList.last}
           />
         </div>
       </div>

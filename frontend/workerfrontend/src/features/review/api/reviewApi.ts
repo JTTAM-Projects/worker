@@ -1,6 +1,6 @@
 import type { Review, ReviewRequest, PaginatedResponse, ReviewProfileType } from "../types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Fetch reviews for a user profile
@@ -16,25 +16,22 @@ export async function getReviews(
   username: string,
   profileType: ReviewProfileType,
   page = 0,
-  size = 10
+  size = 10,
 ): Promise<PaginatedResponse<Review>> {
   const token = await getAccessTokenSilently();
-  const endpoint = profileType === 'TASKER' ? 'tasker' : 'employer';
-  
+  const endpoint = profileType === "TASKER" ? "tasker" : "employer";
+
   const queryParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
   });
 
-  const response = await fetch(
-    `${API_BASE_URL}/reviews/${endpoint}/${username}?${queryParams}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/reviews/${endpoint}/${username}?${queryParams}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
@@ -52,19 +49,16 @@ export async function getReviews(
  */
 export async function getAverageRating(
   getAccessTokenSilently: () => Promise<string>,
-  username: string
+  username: string,
 ): Promise<number | null> {
   const token = await getAccessTokenSilently();
 
-  const response = await fetch(
-    `${API_BASE_URL}/reviews/average/${username}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/reviews/average/${username}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   // 204 No Content means no reviews
   if (response.status === 204) {
@@ -87,7 +81,7 @@ export async function getAverageRating(
  */
 export async function createReview(
   getAccessTokenSilently: () => Promise<string>,
-  payload: ReviewRequest
+  payload: ReviewRequest,
 ): Promise<Review> {
   const token = await getAccessTokenSilently();
   const response = await fetch(`${API_BASE_URL}/reviews`, {
@@ -117,7 +111,7 @@ export async function createReview(
 export async function updateReview(
   getAccessTokenSilently: () => Promise<string>,
   reviewId: number,
-  payload: ReviewRequest
+  payload: ReviewRequest,
 ): Promise<Review> {
   const token = await getAccessTokenSilently();
   const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
@@ -142,10 +136,7 @@ export async function updateReview(
  * @param getAccessTokenSilently Auth0 token function
  * @param reviewId ID of the review to delete
  */
-export async function deleteReview(
-  getAccessTokenSilently: () => Promise<string>,
-  reviewId: number
-): Promise<void> {
+export async function deleteReview(getAccessTokenSilently: () => Promise<string>, reviewId: number): Promise<void> {
   const token = await getAccessTokenSilently();
   const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
     method: "DELETE",

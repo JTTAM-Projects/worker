@@ -5,12 +5,12 @@ import { taskQueries } from "../../../../../features/task/queries/taskQueries";
 import TaskDetails from "../../../../../features/task/components/TaskDetails";
 import { getCategoryIcon } from "../../../../../features/task/utils/categoryUtils";
 
-export const Route = createFileRoute('/_authenticated/worker/own-tasks/$taskId/task-detail',)({
+export const Route = createFileRoute("/_authenticated/worker/own-tasks/$taskId/task-detail")({
   loader: ({ context: { queryClient }, params: { taskId } }) => {
     return queryClient.ensureQueryData(taskQueries.detail(taskId));
   },
   component: TaskExecutionDetailsPage,
-})
+});
 
 function TaskExecutionDetailsPage() {
   const taskId = Route.useParams().taskId;

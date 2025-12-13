@@ -68,6 +68,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("fi-FI", {
 const formatDate = (isoString: string): string => {
   try {
     return DATE_FORMATTER.format(new Date(isoString));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return "Ei päivämäärää";
   }
@@ -76,9 +77,7 @@ const formatDate = (isoString: string): string => {
 /**
  * Creates a display string from a location object or string.
  */
-const getLocationString = (
-  location: LocationResponse | string | null | undefined
-): string => {
+const getLocationString = (location: LocationResponse | string | null | undefined): string => {
   if (!location) return "Ei sijaintia";
   if (typeof location === "string") return location;
 
@@ -120,32 +119,23 @@ export default function TaskCard({ task }: TaskCardProps) {
    * `useMemo` calculates derived values.
    * This logic only re-runs if the `task` prop changes.
    */
-  const {
-    categoryIcon,
-    categoryBg,
-    locationString,
-    locationCount,
-    userInitials,
-    formattedDate,
-    hasLocation,
-  } = useMemo(() => {
-    const catTitle = task.categories?.[0]?.title || "OTHER";
-    const locs = task.locations || [];
-    const firstLoc = locs[0];
-    const locationStr = getLocationString(firstLoc);
+  const { categoryIcon, categoryBg, locationString, locationCount, userInitials, formattedDate, hasLocation } =
+    useMemo(() => {
+      const catTitle = task.categories?.[0]?.title || "OTHER";
+      const locs = task.locations || [];
+      const firstLoc = locs[0];
+      const locationStr = getLocationString(firstLoc);
 
-    return {
-      categoryIcon: getCategoryIcon(catTitle),
-      categoryBg: getCategoryColor(catTitle), // Re-added color logic
-      locationString: locationStr,
-      locationCount: locs.length,
-      userInitials: getUserInitials(task.user?.userName),
-      formattedDate: task.startDate
-        ? formatDate(task.startDate)
-        : "Ei päivämäärää",
-      hasLocation: locs.length > 0 && locationStr !== "Ei sijaintia",
-    };
-  }, [task]);
+      return {
+        categoryIcon: getCategoryIcon(catTitle),
+        categoryBg: getCategoryColor(catTitle), // Re-added color logic
+        locationString: locationStr,
+        locationCount: locs.length,
+        userInitials: getUserInitials(task.user?.userName),
+        formattedDate: task.startDate ? formatDate(task.startDate) : "Ei päivämäärää",
+        hasLocation: locs.length > 0 && locationStr !== "Ei sijaintia",
+      };
+    }, [task]);
 
   /**
    * `useCallback` for stable function identity.
@@ -167,7 +157,7 @@ export default function TaskCard({ task }: TaskCardProps) {
         handleClick();
       }
     },
-    [handleClick]
+    [handleClick],
   );
 
   // This JSX implements your requested layout:
@@ -186,33 +176,24 @@ export default function TaskCard({ task }: TaskCardProps) {
         className={`w-24 h-24 md:w-28 md:h-28 flex-shrink-0 ${categoryBg} flex items-center justify-center rounded-lg`}
         aria-hidden="true"
       >
-        <span className="material-icons text-gray-600 text-5xl">
-          {categoryIcon}
-        </span>
+        <span className="material-icons text-gray-600 text-5xl">{categoryIcon}</span>
       </div>
 
       {/* Column 2: Heading, Location(s), User */}
       <div className="flex-1 min-w-0 flex flex-col gap-2">
         {/* Heading */}
-        <h3 className="font-semibold text-gray-800 text-lg leading-tight">
-          {task.title}
-        </h3>
+        <h3 className="font-semibold text-gray-800 text-lg leading-tight">{task.title}</h3>
 
         {/* Location(s) */}
         {hasLocation && (
           <div className="flex items-center gap-2">
-            <span
-              className="material-icons text-green-500 text-base"
-              aria-hidden="true"
-            >
+            <span className="material-icons text-green-500 text-base" aria-hidden="true">
               place
             </span>
             <div className="flex-1 min-w-0">
               <span className="text-sm text-gray-700">{locationString}</span>
               {locationCount > 1 && (
-                <span className="ml-2 text-sm text-blue-600 font-medium">
-                  +{locationCount - 1}
-                </span>
+                <span className="ml-2 text-sm text-blue-600 font-medium">+{locationCount - 1}</span>
               )}
             </div>
           </div>
@@ -236,25 +217,18 @@ export default function TaskCard({ task }: TaskCardProps) {
       {/* 'flex-1' makes it flexible. 'hidden md:block' hides it on small screens. */}
       {task.description && (
         <div className="flex-1 min-w-0 hidden md:block">
-          <p className="text-sm text-gray-600 line-clamp-3">
-            {task.description}
-          </p>
+          <p className="text-sm text-gray-600 line-clamp-3">{task.description}</p>
         </div>
       )}
 
       {/* Column 4: Price, Time */}
       <div className="flex flex-col items-end justify-start gap-2 flex-shrink-0 pl-2">
         {/* Price */}
-        <span className="text-green-600 font-bold text-xl whitespace-nowrap">
-          {task.price} €
-        </span>
+        <span className="text-green-600 font-bold text-xl whitespace-nowrap">{task.price} €</span>
 
         {/* Date */}
         <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <span
-            className="material-icons text-green-500 text-base"
-            aria-hidden="true"
-          >
+          <span className="material-icons text-green-500 text-base" aria-hidden="true">
             event
           </span>
           <span className="whitespace-nowrap">{formattedDate}</span>

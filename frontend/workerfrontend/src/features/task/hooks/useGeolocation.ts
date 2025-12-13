@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface GeolocationResult {
   latitude: number;
@@ -20,7 +20,7 @@ export function useGeolocation(): UseGeolocationReturn {
 
   const getCurrentLocation = useCallback(async (): Promise<GeolocationResult | null> => {
     if (!navigator.geolocation) {
-      setError('Geolokalisaatio ei ole tuettu selaimessasi.');
+      setError("Geolokalisaatio ei ole tuettu selaimessasi.");
       return null;
     }
 
@@ -33,16 +33,16 @@ export function useGeolocation(): UseGeolocationReturn {
           setIsLoading(false);
           resolve({
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           });
         },
         (err) => {
           setIsLoading(false);
-          const errorMessage = 'Virhe haettaessa sijaintiasi. Varmista, että olet sallinut sijaintioikeudet.';
+          const errorMessage = "Virhe haettaessa sijaintiasi. Varmista, että olet sallinut sijaintioikeudet.";
           setError(errorMessage);
-          console.error('Geolocation error:', err);
+          console.error("Geolocation error:", err);
           resolve(null);
-        }
+        },
       );
     });
   }, []);

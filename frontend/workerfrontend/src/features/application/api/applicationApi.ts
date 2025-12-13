@@ -1,11 +1,6 @@
-import type {
-  ApplicationFilters,
-  ApplicationStatus,
-  ApplicationWithDetails,
-  PaginatedResponse,
-} from "../types";
+import type { ApplicationFilters, ApplicationStatus, ApplicationWithDetails, PaginatedResponse } from "../types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface ApplicationPayload {
   priceSuggestion: number;
@@ -20,25 +15,25 @@ export interface FetchApplicationParams extends ApplicationFilters {
 }
 
 export async function fetchApplication(
-  getAccessToken: () => Promise<string>, 
-  taskId: number
-): Promise<ApplicationWithDetails | null>{
+  getAccessToken: () => Promise<string>,
+  taskId: number,
+): Promise<ApplicationWithDetails | null> {
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 
-  if ( response.status === 404 ) {
+  if (response.status === 404) {
     return null;
   }
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('Error response: ' + errorText);
+    console.error("Error response: " + errorText);
     throw new Error(`Failed to fetch single application related to user: ${response.statusText}`);
   }
 
@@ -49,15 +44,15 @@ export async function fetchApplication(
 export async function createApplication(
   getAccessToken: () => Promise<string>,
   taskId: number,
-  payload: ApplicationPayload
+  payload: ApplicationPayload,
 ): Promise<ApplicationWithDetails> {
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });
@@ -90,15 +85,15 @@ export async function createApplication(
 export async function updateApplication(
   getAccessToken: () => Promise<string>,
   taskId: number,
-  payload: ApplicationPayload
+  payload: ApplicationPayload,
 ): Promise<ApplicationWithDetails> {
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });
@@ -111,16 +106,13 @@ export async function updateApplication(
   return response.json();
 }
 
-export async function deleteApplication(
-  getAccessToken: () => Promise<string>,
-  taskId: number
-): Promise<void> {
+export async function deleteApplication(getAccessToken: () => Promise<string>, taskId: number): Promise<void> {
   const token = await getAccessToken();
 
   const response = await fetch(`${API_BASE_URL}/task/${taskId}/application`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -132,29 +124,21 @@ export async function deleteApplication(
 
 export async function fetchAllApplications(
   getAccessToken: () => Promise<string>,
-  params: Partial<FetchApplicationParams> = {}
+  params: Partial<FetchApplicationParams> = {},
 ): Promise<PaginatedResponse<ApplicationWithDetails>> {
-  const { 
-    page = 0, 
-    size = 10, 
-    applicationStatus,
-    searchText,
-    categories,
-    minPrice,
-    maxPrice,
-  } = params;
+  const { page = 0, size = 10, applicationStatus, searchText, categories, minPrice, maxPrice } = params;
   const token = await getAccessToken();
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
-    size: size.toString()
-  })
+    size: size.toString(),
+  });
 
-  if (searchText && searchText.trim()){
+  if (searchText && searchText.trim()) {
     queryParams.append("searchText", searchText.trim());
   }
   if (categories && categories.length > 0) {
-    categories.forEach(cat => queryParams.append("categories", cat));
+    categories.forEach((cat) => queryParams.append("categories", cat));
   }
 
   if (minPrice !== undefined && minPrice !== null) {
@@ -164,23 +148,21 @@ export async function fetchAllApplications(
   if (maxPrice !== undefined && maxPrice !== null) {
     queryParams.append("applicationMaxPrice", maxPrice.toString());
   }
-  
+
   if (applicationStatus) {
     queryParams.append("applicationStatus", applicationStatus);
   }
-  const response = await fetch(`${API_BASE_URL}/user-applications?${queryParams.toString()}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    }
-  );
-  
+  const response = await fetch(`${API_BASE_URL}/user-applications?${queryParams.toString()}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   if (!response.ok) {
     throw new Error(`Failed to fetch applications: ${response.statusText}`);
   }
   const data = await response.json();
-  console.log('API response: ', data)
+  console.log("API response: ", data);
   return data;
 }

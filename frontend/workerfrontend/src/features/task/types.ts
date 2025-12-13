@@ -1,10 +1,20 @@
-import type { UserDto } from '../Profile/types';
+import type { UserDto } from "../Profile/types";
 
 // Re-export for convenience
 export type { UserDto };
 
 /** Available task categories (matches backend enum) */
-export type Category = "Cleaning" | "Garden" | "Moving" | "Other" | "Yard" | "Forest work" | "Household" | "Repair" | "Painting" | "Snow removal";
+export type Category =
+  | "Cleaning"
+  | "Garden"
+  | "Moving"
+  | "Other"
+  | "Yard"
+  | "Forest work"
+  | "Household"
+  | "Repair"
+  | "Painting"
+  | "Snow removal";
 
 /** Task lifecycle status (matches backend enum) */
 export type TaskStatus = "ACTIVE" | "IN_PROGRESS" | "PENDING_APPROVAL" | "COMPLETED" | "CANCELLED" | "EXPIRED";

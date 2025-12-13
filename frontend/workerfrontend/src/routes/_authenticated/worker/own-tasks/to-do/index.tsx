@@ -25,14 +25,14 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/to-do/")(
           page: 0,
           size: 10,
           status: "ACTIVE",
-        })
+        }),
       );
     } catch (error) {
-      console.error('Failed to load tasks: ', error);
-      // Return empty data on error to prevent crash    
+      console.error("Failed to load tasks: ", error);
+      // Return empty data on error to prevent crash
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
-  }
+  },
 });
 
 function WorkerToDoTasksPage() {
@@ -45,14 +45,13 @@ function WorkerToDoTasksPage() {
   const viewMode: ViewMode = search.view ?? "list";
   const tabs = useWorkerTaskTabs();
 
-
   const { data: taskList } = useSuspenseQuery(
     taskQueries.worker(getAccessTokenSilently, {
       status: "ACTIVE",
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
 
   const { data: tasksOnMap } = useQuery({
@@ -86,7 +85,7 @@ function WorkerToDoTasksPage() {
     navigate({
       search: {
         ...search,
-        ...newFilters
+        ...newFilters,
       },
     });
   };
@@ -106,49 +105,47 @@ function WorkerToDoTasksPage() {
   return (
     <main className="container mx-auto px-6 py-12 gap-10">
       <div className="flex mt-5 justify-center">
-        <Tabulation tabs={tabs}/>
+        <Tabulation tabs={tabs} />
       </div>
 
-      <div className="container mx-auto px-6 py-8">    
-          <TaskFilterPanel
-            filters={filters}
-            onFiltersChange={(newFilters) => {
-              setFilters((prev) => ({
-                ...prev,
-                ...newFilters
-              }));
-              setCurrentPage(0);
-            }}
-            onReset={handleResetFilters}
-          />
-          <ResultsControlBar
-            totalResults={data?.totalElements}
-            filters={filters}
-            sortBy={filters.sortBy || "newest"}
-            viewMode={viewMode}
-            onSortChange={(sort) =>
-              updateFilters({ ...filters, sortBy: sort })
-            }
-            onViewModeChange={updateViewMode}
-            onRemoveFilter={handleResetFilters}
-          />
+      <div className="container mx-auto px-6 py-8">
+        <TaskFilterPanel
+          filters={filters}
+          onFiltersChange={(newFilters) => {
+            setFilters((prev) => ({
+              ...prev,
+              ...newFilters,
+            }));
+            setCurrentPage(0);
+          }}
+          onReset={handleResetFilters}
+        />
+        <ResultsControlBar
+          totalResults={data?.totalElements}
+          filters={filters}
+          sortBy={filters.sortBy || "newest"}
+          viewMode={viewMode}
+          onSortChange={(sort) => updateFilters({ ...filters, sortBy: sort })}
+          onViewModeChange={updateViewMode}
+          onRemoveFilter={handleResetFilters}
+        />
         <div className="flex-1">
-        {viewMode === "list" ? (
-          <WorkerTasksToList 
-            tasks={taskList.content}
-            totalPages={taskList.totalPages}
-            currentPage={taskList.number}
-            onPageChange={handlePageChange}
-            isFirst={taskList.first}
-            isLast={taskList.last} 
-          />
-        ) : (
-          <TaskMap
-            tasks={tasksOnMap?.content || []}
-            totalElements={tasksOnMap?.totalElements || 0}
-            filters={filters}
-          />
-        )}
+          {viewMode === "list" ? (
+            <WorkerTasksToList
+              tasks={taskList.content}
+              totalPages={taskList.totalPages}
+              currentPage={taskList.number}
+              onPageChange={handlePageChange}
+              isFirst={taskList.first}
+              isLast={taskList.last}
+            />
+          ) : (
+            <TaskMap
+              tasks={tasksOnMap?.content || []}
+              totalElements={tasksOnMap?.totalElements || 0}
+              filters={filters}
+            />
+          )}
         </div>
       </div>
     </main>

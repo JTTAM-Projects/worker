@@ -16,9 +16,7 @@ export default function TaskFilter({ category, setCategory }: TaskFilterProps) {
 
   return (
     <section className="grid gap-6">
-      <h2 className="text-2xl font-bold text-gray-800">
-        Suosittuja kategorioita
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800">Suosittuja kategorioita</h2>
       <div className="flex flex-wrap gap-4">
         {filterOptions.map(({ id, icon, label }) => {
           const active = category === id;
@@ -28,11 +26,7 @@ export default function TaskFilter({ category, setCategory }: TaskFilterProps) {
               type="button"
               onClick={() => setCategory(id)}
               className={`flex items-center bg-white border rounded-lg px-4 py-3 transition
-                ${
-                  active
-                    ? "border-green-400"
-                    : "border-gray-300 hover:bg-gray-100 hover:border-green-400"
-                }`}
+                ${active ? "border-green-400" : "border-gray-300 hover:bg-gray-100 hover:border-green-400"}`}
             >
               <span className="material-icons mr-2 text-green-400">{icon}</span>
               <span className="font-medium text-gray-800">{label}</span>

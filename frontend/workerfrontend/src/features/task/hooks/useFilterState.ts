@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { TaskFilters } from '../types';
+import { useState, useCallback, useEffect } from "react";
+import type { TaskFilters } from "../types";
 
 export interface FilterState {
   searchText: string;
@@ -29,13 +29,13 @@ export interface UseFilterStateReturn {
 }
 
 const DEFAULT_STATE: FilterState = {
-  searchText: '',
+  searchText: "",
   selectedCategories: [],
-  minPrice: '',
-  maxPrice: '',
+  minPrice: "",
+  maxPrice: "",
   minPriceSlider: 0,
   maxPriceSlider: 200,
-  locationSearch: '',
+  locationSearch: "",
   radiusKm: 10,
 };
 
@@ -45,112 +45,112 @@ const DEFAULT_STATE: FilterState = {
  */
 export function useFilterState(initialFilters: TaskFilters): UseFilterStateReturn {
   const [state, setState] = useState<FilterState>(() => ({
-    searchText: initialFilters.searchText || '',
+    searchText: initialFilters.searchText || "",
     selectedCategories: initialFilters.categories || [],
-    minPrice: initialFilters.minPrice?.toString() || '',
-    maxPrice: initialFilters.maxPrice?.toString() || '',
+    minPrice: initialFilters.minPrice?.toString() || "",
+    maxPrice: initialFilters.maxPrice?.toString() || "",
     minPriceSlider: initialFilters.minPrice || 0,
     maxPriceSlider: initialFilters.maxPrice || 200,
-    locationSearch: initialFilters.locationText || '',
+    locationSearch: initialFilters.locationText || "",
     radiusKm: initialFilters.radiusKm || 10,
   }));
 
   const setSearchText = useCallback((value: string) => {
-    setState(prev => ({ ...prev, searchText: value }));
+    setState((prev) => ({ ...prev, searchText: value }));
   }, []);
 
   const setSelectedCategories = useCallback((value: string[]) => {
-    setState(prev => ({ ...prev, selectedCategories: value }));
+    setState((prev) => ({ ...prev, selectedCategories: value }));
   }, []);
 
   const toggleCategory = useCallback((category: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedCategories: prev.selectedCategories.includes(category)
-        ? prev.selectedCategories.filter(c => c !== category)
-        : [...prev.selectedCategories, category]
+        ? prev.selectedCategories.filter((c) => c !== category)
+        : [...prev.selectedCategories, category],
     }));
   }, []);
 
   const setMinPrice = useCallback((value: string) => {
     // Allow empty string for clearing
-    if (value === '') {
-      setState(prev => ({
+    if (value === "") {
+      setState((prev) => ({
         ...prev,
-        minPrice: '',
-        minPriceSlider: 0
+        minPrice: "",
+        minPriceSlider: 0,
       }));
       return;
     }
-    
+
     const numValue = parseInt(value);
     // Clamp between 0 and 500
     const clampedValue = Math.max(0, Math.min(500, numValue));
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       minPrice: value, // Keep original input for UX
-      minPriceSlider: clampedValue // But clamp slider position
+      minPriceSlider: clampedValue, // But clamp slider position
     }));
   }, []);
 
   const setMaxPrice = useCallback((value: string) => {
     // Allow empty string for clearing
-    if (value === '') {
-      setState(prev => ({
+    if (value === "") {
+      setState((prev) => ({
         ...prev,
-        maxPrice: '',
-        maxPriceSlider: 500
+        maxPrice: "",
+        maxPriceSlider: 500,
       }));
       return;
     }
-    
+
     const numValue = parseInt(value);
     // Clamp between 0 and 500
     const clampedValue = Math.max(0, Math.min(500, numValue));
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       maxPrice: value, // Keep original input for UX
-      maxPriceSlider: clampedValue // But clamp slider position
+      maxPriceSlider: clampedValue, // But clamp slider position
     }));
   }, []);
 
   const setMinPriceSlider = useCallback((value: number) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       minPriceSlider: value,
-      minPrice: value.toString()
+      minPrice: value.toString(),
     }));
   }, []);
 
   const setMaxPriceSlider = useCallback((value: number) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       maxPriceSlider: value,
-      maxPrice: value.toString()
+      maxPrice: value.toString(),
     }));
   }, []);
 
   const setLocationSearch = useCallback((value: string) => {
-    setState(prev => ({ ...prev, locationSearch: value }));
+    setState((prev) => ({ ...prev, locationSearch: value }));
   }, []);
 
   const setRadiusKm = useCallback((value: number) => {
-    setState(prev => ({ ...prev, radiusKm: value }));
+    setState((prev) => ({ ...prev, radiusKm: value }));
   }, []);
 
   const syncWithFilters = useCallback((filters: TaskFilters) => {
     // Only sync when explicitly reset (all filters empty)
-    const isReset = !filters.searchText && !filters.categories?.length && 
-                     !filters.minPrice && !filters.maxPrice && !filters.latitude;
-    
-    setState(prev => ({
-      searchText: isReset ? '' : prev.searchText,
+    const isReset =
+      !filters.searchText && !filters.categories?.length && !filters.minPrice && !filters.maxPrice && !filters.latitude;
+
+    setState((prev) => ({
+      searchText: isReset ? "" : prev.searchText,
       selectedCategories: filters.categories || [],
-      minPrice: filters.minPrice?.toString() || '',
-      maxPrice: filters.maxPrice?.toString() || '',
+      minPrice: filters.minPrice?.toString() || "",
+      maxPrice: filters.maxPrice?.toString() || "",
       minPriceSlider: filters.minPrice || 0,
       maxPriceSlider: filters.maxPrice || 200,
-      locationSearch: filters.locationText || (isReset ? '' : prev.locationSearch),
+      locationSearch: filters.locationText || (isReset ? "" : prev.locationSearch),
       radiusKm: filters.radiusKm || 10,
     }));
   }, []);
@@ -159,19 +159,22 @@ export function useFilterState(initialFilters: TaskFilters): UseFilterStateRetur
     setState(DEFAULT_STATE);
   }, []);
 
-  const buildFilters = useCallback((currentFilters: TaskFilters): TaskFilters => {
-    return {
-      ...currentFilters,
-      searchText: state.searchText.trim() || undefined,
-      categories: state.selectedCategories.length > 0 ? state.selectedCategories : undefined,
-      minPrice: state.minPrice ? parseInt(state.minPrice) : undefined,
-      maxPrice: state.maxPrice ? parseInt(state.maxPrice) : undefined,
-      // Keep location data if it exists
-      latitude: currentFilters.latitude,
-      longitude: currentFilters.longitude,
-      radiusKm: currentFilters.latitude && currentFilters.longitude ? state.radiusKm : undefined,
-    };
-  }, [state]);
+  const buildFilters = useCallback(
+    (currentFilters: TaskFilters): TaskFilters => {
+      return {
+        ...currentFilters,
+        searchText: state.searchText.trim() || undefined,
+        categories: state.selectedCategories.length > 0 ? state.selectedCategories : undefined,
+        minPrice: state.minPrice ? parseInt(state.minPrice) : undefined,
+        maxPrice: state.maxPrice ? parseInt(state.maxPrice) : undefined,
+        // Keep location data if it exists
+        latitude: currentFilters.latitude,
+        longitude: currentFilters.longitude,
+        radiusKm: currentFilters.latitude && currentFilters.longitude ? state.radiusKm : undefined,
+      };
+    },
+    [state],
+  );
 
   // Sync local state with parent filters when they change externally
   useEffect(() => {

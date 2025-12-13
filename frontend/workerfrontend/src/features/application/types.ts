@@ -1,15 +1,11 @@
-import type { UserDto } from '../Profile/types';
-import type { Category, PaginatedResponse } from '../task/types';
+import type { UserDto } from "../Profile/types";
+import type { Category, PaginatedResponse } from "../task/types";
 
 // Re-export for convenience
 export type { PaginatedResponse };
 
 /** Status of a job application (matches backend enum) */
-export type ApplicationStatus = 
-  | 'PENDING' 
-  | 'ACCEPTED' 
-  | 'REJECTED' 
-  | 'WITHDRAWN';
+export type ApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
 
 /** Mode for application form - determines if creating new or editing existing */
 export type ApplicationFormMode = "create" | "edit";
@@ -27,15 +23,15 @@ export interface ApplicationFilters {
   categories?: string[];
   minPrice?: number;
   maxPrice?: number;
-  applicationStatus?:  ApplicationStatus
+  applicationStatus?: ApplicationStatus;
 }
 
 /** Basic application data without user details */
 export interface Application {
-  priceSuggestion: number,
-  timeSuggestion: string,
-  description: string,
-  applicationStatus: ApplicationStatus
+  priceSuggestion: number;
+  timeSuggestion: string;
+  description: string;
+  applicationStatus: ApplicationStatus;
 }
 
 /** Application with full user details and task information (from backend) */
@@ -85,4 +81,4 @@ export interface DeleteApplicationInput {
 }
 
 // Re-import ApplicationPayload from api for the input types
-import type { ApplicationPayload } from './api/applicationApi';
+import type { ApplicationPayload } from "./api/applicationApi";

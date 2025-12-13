@@ -18,21 +18,21 @@ export const Route = createFileRoute("/_authenticated/worker/own-tasks/past/")({
           page: 0,
           size: 10,
           status: "COMPLETED",
-        })
+        }),
       );
     } catch (error) {
-      console.error('Failed to load tasks: ', error);
-      // Return empty data on error to prevent crash    
+      console.error("Failed to load tasks: ", error);
+      // Return empty data on error to prevent crash
       return { context: [], totalPages: 0, number: 0, first: true, last: true };
     }
-  }
+  },
 });
 
 function WorkerPastTasksPage() {
   const { getAccessTokenSilently } = useAuth0();
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
-  const [filters, setFilters] = useState<TaskFilters>({})
+  const [filters, setFilters] = useState<TaskFilters>({});
   const tabs = useWorkerTaskTabs();
 
   const { data: taskList } = useSuspenseQuery(
@@ -41,7 +41,7 @@ function WorkerPastTasksPage() {
       page: currentPage,
       size: pageSize,
       ...filters,
-    })
+    }),
   );
   // console.log(taskList); DEBUGGING
 
@@ -63,26 +63,26 @@ function WorkerPastTasksPage() {
         <Tabulation tabs={tabs} />
       </div>
 
-      <div className="container mx-auto px-6 py-8">    
-          <TaskFilterPanel
-            filters={filters}
-            onFiltersChange={(newFilters) => {
-              setFilters((prev) => ({
-                ...prev,
-                ...newFilters
-              }));
-              setCurrentPage(0);
-            }}
-            onReset={handleResetFilters}
-          />
+      <div className="container mx-auto px-6 py-8">
+        <TaskFilterPanel
+          filters={filters}
+          onFiltersChange={(newFilters) => {
+            setFilters((prev) => ({
+              ...prev,
+              ...newFilters,
+            }));
+            setCurrentPage(0);
+          }}
+          onReset={handleResetFilters}
+        />
         <div className="flex-1">
-          <WorkerTasksToList 
+          <WorkerTasksToList
             tasks={taskList.content}
             totalPages={taskList.totalPages}
             currentPage={taskList.number}
             onPageChange={handlePageChange}
             isFirst={taskList.first}
-            isLast={taskList.last} 
+            isLast={taskList.last}
           />
         </div>
       </div>

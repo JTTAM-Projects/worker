@@ -21,13 +21,12 @@ const buttonVariants = cva(
       color: "primary",
       size: "medium",
     },
-  }
+  },
 );
 
 // 2. Komponentin propsien määrittely
 export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color" | "size">,
-    VariantProps<typeof buttonVariants> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color" | "size">, VariantProps<typeof buttonVariants> {
   title: string;
 }
 

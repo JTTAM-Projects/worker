@@ -1,4 +1,4 @@
-import type { Task } from '../types';
+import type { Task } from "../types";
 
 /**
  * Filter tasks that have valid location coordinates for mapping
@@ -10,10 +10,10 @@ export function filterMappableTasks(tasks: Task[]): Task[] {
       task.locations &&
       task.locations.length > 0 &&
       task.locations[0] &&
-      typeof task.locations[0].latitude === 'number' &&
-      typeof task.locations[0].longitude === 'number' &&
+      typeof task.locations[0].latitude === "number" &&
+      typeof task.locations[0].longitude === "number" &&
       !isNaN(task.locations[0].latitude) &&
-      !isNaN(task.locations[0].longitude)
+      !isNaN(task.locations[0].longitude),
   );
 }
 

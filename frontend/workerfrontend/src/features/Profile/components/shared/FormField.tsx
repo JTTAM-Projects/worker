@@ -8,8 +8,8 @@ interface FormFieldProps {
 }
 
 export const FormField = ({ label, name, value, onChange, placeholder, isTextArea = false }: FormFieldProps) => {
-  const InputComponent = isTextArea ? 'textarea' : 'input';
-  
+  const InputComponent = isTextArea ? "textarea" : "input";
+
   return (
     <div>
       <h3 className="text-sm font-medium text-gray-500">{label}</h3>

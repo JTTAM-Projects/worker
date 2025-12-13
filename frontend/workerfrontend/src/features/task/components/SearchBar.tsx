@@ -3,10 +3,7 @@ interface SearchBarProps {
   setSearchQuery: (query: string) => void;
 }
 
-export default function SearchBar({
-  searchQuery,
-  setSearchQuery,
-}: SearchBarProps) {
+export default function SearchBar({ searchQuery, setSearchQuery }: SearchBarProps) {
   return (
     <div className="w-full">
       <input
